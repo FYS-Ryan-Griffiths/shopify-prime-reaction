@@ -1,0 +1,85 @@
+{% comment %}
+  Cart Quote Snippet
+  Convert cart to Request for Quote
+  
+  Usage:
+  {% render 'cart-quote' %}
+{% endcomment %}
+
+<div class="cart-quote" data-cart-quote hidden>
+  <div class="cart-quote__header">
+    <h3 class="cart-quote__title">{{ 'cart.quote.title' | t | default: 'Request a Quote' }}</h3>
+    <p class="cart-quote__subtitle">{{ 'cart.quote.subtitle' | t | default: 'Fill out the form below and we\'ll get back to you within 24 hours.' }}</p>
+  </div>
+  
+  <form class="cart-quote__form" data-quote-form action="/contact#contact_form" method="post">
+    <input type="hidden" name="form_type" value="contact">
+    <input type="hidden" name="contact[subject]" value="Quote Request">
+    <input type="hidden" name="contact[cart_items]" data-quote-items>
+    
+    <div class="cart-quote__fields">
+      <div class="cart-quote__field">
+        <label for="quote-name">{{ 'cart.quote.name' | t | default: 'Full Name' }} *</label>
+        <input type="text" id="quote-name" name="contact[name]" required>
+      </div>
+      
+      <div class="cart-quote__field">
+        <label for="quote-email">{{ 'cart.quote.email' | t | default: 'Email' }} *</label>
+        <input type="email" id="quote-email" name="contact[email]" required>
+      </div>
+      
+      <div class="cart-quote__field">
+        <label for="quote-company">{{ 'cart.quote.company' | t | default: 'Company Name' }}</label>
+        <input type="text" id="quote-company" name="contact[company]">
+      </div>
+      
+      <div class="cart-quote__field">
+        <label for="quote-phone">{{ 'cart.quote.phone' | t | default: 'Phone' }}</label>
+        <input type="tel" id="quote-phone" name="contact[phone]">
+      </div>
+      
+      <div class="cart-quote__field cart-quote__field--full">
+        <label for="quote-message">{{ 'cart.quote.message' | t | default: 'Additional Notes' }}</label>
+        <textarea id="quote-message" name="contact[body]" rows="3"></textarea>
+      </div>
+    </div>
+    
+    <button type="submit" class="cart-quote__submit btn btn--primary btn--full">
+      {{ 'cart.quote.submit' | t | default: 'Submit Quote Request' }}
+    </button>
+  </form>
+</div>
+
+<style>
+.cart-quote { padding: var(--spacing-6); background: var(--color-background-secondary); border-radius: var(--radius-lg); }
+.cart-quote__header { margin-bottom: var(--spacing-6); }
+.cart-quote__title { font-size: var(--font-size-lg); font-weight: 600; margin: 0 0 var(--spacing-2); }
+.cart-quote__subtitle { font-size: var(--font-size-sm); color: var(--color-foreground-muted); margin: 0; }
+.cart-quote__fields { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); margin-bottom: var(--spacing-6); }
+.cart-quote__field { display: flex; flex-direction: column; gap: var(--spacing-2); }
+.cart-quote__field--full { grid-column: span 2; }
+.cart-quote__field label { font-size: var(--font-size-sm); font-weight: 500; }
+.cart-quote__field input, .cart-quote__field textarea { padding: var(--spacing-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-base); }
+.cart-quote__field input:focus, .cart-quote__field textarea:focus { outline: none; border-color: var(--color-accent); }
+@media (max-width: 749px) { .cart-quote__fields { grid-template-columns: 1fr; } .cart-quote__field--full { grid-column: span 1; } }
+</style>
+
+<script>
+document.addEventListener('b2b:modeChanged', (e) => {
+  const quoteSection = document.querySelector('[data-cart-quote]');
+  if (quoteSection) {
+    quoteSection.hidden = e.detail.mode !== 'quote';
+  }
+});
+
+document.querySelector('[data-quote-form]')?.addEventListener('submit', (e) => {
+  const itemsInput = e.target.querySelector('[data-quote-items]');
+  const items = [];
+  document.querySelectorAll('[data-cart-item]').forEach(item => {
+    const title = item.querySelector('.cart-item__title')?.textContent?.trim();
+    const qty = item.querySelector('[data-quantity-input]')?.value;
+    if (title && qty) items.push(`${title} x ${qty}`);
+  });
+  itemsInput.value = items.join('\n');
+});
+</script>

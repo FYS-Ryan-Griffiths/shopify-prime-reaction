@@ -1,0 +1,135 @@
+{% comment %}
+  Add to Cart Snippet
+  Triggers cart drawer with quantity selector
+  
+  Usage:
+  {% render 'add-to-cart', product: product %}
+{% endcomment %}
+
+{% assign current_variant = product.selected_or_first_available_variant %}
+
+<div class="add-to-cart" data-add-to-cart>
+  <form method="post" action="/cart/add" id="AddToCartForm-{{ section.id }}" data-product-form>
+    <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+    
+    {% comment %} Quantity Selector {% endcomment %}
+    <div class="add-to-cart__quantity">
+      <label for="Quantity-{{ section.id }}" class="visually-hidden">{{ 'products.product.quantity.label' | t }}</label>
+      <div class="quantity-selector">
+        <button type="button" class="quantity-selector__btn" data-quantity-minus aria-label="{{ 'products.product.quantity.decrease' | t }}">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <input type="number" id="Quantity-{{ section.id }}" name="quantity" value="1" min="1" max="{{ current_variant.inventory_quantity | default: 99 }}" class="quantity-selector__input" data-quantity-input>
+        <button type="button" class="quantity-selector__btn" data-quantity-plus aria-label="{{ 'products.product.quantity.increase' | t }}">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    {% comment %} Add to Cart Button {% endcomment %}
+    <button type="submit" class="add-to-cart__btn btn btn--primary btn--full" {% unless current_variant.available %}disabled{% endunless %} data-add-btn>
+      <span class="add-to-cart__text" data-add-text>
+        {% if current_variant.available %}
+          {{ 'products.product.add_to_cart' | t }} — {{ current_variant.price | money }}
+        {% else %}
+          {{ 'products.product.sold_out' | t }}
+        {% endif %}
+      </span>
+      <span class="add-to-cart__loading" hidden>
+        <svg class="spinner" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="50" stroke-linecap="round"/></svg>
+      </span>
+    </button>
+  </form>
+
+  {% comment %} Buy Now Button (optional) {% endcomment %}
+  {% if show_buy_now %}
+  <button type="button" class="add-to-cart__buy-now btn btn--secondary btn--full" data-buy-now {% unless current_variant.available %}disabled{% endunless %}>
+    {{ 'products.product.buy_now' | t | default: 'Buy Now' }}
+  </button>
+  {% endif %}
+
+  {% comment %} Trust Badges {% endcomment %}
+  {% if show_trust_badges %}
+  <div class="add-to-cart__trust">
+    <span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L2 4V7.5C2 11 4.5 14 8 15C11.5 14 14 11 14 7.5V4L8 1Z" stroke="currentColor" stroke-width="1.5"/></svg> Secure Checkout</span>
+    <span><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 6H14M4 10H6M10 10H12M3 3H13C13.5523 3 14 3.44772 14 4V12C14 12.5523 13.5523 13 13 13H3C2.44772 13 2 12.5523 2 12V4C2 3.44772 2.44772 3 3 3Z" stroke="currentColor" stroke-width="1.5"/></svg> Free Returns</span>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+.add-to-cart { display: flex; flex-direction: column; gap: var(--spacing-4); }
+.add-to-cart__quantity { margin-bottom: var(--spacing-2); }
+.quantity-selector { display: inline-flex; align-items: center; border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+.quantity-selector__btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: none; border: none; cursor: pointer; color: var(--color-foreground); }
+.quantity-selector__btn:hover { background: var(--color-background-secondary); }
+.quantity-selector__input { width: 60px; height: 44px; text-align: center; font-size: var(--font-size-base); font-weight: 500; border: none; background: none; -moz-appearance: textfield; }
+.quantity-selector__input::-webkit-outer-spin-button, .quantity-selector__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.add-to-cart__btn { position: relative; min-height: 54px; }
+.add-to-cart__loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.add-to-cart__btn[aria-busy="true"] .add-to-cart__text { visibility: hidden; }
+.add-to-cart__btn[aria-busy="true"] .add-to-cart__loading { display: flex; }
+.spinner { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.add-to-cart__buy-now { margin-top: var(--spacing-2); }
+.add-to-cart__trust { display: flex; flex-wrap: wrap; gap: var(--spacing-4); margin-top: var(--spacing-4); font-size: var(--font-size-xs); color: var(--color-foreground-muted); }
+.add-to-cart__trust span { display: flex; align-items: center; gap: var(--spacing-2); }
+</style>
+
+<script>
+(function() {
+  const container = document.querySelector('[data-add-to-cart]');
+  if (!container) return;
+  
+  const form = container.querySelector('[data-product-form]');
+  const minusBtn = container.querySelector('[data-quantity-minus]');
+  const plusBtn = container.querySelector('[data-quantity-plus]');
+  const input = container.querySelector('[data-quantity-input]');
+  const addBtn = container.querySelector('[data-add-btn]');
+  const buyNowBtn = container.querySelector('[data-buy-now]');
+  
+  // Quantity controls
+  minusBtn?.addEventListener('click', () => {
+    const val = parseInt(input.value) || 1;
+    if (val > 1) input.value = val - 1;
+  });
+  
+  plusBtn?.addEventListener('click', () => {
+    const val = parseInt(input.value) || 1;
+    const max = parseInt(input.max) || 99;
+    if (val < max) input.value = val + 1;
+  });
+  
+  // AJAX add to cart
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    addBtn.setAttribute('aria-busy', 'true');
+    addBtn.disabled = true;
+    
+    try {
+      const formData = new FormData(form);
+      const response = await fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (response.ok) {
+        document.dispatchEvent(new CustomEvent('cart:open'));
+        document.dispatchEvent(new CustomEvent('cart:refresh'));
+      }
+    } catch (err) {
+      console.error('Add to cart failed:', err);
+    } finally {
+      addBtn.setAttribute('aria-busy', 'false');
+      addBtn.disabled = false;
+    }
+  });
+  
+  // Buy now
+  buyNowBtn?.addEventListener('click', async () => {
+    const formData = new FormData(form);
+    await fetch('/cart/add.js', { method: 'POST', body: formData });
+    window.location.href = '/checkout';
+  });
+})();
+</script>

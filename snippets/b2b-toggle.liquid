@@ -1,0 +1,76 @@
+{% comment %}
+  B2B Toggle Snippet
+  Switch between Add to Cart and Request Quote modes
+  
+  Usage:
+  {% render 'b2b-toggle' %}
+{% endcomment %}
+
+{% liquid
+  assign is_b2b = false
+  if customer and customer.tags contains 'b2b' or customer.tags contains 'wholesale'
+    assign is_b2b = true
+  endif
+%}
+
+{% if settings.enable_b2b_mode %}
+<div class="b2b-toggle" data-b2b-toggle>
+  <span class="b2b-toggle__label">{{ 'cart.b2b.mode' | t | default: 'Shopping Mode' }}</span>
+  
+  <div class="b2b-toggle__switch">
+    <button type="button" class="b2b-toggle__btn{% unless is_b2b %} is-active{% endunless %}" data-mode="retail" aria-pressed="{% unless is_b2b %}true{% else %}false{% endunless %}">
+      <svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 4H14L13 14H3L2 4ZM5 4V3C5 1.9 5.9 1 7 1H9C10.1 1 11 1.9 11 3V4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+      {{ 'cart.b2b.retail' | t | default: 'Buy Now' }}
+    </button>
+    
+    <button type="button" class="b2b-toggle__btn{% if is_b2b %} is-active{% endif %}" data-mode="quote" aria-pressed="{% if is_b2b %}true{% else %}false{% endunless %}">
+      <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 2H13V14H3V2ZM5 5H11M5 8H11M5 11H9" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+      {{ 'cart.b2b.quote' | t | default: 'Request Quote' }}
+    </button>
+  </div>
+  
+  {% if is_b2b %}
+  <p class="b2b-toggle__note">{{ 'cart.b2b.wholesale_note' | t | default: 'You are viewing wholesale pricing' }}</p>
+  {% endif %}
+</div>
+
+<style>
+.b2b-toggle { padding: var(--spacing-4); background: var(--color-background-secondary); border-radius: var(--radius-md); margin-bottom: var(--spacing-4); }
+.b2b-toggle__label { display: block; font-size: var(--font-size-xs); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-foreground-muted); margin-bottom: var(--spacing-2); }
+.b2b-toggle__switch { display: flex; gap: var(--spacing-2); }
+.b2b-toggle__btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: var(--spacing-2); padding: var(--spacing-3); font-size: var(--font-size-sm); font-weight: 500; background: var(--color-background); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; transition: all var(--duration-short) ease; }
+.b2b-toggle__btn:hover { border-color: var(--color-accent); }
+.b2b-toggle__btn.is-active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+.b2b-toggle__note { font-size: var(--font-size-xs); color: var(--color-accent); margin: var(--spacing-3) 0 0; text-align: center; }
+</style>
+
+<script>
+(function() {
+  const toggle = document.querySelector('[data-b2b-toggle]');
+  if (!toggle) return;
+  
+  const btns = toggle.querySelectorAll('[data-mode]');
+  
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const mode = btn.dataset.mode;
+      btns.forEach(b => {
+        b.classList.toggle('is-active', b === btn);
+        b.setAttribute('aria-pressed', b === btn);
+      });
+      
+      document.body.dataset.shoppingMode = mode;
+      localStorage.setItem('shopping-mode', mode);
+      document.dispatchEvent(new CustomEvent('b2b:modeChanged', { detail: { mode } }));
+    });
+  });
+  
+  // Restore saved mode
+  const savedMode = localStorage.getItem('shopping-mode');
+  if (savedMode) {
+    const savedBtn = toggle.querySelector(`[data-mode="${savedMode}"]`);
+    savedBtn?.click();
+  }
+})();
+</script>
+{% endif %}

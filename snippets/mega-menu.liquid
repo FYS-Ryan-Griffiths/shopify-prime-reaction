@@ -1,0 +1,457 @@
+{% comment %}
+  Mega Menu Snippet
+  Renders a full-width dropdown menu with product previews and images
+  
+  Usage:
+  {% render 'mega-menu', menu: section.settings.menu %}
+{% endcomment %}
+
+{% assign menu = menu | default: linklists[section.settings.menu] %}
+
+<nav class="mega-menu" aria-label="{{ 'accessibility.main_navigation' | t }}">
+  <ul class="mega-menu__list" role="menubar">
+    {% for link in menu.links %}
+      <li class="mega-menu__item{% if link.links.size > 0 %} has-dropdown{% endif %}" role="none">
+        {% if link.links.size > 0 %}
+          <button
+            class="mega-menu__link mega-menu__link--toggle"
+            aria-expanded="false"
+            aria-haspopup="true"
+            aria-controls="mega-dropdown-{{ forloop.index }}"
+            role="menuitem"
+          >
+            {{ link.title }}
+            <svg class="mega-menu__icon" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          
+          <div 
+            id="mega-dropdown-{{ forloop.index }}" 
+            class="mega-menu__dropdown"
+            role="menu"
+            aria-label="{{ link.title }}"
+          >
+            <div class="mega-menu__dropdown-inner">
+              <div class="mega-menu__columns">
+                {% comment %} Navigation Links Column {% endcomment %}
+                <div class="mega-menu__column mega-menu__column--links">
+                  <span class="mega-menu__column-title">{{ link.title }}</span>
+                  <ul class="mega-menu__sublinks" role="menu">
+                    {% for child_link in link.links %}
+                      <li role="none">
+                        <a 
+                          href="{{ child_link.url }}" 
+                          class="mega-menu__sublink"
+                          role="menuitem"
+                          {% if child_link.current %}aria-current="page"{% endif %}
+                        >
+                          {{ child_link.title }}
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                
+                {% comment %} Featured Products Column {% endcomment %}
+                {% if link.type == 'collection_link' and link.object.products.size > 0 %}
+                  <div class="mega-menu__column mega-menu__column--products">
+                    <span class="mega-menu__column-title">{{ 'sections.mega_menu.featured' | t | default: 'Featured' }}</span>
+                    <div class="mega-menu__products">
+                      {% for product in link.object.products limit: 3 %}
+                        <a href="{{ product.url }}" class="mega-menu__product" role="menuitem">
+                          <div class="mega-menu__product-image">
+                            {% if product.featured_media %}
+                              {{ product.featured_media | image_url: width: 200 | image_tag:
+                                loading: 'lazy',
+                                alt: product.featured_media.alt | escape,
+                                class: 'mega-menu__product-img'
+                              }}
+                            {% else %}
+                              {{ 'product-1' | placeholder_svg_tag: 'mega-menu__product-placeholder' }}
+                            {% endif %}
+                            
+                            {% comment %} Video preview on hover {% endcomment %}
+                            {% for media in product.media %}
+                              {% if media.media_type == 'video' or media.media_type == 'external_video' %}
+                                <div class="mega-menu__product-video" data-video-preview>
+                                  {% if media.media_type == 'video' %}
+                                    {{ media | video_tag: autoplay: true, loop: true, muted: true, playsinline: true }}
+                                  {% else %}
+                                    {{ media | external_video_url: autoplay: true, loop: true, muted: true | external_video_tag }}
+                                  {% endif %}
+                                </div>
+                                {% break %}
+                              {% endif %}
+                            {% endfor %}
+                          </div>
+                          <span class="mega-menu__product-title">{{ product.title }}</span>
+                          <span class="mega-menu__product-price">{{ product.price | money }}</span>
+                        </a>
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endif %}
+                
+                {% comment %} Promo/Image Column {% endcomment %}
+                <div class="mega-menu__column mega-menu__column--promo">
+                  {% if section.settings.promo_image %}
+                    <a 
+                      href="{{ section.settings.promo_link | default: '#' }}" 
+                      class="mega-menu__promo"
+                      role="menuitem"
+                    >
+                      {{ section.settings.promo_image | image_url: width: 400 | image_tag:
+                        loading: 'lazy',
+                        alt: section.settings.promo_heading | escape,
+                        class: 'mega-menu__promo-img'
+                      }}
+                      {% if section.settings.promo_heading != blank %}
+                        <div class="mega-menu__promo-content">
+                          <span class="mega-menu__promo-heading">{{ section.settings.promo_heading }}</span>
+                          {% if section.settings.promo_text != blank %}
+                            <span class="mega-menu__promo-text">{{ section.settings.promo_text }}</span>
+                          {% endif %}
+                        </div>
+                      {% endif %}
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+              
+              {% comment %} View All Link {% endcomment %}
+              {% if link.url != '#' %}
+                <div class="mega-menu__footer">
+                  <a href="{{ link.url }}" class="mega-menu__view-all">
+                    {{ 'sections.mega_menu.view_all' | t | default: 'View All' }} {{ link.title }}
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% else %}
+          <a 
+            href="{{ link.url }}" 
+            class="mega-menu__link"
+            role="menuitem"
+            {% if link.current %}aria-current="page"{% endif %}
+          >
+            {{ link.title }}
+          </a>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</nav>
+
+<style>
+  .mega-menu {
+    position: relative;
+  }
+  
+  .mega-menu__list {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-6, 1.5rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .mega-menu__item {
+    position: static;
+  }
+  
+  .mega-menu__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2, 0.5rem);
+    padding: var(--spacing-2, 0.5rem) 0;
+    font-family: var(--font-body-family);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-medium, 500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-foreground);
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color var(--duration-short) ease;
+  }
+  
+  .mega-menu__link:hover,
+  .mega-menu__link:focus-visible,
+  .mega-menu__link[aria-expanded="true"] {
+    color: var(--color-accent);
+  }
+  
+  .mega-menu__link[aria-current="page"] {
+    color: var(--color-accent);
+  }
+  
+  .mega-menu__icon {
+    transition: transform var(--duration-short) ease;
+  }
+  
+  .mega-menu__link[aria-expanded="true"] .mega-menu__icon {
+    transform: rotate(180deg);
+  }
+  
+  .mega-menu__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--color-background);
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: 
+      opacity var(--duration-medium) ease,
+      visibility var(--duration-medium) ease,
+      transform var(--duration-medium) ease;
+    z-index: var(--z-dropdown, 100);
+  }
+  
+  .mega-menu__item:hover .mega-menu__dropdown,
+  .mega-menu__item:focus-within .mega-menu__dropdown,
+  .mega-menu__link[aria-expanded="true"] + .mega-menu__dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  
+  .mega-menu__dropdown-inner {
+    max-width: var(--page-width, 1400px);
+    margin: 0 auto;
+    padding: var(--spacing-8, 2rem) var(--spacing-6, 1.5rem);
+  }
+  
+  .mega-menu__columns {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: var(--spacing-8, 2rem);
+  }
+  
+  .mega-menu__column-title {
+    display: block;
+    margin-bottom: var(--spacing-4, 1rem);
+    font-family: var(--font-heading-family);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-semibold, 600);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-foreground-muted);
+  }
+  
+  .mega-menu__sublinks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .mega-menu__sublink {
+    display: block;
+    padding: var(--spacing-2, 0.5rem) 0;
+    font-size: var(--font-size-base, 1rem);
+    color: var(--color-foreground);
+    text-decoration: none;
+    transition: color var(--duration-short) ease, padding-left var(--duration-short) ease;
+  }
+  
+  .mega-menu__sublink:hover,
+  .mega-menu__sublink:focus-visible {
+    color: var(--color-accent);
+    padding-left: var(--spacing-2, 0.5rem);
+  }
+  
+  .mega-menu__products {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-4, 1rem);
+  }
+  
+  .mega-menu__product {
+    text-decoration: none;
+    color: var(--color-foreground);
+    transition: transform var(--duration-short) ease;
+  }
+  
+  .mega-menu__product:hover {
+    transform: translateY(-4px);
+  }
+  
+  .mega-menu__product-image {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: var(--radius-md, 0.5rem);
+    background: var(--color-background-secondary);
+    margin-bottom: var(--spacing-2, 0.5rem);
+  }
+  
+  .mega-menu__product-img,
+  .mega-menu__product-placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .mega-menu__product-video {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity var(--duration-medium) ease;
+  }
+  
+  .mega-menu__product:hover .mega-menu__product-video {
+    opacity: 1;
+  }
+  
+  .mega-menu__product-video video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .mega-menu__product-title {
+    display: block;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-medium, 500);
+    margin-bottom: var(--spacing-1, 0.25rem);
+  }
+  
+  .mega-menu__product-price {
+    font-size: var(--font-size-sm, 0.875rem);
+    color: var(--color-foreground-muted);
+  }
+  
+  .mega-menu__promo {
+    display: block;
+    position: relative;
+    border-radius: var(--radius-md, 0.5rem);
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--color-background);
+  }
+  
+  .mega-menu__promo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--duration-long) ease;
+  }
+  
+  .mega-menu__promo:hover .mega-menu__promo-img {
+    transform: scale(1.05);
+  }
+  
+  .mega-menu__promo-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--spacing-4, 1rem);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  }
+  
+  .mega-menu__promo-heading {
+    display: block;
+    font-family: var(--font-heading-family);
+    font-size: var(--font-size-lg, 1.125rem);
+    font-weight: var(--font-weight-semibold, 600);
+    margin-bottom: var(--spacing-1, 0.25rem);
+  }
+  
+  .mega-menu__promo-text {
+    font-size: var(--font-size-sm, 0.875rem);
+    opacity: 0.9;
+  }
+  
+  .mega-menu__footer {
+    margin-top: var(--spacing-6, 1.5rem);
+    padding-top: var(--spacing-4, 1rem);
+    border-top: 1px solid var(--color-border);
+  }
+  
+  .mega-menu__view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2, 0.5rem);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-medium, 500);
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: gap var(--duration-short) ease;
+  }
+  
+  .mega-menu__view-all:hover {
+    gap: var(--spacing-3, 0.75rem);
+  }
+  
+  /* Hide on mobile */
+  @media screen and (max-width: 989px) {
+    .mega-menu {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const megaMenu = document.querySelector('.mega-menu');
+    if (!megaMenu) return;
+    
+    const toggleButtons = megaMenu.querySelectorAll('.mega-menu__link--toggle');
+    
+    toggleButtons.forEach(button => {
+      // Toggle on click
+      button.addEventListener('click', (e) => {
+        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+        
+        // Close all other dropdowns
+        toggleButtons.forEach(btn => {
+          btn.setAttribute('aria-expanded', 'false');
+        });
+        
+        // Toggle current
+        button.setAttribute('aria-expanded', !isExpanded);
+      });
+      
+      // Keyboard navigation
+      button.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          button.setAttribute('aria-expanded', 'false');
+          button.focus();
+        }
+      });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!megaMenu.contains(e.target)) {
+        toggleButtons.forEach(btn => {
+          btn.setAttribute('aria-expanded', 'false');
+        });
+      }
+    });
+    
+    // Close on escape from anywhere in dropdown
+    megaMenu.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        toggleButtons.forEach(btn => {
+          if (btn.getAttribute('aria-expanded') === 'true') {
+            btn.setAttribute('aria-expanded', 'false');
+            btn.focus();
+          }
+        });
+      }
+    });
+  })();
+</script>

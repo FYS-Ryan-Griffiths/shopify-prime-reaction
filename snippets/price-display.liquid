@@ -1,0 +1,87 @@
+{% comment %}
+  Price Display Snippet
+  Conditional price visibility for B2B/wholesale
+  
+  Usage:
+  {% render 'price-display', product: product %}
+  {% render 'price-display', variant: variant %}
+{% endcomment %}
+
+{% liquid
+  assign target = variant | default: product.selected_or_first_available_variant | default: product
+  assign show_price = true
+  
+  # Check global hide prices setting
+  if settings.hide_prices
+    assign show_price = false
+  endif
+  
+  # Check if product has "hide-price" tag
+  if product.tags contains 'hide-price' or product.tags contains 'request-quote'
+    assign show_price = false
+  endif
+  
+  # Check if customer is B2B and should see prices
+  if customer and customer.tags contains 'b2b-approved'
+    assign show_price = true
+  endif
+  
+  # Allow override via parameter
+  if force_show == true
+    assign show_price = true
+  endif
+  if force_hide == true
+    assign show_price = false
+  endif
+%}
+
+<div class="price-display{% unless show_price %} price-display--hidden{% endunless %}" data-price-display>
+  {% if show_price %}
+    <div class="price-display__prices">
+      {% if target.compare_at_price > target.price %}
+        <span class="price-display__sale" data-price>{{ target.price | money }}</span>
+        <span class="price-display__compare">
+          <s>{{ target.compare_at_price | money }}</s>
+        </span>
+        {% assign savings = target.compare_at_price | minus: target.price %}
+        {% assign savings_percent = savings | times: 100.0 | divided_by: target.compare_at_price | round %}
+        <span class="price-display__badge">Save {{ savings_percent }}%</span>
+      {% else %}
+        <span class="price-display__regular" data-price>{{ target.price | money }}</span>
+      {% endif %}
+      
+      {% if target.unit_price_measurement %}
+        <span class="price-display__unit">
+          {{ target.unit_price | money }} / {{ target.unit_price_measurement.reference_value }}{{ target.unit_price_measurement.reference_unit }}
+        </span>
+      {% endif %}
+    </div>
+    
+    {% if show_tax_note and shop.taxes_included %}
+      <span class="price-display__tax">{{ 'products.product.include_taxes' | t }}</span>
+    {% endif %}
+  {% else %}
+    <div class="price-display__request">
+      <span class="price-display__request-text">{{ settings.price_hidden_text | default: 'Request Quote for Pricing' }}</span>
+      {% if settings.show_quote_button_on_hidden %}
+        <a href="#quote-form" class="price-display__quote-link" data-quote-trigger>
+          {{ 'products.product.request_quote' | t | default: 'Get Quote' }}
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+<style>
+.price-display { display: flex; flex-direction: column; gap: var(--spacing-1); }
+.price-display__prices { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--spacing-2); }
+.price-display__regular { font-size: var(--font-size-xl); font-weight: 600; color: var(--color-foreground); }
+.price-display__sale { font-size: var(--font-size-xl); font-weight: 600; color: var(--color-sale); }
+.price-display__compare { font-size: var(--font-size-base); color: var(--color-foreground-muted); }
+.price-display__badge { font-size: var(--font-size-xs); font-weight: 600; padding: var(--spacing-1) var(--spacing-2); background: var(--color-sale); color: #fff; border-radius: var(--radius-sm); text-transform: uppercase; }
+.price-display__unit { display: block; font-size: var(--font-size-sm); color: var(--color-foreground-muted); margin-top: var(--spacing-1); }
+.price-display__tax { font-size: var(--font-size-xs); color: var(--color-foreground-muted); }
+.price-display__request { padding: var(--spacing-3) var(--spacing-4); background: var(--color-background-secondary); border-radius: var(--radius-md); text-align: center; }
+.price-display__request-text { font-weight: 500; color: var(--color-foreground); }
+.price-display__quote-link { display: inline-block; margin-top: var(--spacing-2); font-size: var(--font-size-sm); color: var(--color-accent); text-decoration: underline; }
+</style>

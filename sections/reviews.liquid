@@ -1,0 +1,175 @@
+{% comment %}
+  Reviews Section
+  Product reviews with video upload support
+{% endcomment %}
+
+{%- style -%}
+.reviews { padding: var(--spacing-section) 0; }
+.reviews__inner { max-width: var(--page-width); margin: 0 auto; padding: 0 var(--spacing-6); }
+.reviews__header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--spacing-8); flex-wrap: wrap; gap: var(--spacing-6); }
+.reviews__title { font-family: var(--font-heading-family); font-size: var(--font-size-2xl); margin: 0; }
+.reviews__summary { display: flex; align-items: center; gap: var(--spacing-4); }
+.reviews__rating { font-size: var(--font-size-4xl); font-weight: 700; }
+.reviews__stars { display: flex; gap: 2px; color: var(--color-accent); }
+.reviews__count { font-size: var(--font-size-sm); color: var(--color-foreground-muted); }
+.reviews__write-btn { padding: var(--spacing-3) var(--spacing-6); background: var(--color-accent); color: #fff; border: none; border-radius: var(--radius-md); font-weight: 500; cursor: pointer; }
+.reviews__list { display: flex; flex-direction: column; gap: var(--spacing-6); }
+.review { padding: var(--spacing-6); background: var(--color-background-secondary); border-radius: var(--radius-lg); }
+.review__header { display: flex; justify-content: space-between; margin-bottom: var(--spacing-4); }
+.review__author { font-weight: 600; }
+.review__date { font-size: var(--font-size-sm); color: var(--color-foreground-muted); }
+.review__stars { display: flex; gap: 2px; color: var(--color-accent); margin-bottom: var(--spacing-3); }
+.review__title { font-weight: 600; margin-bottom: var(--spacing-2); }
+.review__text { color: var(--color-foreground-muted); line-height: 1.7; }
+.review__media { display: flex; gap: var(--spacing-3); margin-top: var(--spacing-4); }
+.review__media-item { width: 80px; height: 80px; border-radius: var(--radius-md); overflow: hidden; cursor: pointer; }
+.review__media-item img, .review__media-item video { width: 100%; height: 100%; object-fit: cover; }
+.review__helpful { display: flex; align-items: center; gap: var(--spacing-4); margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: 1px solid var(--color-border); font-size: var(--font-size-sm); }
+.review__helpful-btn { display: flex; align-items: center; gap: var(--spacing-2); padding: var(--spacing-2) var(--spacing-3); background: none; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-sm); cursor: pointer; }
+.review__helpful-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.reviews__empty { text-align: center; padding: var(--spacing-12); color: var(--color-foreground-muted); }
+.review-form { display: none; padding: var(--spacing-8); background: var(--color-background-secondary); border-radius: var(--radius-lg); margin-bottom: var(--spacing-8); }
+.review-form.is-open { display: block; }
+.review-form__field { margin-bottom: var(--spacing-4); }
+.review-form__label { display: block; font-weight: 500; margin-bottom: var(--spacing-2); }
+.review-form__input, .review-form__textarea { width: 100%; padding: var(--spacing-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-base); }
+.review-form__textarea { min-height: 120px; resize: vertical; }
+.review-form__stars { display: flex; gap: var(--spacing-2); }
+.review-form__star { width: 32px; height: 32px; background: none; border: none; cursor: pointer; color: var(--color-border); }
+.review-form__star.is-active, .review-form__star:hover { color: var(--color-accent); }
+.review-form__submit { padding: var(--spacing-3) var(--spacing-8); background: var(--color-accent); color: #fff; border: none; border-radius: var(--radius-md); font-weight: 500; cursor: pointer; }
+{%- endstyle -%}
+
+<section class="reviews" id="reviews">
+  <div class="reviews__inner">
+    <header class="reviews__header">
+      <div>
+        <h2 class="reviews__title">{{ section.settings.heading | default: 'Customer Reviews' }}</h2>
+        <div class="reviews__summary">
+          <span class="reviews__rating">{{ section.settings.avg_rating | default: '4.8' }}</span>
+          <div>
+            <div class="reviews__stars">
+              {% for i in (1..5) %}
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1L12.5 7H19L14 11L16 18L10 14L4 18L6 11L1 7H7.5L10 1Z"/></svg>
+              {% endfor %}
+            </div>
+            <span class="reviews__count">Based on {{ section.settings.review_count | default: '124' }} reviews</span>
+          </div>
+        </div>
+      </div>
+      <button class="reviews__write-btn" data-review-toggle>Write a Review</button>
+    </header>
+
+    <div class="review-form" data-review-form>
+      <h3>Write Your Review</h3>
+      <form>
+        <div class="review-form__field">
+          <label class="review-form__label">Rating</label>
+          <div class="review-form__stars">
+            {% for i in (1..5) %}
+            <button type="button" class="review-form__star" data-rating="{{ i }}">
+              <svg width="32" height="32" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1L12.5 7H19L14 11L16 18L10 14L4 18L6 11L1 7H7.5L10 1Z"/></svg>
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="review-form__field">
+          <label class="review-form__label" for="review-title">Title</label>
+          <input type="text" id="review-title" class="review-form__input" placeholder="Summarize your experience">
+        </div>
+        <div class="review-form__field">
+          <label class="review-form__label" for="review-body">Review</label>
+          <textarea id="review-body" class="review-form__textarea" placeholder="Share your thoughts"></textarea>
+        </div>
+        <button type="submit" class="review-form__submit">Submit Review</button>
+      </form>
+    </div>
+
+    <div class="reviews__list">
+      {% for block in section.blocks %}
+      <article class="review" {{ block.shopify_attributes }}>
+        <header class="review__header">
+          <span class="review__author">{{ block.settings.author | default: 'Customer' }}</span>
+          <span class="review__date">{{ block.settings.date | default: 'January 2026' }}</span>
+        </header>
+        <div class="review__stars">
+          {% assign rating = block.settings.rating | default: 5 %}
+          {% for i in (1..5) %}
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="{% if i <= rating %}currentColor{% else %}none{% endif %}" stroke="currentColor"><path d="M10 1L12.5 7H19L14 11L16 18L10 14L4 18L6 11L1 7H7.5L10 1Z"/></svg>
+          {% endfor %}
+        </div>
+        {% if block.settings.title != blank %}
+        <h4 class="review__title">{{ block.settings.title }}</h4>
+        {% endif %}
+        <p class="review__text">{{ block.settings.text | default: 'Great product!' }}</p>
+        {% if block.settings.image or block.settings.video %}
+        <div class="review__media">
+          {% if block.settings.image %}
+          <div class="review__media-item">{{ block.settings.image | image_url: width: 160 | image_tag }}</div>
+          {% endif %}
+        </div>
+        {% endif %}
+        <div class="review__helpful">
+          <span>Was this helpful?</span>
+          <button class="review__helpful-btn" data-helpful>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8V14M8 14H12.5C13.3 14 14 13.3 14 12.5V8.5C14 7.7 13.3 7 12.5 7H10L11 3C11 2.4 10.6 2 10 2H9L6 7V14H8Z" stroke="currentColor" stroke-width="1.5"/></svg>
+            Yes (<span data-helpful-count>{{ block.settings.helpful | default: 12 }}</span>)
+          </button>
+        </div>
+      </article>
+      {% else %}
+      <div class="reviews__empty">
+        <p>No reviews yet. Be the first to share your experience!</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  const toggleBtn = document.querySelector('[data-review-toggle]');
+  const form = document.querySelector('[data-review-form]');
+  const stars = document.querySelectorAll('[data-rating]');
+  
+  toggleBtn?.addEventListener('click', () => form?.classList.toggle('is-open'));
+  
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      const rating = parseInt(star.dataset.rating);
+      stars.forEach((s, i) => s.classList.toggle('is-active', i < rating));
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Reviews",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Customer Reviews" },
+    { "type": "text", "id": "avg_rating", "label": "Average Rating", "default": "4.8" },
+    { "type": "text", "id": "review_count", "label": "Review Count", "default": "124" }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        { "type": "text", "id": "author", "label": "Author", "default": "John D." },
+        { "type": "text", "id": "date", "label": "Date", "default": "January 2026" },
+        { "type": "range", "id": "rating", "label": "Rating", "min": 1, "max": 5, "default": 5 },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "textarea", "id": "text", "label": "Review Text", "default": "Great product!" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "number", "id": "helpful", "label": "Helpful Count", "default": 12 }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Reviews", "blocks": [
+    { "type": "review", "settings": { "author": "Mike T.", "rating": 5, "title": "Game changer!", "text": "The Fluiball has completely transformed my training." }},
+    { "type": "review", "settings": { "author": "Sarah L.", "rating": 5, "title": "Love it", "text": "Perfect for core work. The unpredictable movement really engages stabilizers." }}
+  ]}]
+}
+{% endschema %}

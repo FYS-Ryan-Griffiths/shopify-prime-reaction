@@ -1,0 +1,66 @@
+{% comment %}
+  Collection Empty Snippet
+  Helpful empty state when collection has no products
+  
+  Usage:
+  {% render 'collection-empty', collection: collection %}
+{% endcomment %}
+
+<div class="collection-empty">
+  <div class="collection-empty__icon">
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+      <path d="M24 24L40 40M40 24L24 40" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+  
+  <h2 class="collection-empty__title">
+    {{ 'sections.collection_template.empty' | t | default: 'No products found' }}
+  </h2>
+  
+  <p class="collection-empty__text">
+    {% if collection.all_tags.size > 0 or collection.filters.size > 0 %}
+      {{ 'sections.collection_template.no_matches' | t | default: 'Try adjusting your filters or browse our other collections.' }}
+    {% else %}
+      {{ 'sections.collection_template.check_back' | t | default: 'Check back soon for new arrivals!' }}
+    {% endif %}
+  </p>
+  
+  <div class="collection-empty__actions">
+    {% if collection.current_vendor or collection.current_type or current_tags.size > 0 %}
+    <a href="{{ collection.url }}" class="btn btn--secondary">
+      {{ 'sections.collection_template.clear_filters' | t | default: 'Clear Filters' }}
+    </a>
+    {% endif %}
+    
+    <a href="{{ routes.collections_url }}" class="btn btn--primary">
+      {{ 'sections.collection_template.browse_collections' | t | default: 'Browse Collections' }}
+    </a>
+  </div>
+  
+  {% if section.settings.show_suggestions %}
+  <div class="collection-empty__suggestions">
+    <h3 class="collection-empty__suggestions-title">
+      {{ 'sections.collection_template.suggestions' | t | default: 'You might like' }}
+    </h3>
+    <div class="collection-empty__products">
+      {% assign suggested_collection = collections[section.settings.suggestion_collection] | default: collections.all %}
+      {% for product in suggested_collection.products limit: 4 %}
+        {% render 'product-card', product: product %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+.collection-empty { text-align: center; padding: var(--spacing-16) var(--spacing-6); max-width: 600px; margin: 0 auto; }
+.collection-empty__icon { color: var(--color-foreground-muted); margin-bottom: var(--spacing-6); }
+.collection-empty__title { font-family: var(--font-heading-family); font-size: var(--font-size-2xl); margin: 0 0 var(--spacing-4); }
+.collection-empty__text { color: var(--color-foreground-muted); margin: 0 0 var(--spacing-8); }
+.collection-empty__actions { display: flex; justify-content: center; gap: var(--spacing-4); flex-wrap: wrap; }
+.collection-empty__suggestions { margin-top: var(--spacing-16); padding-top: var(--spacing-10); border-top: 1px solid var(--color-border); }
+.collection-empty__suggestions-title { font-size: var(--font-size-lg); margin-bottom: var(--spacing-6); }
+.collection-empty__products { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-6); max-width: 100vw; }
+@media (max-width: 989px) { .collection-empty__products { grid-template-columns: repeat(2, 1fr); } }
+</style>

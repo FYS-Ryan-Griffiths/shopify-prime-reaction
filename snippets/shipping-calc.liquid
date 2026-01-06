@@ -1,0 +1,118 @@
+{% comment %}
+  Shipping Calculator Snippet
+  Estimate shipping before checkout
+  
+  Usage:
+  {% render 'shipping-calc' %}
+{% endcomment %}
+
+{% if settings.show_shipping_calculator %}
+<div class="shipping-calc" data-shipping-calc>
+  <button type="button" class="shipping-calc__toggle" data-shipping-toggle aria-expanded="false">
+    <svg width="18" height="18" viewBox="0 0 18 18"><path d="M1 6H12V15H1V6ZM12 9H16L17 12V15H12V9ZM14 15.5C14 16.3 14.7 17 15.5 17C16.3 17 17 16.3 17 15.5M3 15.5C3 16.3 3.7 17 4.5 17C5.3 17 6 16.3 6 15.5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+    {{ 'cart.shipping.estimate' | t | default: 'Estimate Shipping' }}
+    <svg class="shipping-calc__arrow" width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </button>
+  
+  <div class="shipping-calc__form" data-shipping-form hidden>
+    <div class="shipping-calc__fields">
+      <div class="shipping-calc__field">
+        <label for="shipping-country">{{ 'cart.shipping.country' | t | default: 'Country' }}</label>
+        <select id="shipping-country" name="country" data-shipping-country>
+          {% for country in shop.enabled_countries %}
+            <option value="{{ country.iso_code }}" {% if country.iso_code == 'US' %}selected{% endif %}>{{ country.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <div class="shipping-calc__field">
+        <label for="shipping-zip">{{ 'cart.shipping.zip' | t | default: 'ZIP / Postal Code' }}</label>
+        <input type="text" id="shipping-zip" name="zip" data-shipping-zip placeholder="Enter ZIP code">
+      </div>
+    </div>
+    
+    <button type="button" class="shipping-calc__submit btn btn--secondary" data-shipping-submit>
+      {{ 'cart.shipping.calculate' | t | default: 'Calculate' }}
+    </button>
+    
+    <div class="shipping-calc__results" data-shipping-results hidden>
+      <div class="shipping-calc__loading" data-shipping-loading hidden>
+        <span class="spinner"></span> Calculating...
+      </div>
+      <div class="shipping-calc__rates" data-shipping-rates></div>
+      <div class="shipping-calc__error" data-shipping-error hidden></div>
+    </div>
+  </div>
+</div>
+
+<style>
+.shipping-calc { border-top: 1px solid var(--color-border); padding-top: var(--spacing-4); margin-top: var(--spacing-4); }
+.shipping-calc__toggle { display: flex; align-items: center; gap: var(--spacing-2); width: 100%; padding: var(--spacing-3) 0; font-size: var(--font-size-sm); font-weight: 500; background: none; border: none; cursor: pointer; color: var(--color-foreground); }
+.shipping-calc__toggle:hover { color: var(--color-accent); }
+.shipping-calc__arrow { margin-left: auto; transition: transform var(--duration-short) ease; }
+.shipping-calc__toggle[aria-expanded="true"] .shipping-calc__arrow { transform: rotate(180deg); }
+.shipping-calc__form { padding: var(--spacing-4) 0; }
+.shipping-calc__fields { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-3); margin-bottom: var(--spacing-4); }
+.shipping-calc__field label { display: block; font-size: var(--font-size-xs); font-weight: 500; margin-bottom: var(--spacing-1); }
+.shipping-calc__field select, .shipping-calc__field input { width: 100%; padding: var(--spacing-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-sm); }
+.shipping-calc__results { margin-top: var(--spacing-4); }
+.shipping-calc__rates { display: flex; flex-direction: column; gap: var(--spacing-2); }
+.shipping-rate { display: flex; justify-content: space-between; padding: var(--spacing-2); background: var(--color-background-secondary); border-radius: var(--radius-md); font-size: var(--font-size-sm); }
+.shipping-rate__name { font-weight: 500; }
+.shipping-rate__price { color: var(--color-accent); }
+.shipping-calc__error { color: var(--color-error); font-size: var(--font-size-sm); }
+</style>
+
+<script>
+(function() {
+  const calc = document.querySelector('[data-shipping-calc]');
+  if (!calc) return;
+  
+  const toggle = calc.querySelector('[data-shipping-toggle]');
+  const form = calc.querySelector('[data-shipping-form]');
+  const submit = calc.querySelector('[data-shipping-submit]');
+  const results = calc.querySelector('[data-shipping-results]');
+  const rates = calc.querySelector('[data-shipping-rates]');
+  const loading = calc.querySelector('[data-shipping-loading]');
+  const error = calc.querySelector('[data-shipping-error]');
+  
+  toggle?.addEventListener('click', () => {
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', !expanded);
+    form.hidden = expanded;
+  });
+  
+  submit?.addEventListener('click', async () => {
+    const country = calc.querySelector('[data-shipping-country]').value;
+    const zip = calc.querySelector('[data-shipping-zip]').value;
+    
+    results.hidden = false;
+    loading.hidden = false;
+    rates.innerHTML = '';
+    error.hidden = true;
+    
+    try {
+      const response = await fetch(`/cart/shipping_rates.json?shipping_address[zip]=${zip}&shipping_address[country]=${country}`);
+      const data = await response.json();
+      
+      if (data.shipping_rates && data.shipping_rates.length > 0) {
+        rates.innerHTML = data.shipping_rates.map(rate => `
+          <div class="shipping-rate">
+            <span class="shipping-rate__name">${rate.name}</span>
+            <span class="shipping-rate__price">${rate.price}</span>
+          </div>
+        `).join('');
+      } else {
+        error.textContent = 'No shipping rates available for this location.';
+        error.hidden = false;
+      }
+    } catch (err) {
+      error.textContent = 'Unable to calculate shipping. Please try again.';
+      error.hidden = false;
+    } finally {
+      loading.hidden = true;
+    }
+  });
+})();
+</script>
+{% endif %}

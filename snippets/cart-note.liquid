@@ -1,0 +1,76 @@
+{% comment %}
+  Cart Note Snippet
+  Special instructions for order
+  
+  Usage:
+  {% render 'cart-note' %}
+{% endcomment %}
+
+{% if settings.show_cart_note %}
+<div class="cart-note" data-cart-note>
+  <button type="button" class="cart-note__toggle" data-note-toggle aria-expanded="false">
+    <svg width="16" height="16" viewBox="0 0 16 16"><path d="M2 2H14V14H2V2ZM4 5H12M4 8H12M4 11H8" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+    {{ 'cart.note.label' | t | default: 'Add order note' }}
+    <svg class="cart-note__arrow" width="12" height="12" viewBox="0 0 12 12"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </button>
+  
+  <div class="cart-note__field" data-note-field hidden>
+    <label for="cart-note-input" class="visually-hidden">{{ 'cart.note.label' | t }}</label>
+    <textarea 
+      id="cart-note-input" 
+      name="note" 
+      class="cart-note__input"
+      placeholder="{{ 'cart.note.placeholder' | t | default: 'Special instructions for your order...' }}"
+      data-note-input
+    >{{ cart.note }}</textarea>
+    <button type="button" class="cart-note__save btn btn--sm btn--secondary" data-note-save>
+      {{ 'cart.note.save' | t | default: 'Save Note' }}
+    </button>
+  </div>
+</div>
+
+<style>
+.cart-note { border-top: 1px solid var(--color-border); padding-top: var(--spacing-4); margin-top: var(--spacing-4); }
+.cart-note__toggle { display: flex; align-items: center; gap: var(--spacing-2); width: 100%; padding: var(--spacing-2) 0; font-size: var(--font-size-sm); font-weight: 500; background: none; border: none; cursor: pointer; color: var(--color-foreground); }
+.cart-note__toggle:hover { color: var(--color-accent); }
+.cart-note__arrow { margin-left: auto; transition: transform var(--duration-short) ease; }
+.cart-note__toggle[aria-expanded="true"] .cart-note__arrow { transform: rotate(180deg); }
+.cart-note__field { padding-top: var(--spacing-3); }
+.cart-note__input { width: 100%; min-height: 80px; padding: var(--spacing-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-sm); resize: vertical; margin-bottom: var(--spacing-3); }
+.cart-note__input:focus { outline: none; border-color: var(--color-accent); }
+</style>
+
+<script>
+(function() {
+  const note = document.querySelector('[data-cart-note]');
+  if (!note) return;
+  
+  const toggle = note.querySelector('[data-note-toggle]');
+  const field = note.querySelector('[data-note-field]');
+  const input = note.querySelector('[data-note-input]');
+  const save = note.querySelector('[data-note-save]');
+  
+  toggle?.addEventListener('click', () => {
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', !expanded);
+    field.hidden = expanded;
+    if (!expanded) input.focus();
+  });
+  
+  save?.addEventListener('click', async () => {
+    save.disabled = true;
+    try {
+      await fetch('/cart/update.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note: input.value })
+      });
+      save.textContent = 'Saved!';
+      setTimeout(() => { save.textContent = 'Save Note'; }, 2000);
+    } finally {
+      save.disabled = false;
+    }
+  });
+})();
+</script>
+{% endif %}

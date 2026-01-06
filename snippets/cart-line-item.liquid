@@ -1,0 +1,80 @@
+{% comment %}
+  Cart Line Item Snippet
+  Individual cart item with quantity controls
+  
+  Usage:
+  {% render 'cart-line-item', item: item %}
+{% endcomment %}
+
+<div class="cart-item" data-cart-item data-key="{{ item.key }}">
+  <a href="{{ item.url }}" class="cart-item__image">
+    {% if item.image %}
+      {{ item.image | image_url: width: 200 | image_tag: loading: 'lazy', alt: item.title }}
+    {% else %}
+      {{ 'product-1' | placeholder_svg_tag }}
+    {% endif %}
+  </a>
+  
+  <div class="cart-item__details">
+    <a href="{{ item.url }}" class="cart-item__title">{{ item.product.title }}</a>
+    
+    {% unless item.product.has_only_default_variant %}
+      <p class="cart-item__variant">{{ item.variant.title }}</p>
+    {% endunless %}
+    
+    {% if item.selling_plan_allocation %}
+      <p class="cart-item__subscription">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+    {% endif %}
+    
+    {% for property in item.properties %}
+      {% unless property.last == blank %}
+        <p class="cart-item__property">
+          <span>{{ property.first }}:</span> {{ property.last }}
+        </p>
+      {% endunless %}
+    {% endfor %}
+    
+    <div class="cart-item__price">
+      {% render 'price-display', variant: item.variant %}
+    </div>
+  </div>
+  
+  <div class="cart-item__actions">
+    <div class="cart-item__quantity">
+      <button type="button" class="cart-item__qty-btn" data-quantity-minus aria-label="Decrease quantity">
+        <svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 7H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <input type="number" name="updates[]" value="{{ item.quantity }}" min="0" max="{{ item.variant.inventory_quantity | default: 99 }}" class="cart-item__qty-input" data-quantity-input aria-label="Quantity">
+      <button type="button" class="cart-item__qty-btn" data-quantity-plus aria-label="Increase quantity">
+        <svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 3V11M3 7H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    
+    <button type="button" class="cart-item__remove" data-remove-item aria-label="Remove {{ item.title }}">
+      <svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  
+  <div class="cart-item__total">
+    {{ item.final_line_price | money }}
+  </div>
+</div>
+
+<style>
+.cart-item { display: grid; grid-template-columns: 80px 1fr auto auto; gap: var(--spacing-4); padding: var(--spacing-4) 0; border-bottom: 1px solid var(--color-border); align-items: start; }
+.cart-item__image { width: 80px; aspect-ratio: 1; border-radius: var(--radius-md); overflow: hidden; background: var(--color-background-secondary); }
+.cart-item__image img { width: 100%; height: 100%; object-fit: cover; }
+.cart-item__title { font-weight: 500; text-decoration: none; color: var(--color-foreground); display: block; margin-bottom: var(--spacing-1); }
+.cart-item__title:hover { color: var(--color-accent); }
+.cart-item__variant, .cart-item__property, .cart-item__subscription { font-size: var(--font-size-sm); color: var(--color-foreground-muted); margin: 0 0 var(--spacing-1); }
+.cart-item__price { margin-top: var(--spacing-2); }
+.cart-item__quantity { display: flex; align-items: center; border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+.cart-item__qty-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: none; border: none; cursor: pointer; color: var(--color-foreground); }
+.cart-item__qty-btn:hover { background: var(--color-background-secondary); }
+.cart-item__qty-input { width: 40px; height: 32px; text-align: center; border: none; background: none; font-size: var(--font-size-sm); -moz-appearance: textfield; }
+.cart-item__qty-input::-webkit-outer-spin-button, .cart-item__qty-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.cart-item__remove { padding: var(--spacing-2); background: none; border: none; cursor: pointer; color: var(--color-foreground-muted); }
+.cart-item__remove:hover { color: var(--color-error); }
+.cart-item__total { font-weight: 600; text-align: right; min-width: 80px; }
+@media (max-width: 749px) { .cart-item { grid-template-columns: 60px 1fr; } .cart-item__actions { grid-column: 2; } .cart-item__total { grid-column: 2; } }
+</style>

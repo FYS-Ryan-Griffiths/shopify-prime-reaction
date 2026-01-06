@@ -1,0 +1,77 @@
+{% comment %}
+  Cart Trust Snippet
+  Security and shipping trust badges
+  
+  Usage:
+  {% render 'cart-trust' %}
+{% endcomment %}
+
+<div class="cart-trust">
+  <div class="cart-trust__badges">
+    {% if settings.trust_secure %}
+    <div class="cart-trust__badge">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M10 2L3 5V9.5C3 13.6 5.9 17.4 10 18.5C14.1 17.4 17 13.6 17 9.5V5L10 2Z" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M7 10L9 12L13 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>{{ 'cart.trust.secure' | t | default: 'Secure Checkout' }}</span>
+    </div>
+    {% endif %}
+    
+    {% if settings.trust_shipping %}
+    <div class="cart-trust__badge">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M2 7H12V16H2V7ZM12 10H16L18 13V16H12V10Z" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="5" cy="16" r="1.5" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="15" cy="16" r="1.5" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      <span>{{ settings.trust_shipping_text | default: 'Free Shipping Over $100' }}</span>
+    </div>
+    {% endif %}
+    
+    {% if settings.trust_returns %}
+    <div class="cart-trust__badge">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M4 10C4 6.7 6.7 4 10 4C13.3 4 16 6.7 16 10C16 13.3 13.3 16 10 16H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M7 13L4 16L7 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>{{ settings.trust_returns_text | default: '30-Day Returns' }}</span>
+    </div>
+    {% endif %}
+    
+    {% if settings.trust_support %}
+    <div class="cart-trust__badge">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 6V10L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span>{{ settings.trust_support_text | default: '24/7 Support' }}</span>
+    </div>
+    {% endif %}
+  </div>
+  
+  {% if settings.show_payment_icons %}
+  <div class="cart-trust__payments">
+    <span class="cart-trust__payments-label">{{ 'cart.trust.payment_methods' | t | default: 'We Accept' }}</span>
+    <div class="cart-trust__payment-icons">
+      {{ 'visa' | payment_type_svg_tag }}
+      {{ 'master' | payment_type_svg_tag }}
+      {{ 'american_express' | payment_type_svg_tag }}
+      {{ 'apple_pay' | payment_type_svg_tag }}
+      {{ 'google_pay' | payment_type_svg_tag }}
+      {{ 'paypal' | payment_type_svg_tag }}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+.cart-trust { padding: var(--spacing-6); background: var(--color-background-secondary); border-radius: var(--radius-lg); margin-top: var(--spacing-4); }
+.cart-trust__badges { display: flex; flex-wrap: wrap; gap: var(--spacing-4); margin-bottom: var(--spacing-4); }
+.cart-trust__badge { display: flex; align-items: center; gap: var(--spacing-2); font-size: var(--font-size-xs); color: var(--color-foreground-muted); }
+.cart-trust__badge svg { color: var(--color-accent); flex-shrink: 0; }
+.cart-trust__payments { padding-top: var(--spacing-4); border-top: 1px solid var(--color-border); }
+.cart-trust__payments-label { display: block; font-size: var(--font-size-xs); color: var(--color-foreground-muted); margin-bottom: var(--spacing-2); }
+.cart-trust__payment-icons { display: flex; flex-wrap: wrap; gap: var(--spacing-2); }
+.cart-trust__payment-icons svg { height: 24px; width: auto; opacity: 0.7; }
+</style>

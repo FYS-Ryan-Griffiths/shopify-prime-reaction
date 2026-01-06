@@ -1,0 +1,148 @@
+{% comment %}
+  Product Comparison Section
+  Visual slider tool for comparing product sizes/weights
+{% endcomment %}
+
+{%- style -%}
+.product-comparison { padding: var(--spacing-section) 0; }
+.product-comparison__inner { max-width: var(--page-width); margin: 0 auto; padding: 0 var(--spacing-6); }
+.product-comparison__header { text-align: center; margin-bottom: var(--spacing-10); }
+.product-comparison__title { font-family: var(--font-heading-family); font-size: var(--font-size-3xl); margin: 0 0 var(--spacing-4); }
+.product-comparison__subtitle { color: var(--color-foreground-muted); max-width: 600px; margin: 0 auto; }
+.comparison-slider { position: relative; max-width: 800px; margin: 0 auto; }
+.comparison-slider__track { display: flex; gap: var(--spacing-4); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: var(--spacing-4) 0; }
+.comparison-slider__track::-webkit-scrollbar { display: none; }
+.comparison-item { flex: 0 0 200px; scroll-snap-align: center; background: var(--color-background-secondary); border-radius: var(--radius-lg); padding: var(--spacing-6); text-align: center; cursor: pointer; border: 2px solid transparent; transition: border-color var(--duration-short) ease, transform var(--duration-short) ease; }
+.comparison-item:hover, .comparison-item.is-active { border-color: var(--color-accent); transform: translateY(-4px); }
+.comparison-item__image { width: 120px; height: 120px; margin: 0 auto var(--spacing-4); object-fit: contain; }
+.comparison-item__name { font-weight: 600; margin-bottom: var(--spacing-2); }
+.comparison-item__weight { font-size: var(--font-size-2xl); font-weight: 700; color: var(--color-accent); margin-bottom: var(--spacing-1); }
+.comparison-item__unit { font-size: var(--font-size-sm); color: var(--color-foreground-muted); }
+.comparison-detail { margin-top: var(--spacing-8); padding: var(--spacing-8); background: var(--color-background-secondary); border-radius: var(--radius-lg); display: none; }
+.comparison-detail.is-visible { display: block; }
+.comparison-detail__grid { display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-8); align-items: center; }
+.comparison-detail__image { max-width: 300px; }
+.comparison-detail__info h3 { font-family: var(--font-heading-family); font-size: var(--font-size-2xl); margin: 0 0 var(--spacing-4); }
+.comparison-detail__specs { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-4); margin-bottom: var(--spacing-6); }
+.comparison-spec { padding: var(--spacing-3); background: var(--color-background); border-radius: var(--radius-md); }
+.comparison-spec__label { font-size: var(--font-size-xs); text-transform: uppercase; color: var(--color-foreground-muted); margin-bottom: var(--spacing-1); }
+.comparison-spec__value { font-size: var(--font-size-lg); font-weight: 600; }
+.comparison-detail__cta { display: inline-flex; align-items: center; gap: var(--spacing-2); padding: var(--spacing-3) var(--spacing-6); background: var(--color-accent); color: #fff; text-decoration: none; border-radius: var(--radius-md); font-weight: 500; }
+@media (max-width: 749px) { .comparison-detail__grid { grid-template-columns: 1fr; text-align: center; } .comparison-detail__image { margin: 0 auto; } .comparison-detail__specs { grid-template-columns: 1fr; } }
+{%- endstyle -%}
+
+<section class="product-comparison">
+  <div class="product-comparison__inner">
+    <header class="product-comparison__header">
+      <h2 class="product-comparison__title">{{ section.settings.heading | default: 'Find Your Perfect Weight' }}</h2>
+      <p class="product-comparison__subtitle">{{ section.settings.text | default: 'Compare our range of products to find the right fit for your training level.' }}</p>
+    </header>
+
+    <div class="comparison-slider">
+      <div class="comparison-slider__track">
+        {% for block in section.blocks %}
+          {% assign product = block.settings.product %}
+          <div class="comparison-item{% if forloop.first %} is-active{% endif %}" data-comparison-item="{{ forloop.index }}" {{ block.shopify_attributes }}>
+            {% if product.featured_image %}
+              {{ product.featured_image | image_url: width: 240 | image_tag: class: 'comparison-item__image', loading: 'lazy' }}
+            {% else %}
+              {{ 'product-1' | placeholder_svg_tag: 'comparison-item__image' }}
+            {% endif %}
+            <div class="comparison-item__name">{{ product.title | default: block.settings.title | default: 'Product' }}</div>
+            <div class="comparison-item__weight">{{ block.settings.weight | default: '2' }}</div>
+            <div class="comparison-item__unit">{{ block.settings.unit | default: 'kg' }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% for block in section.blocks %}
+      {% assign product = block.settings.product %}
+      <div class="comparison-detail{% if forloop.first %} is-visible{% endif %}" data-comparison-detail="{{ forloop.index }}">
+        <div class="comparison-detail__grid">
+          <div class="comparison-detail__image">
+            {% if product.featured_image %}
+              {{ product.featured_image | image_url: width: 600 | image_tag: loading: 'lazy' }}
+            {% else %}
+              {{ 'product-1' | placeholder_svg_tag }}
+            {% endif %}
+          </div>
+          <div class="comparison-detail__info">
+            <h3>{{ product.title | default: block.settings.title | default: 'Product Name' }}</h3>
+            <div class="comparison-detail__specs">
+              <div class="comparison-spec">
+                <div class="comparison-spec__label">Weight</div>
+                <div class="comparison-spec__value">{{ block.settings.weight | default: '2' }} {{ block.settings.unit | default: 'kg' }}</div>
+              </div>
+              <div class="comparison-spec">
+                <div class="comparison-spec__label">Level</div>
+                <div class="comparison-spec__value">{{ block.settings.level | default: 'Beginner' }}</div>
+              </div>
+              <div class="comparison-spec">
+                <div class="comparison-spec__label">Best For</div>
+                <div class="comparison-spec__value">{{ block.settings.best_for | default: 'General training' }}</div>
+              </div>
+              <div class="comparison-spec">
+                <div class="comparison-spec__label">Price</div>
+                <div class="comparison-spec__value">{{ product.price | money }}</div>
+              </div>
+            </div>
+            {% if product %}
+            <a href="{{ product.url }}" class="comparison-detail__cta">
+              View Product
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+(function() {
+  const items = document.querySelectorAll('[data-comparison-item]');
+  const details = document.querySelectorAll('[data-comparison-detail]');
+  
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      const index = item.dataset.comparisonItem;
+      items.forEach(i => i.classList.remove('is-active'));
+      details.forEach(d => d.classList.remove('is-visible'));
+      item.classList.add('is-active');
+      document.querySelector(`[data-comparison-detail="${index}"]`)?.classList.add('is-visible');
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Product Comparison",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Find Your Perfect Weight" },
+    { "type": "textarea", "id": "text", "label": "Text" }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "title", "label": "Title (fallback)" },
+        { "type": "text", "id": "weight", "label": "Weight", "default": "2" },
+        { "type": "text", "id": "unit", "label": "Unit", "default": "kg" },
+        { "type": "text", "id": "level", "label": "Skill Level", "default": "Beginner" },
+        { "type": "text", "id": "best_for", "label": "Best For", "default": "General training" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Product Comparison", "blocks": [
+    { "type": "product", "settings": { "weight": "2", "level": "Beginner" }},
+    { "type": "product", "settings": { "weight": "4", "level": "Intermediate" }},
+    { "type": "product", "settings": { "weight": "6", "level": "Advanced" }}
+  ]}]
+}
+{% endschema %}
