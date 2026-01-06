@@ -1,0 +1,67 @@
+{
+  "sections": {
+    "banner": {
+      "type": "banner",
+      "settings": {
+        "title": "Training Library",
+        "subtitle": "Learn & Grow",
+        "description": "Master your equipment with expert tutorials, exercise guides, and workout programs.",
+        "height": "small",
+        "text_alignment": "center",
+        "color_scheme": "inverse"
+      }
+    },
+    "training-library": {
+      "type": "training-library",
+      "blocks": {
+        "cat-tutorials": {
+          "type": "category",
+          "settings": {
+            "category_id": "tutorials",
+            "title": "Tutorials"
+          }
+        },
+        "cat-exercises": {
+          "type": "category",
+          "settings": {
+            "category_id": "exercises",
+            "title": "Exercises"
+          }
+        },
+        "cat-workouts": {
+          "type": "category",
+          "settings": {
+            "category_id": "workouts",
+            "title": "Workouts"
+          }
+        },
+        "cat-guides": {
+          "type": "category",
+          "settings": {
+            "category_id": "guides",
+            "title": "Guides"
+          }
+        }
+      },
+      "block_order": ["cat-tutorials", "cat-exercises", "cat-workouts", "cat-guides"],
+      "settings": {
+        "title": "",
+        "subtitle": "",
+        "show_search": true,
+        "show_filters": true,
+        "columns_desktop": 3,
+        "columns_mobile": 1,
+        "color_scheme": "default"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "title": "Get Training Tips",
+        "description": "Subscribe for weekly workout tips, new exercise guides, and exclusive content.",
+        "color_scheme": "accent"
+      }
+    }
+  },
+  "order": ["banner", "training-library", "newsletter"]
+}

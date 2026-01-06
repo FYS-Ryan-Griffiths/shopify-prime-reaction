@@ -1,0 +1,119 @@
+{% comment %}
+  B2B Customer Detection
+  Tag-based logic to identify B2B/wholesale customers
+  
+  Sets the following variables:
+  - is_b2b_customer: Boolean indicating if current customer is B2B
+  - b2b_tier: String indicating the customer's B2B tier (if applicable)
+  - b2b_discount: Number indicating discount percentage (if applicable)
+  
+  B2B customers are identified by:
+  1. Customer tags (b2b, wholesale, business, dealer, distributor)
+  2. Customer company name
+  3. B2B-specific metafields
+  4. Customer group membership
+{% endcomment %}
+
+{%- liquid
+  # Initialize variables
+  assign is_b2b_customer = false
+  assign b2b_tier = ''
+  assign b2b_discount = 0
+  assign b2b_company = ''
+  assign b2b_account_type = 'retail'
+  
+  # Check if customer is logged in
+  if customer
+    # Get customer tags as lowercase string for easier matching
+    assign customer_tags_string = customer.tags | join: ',' | downcase
+    
+    # Check for B2B tags (configurable in settings)
+    assign b2b_tags = settings.b2b_customer_tags | default: 'b2b, wholesale, business, dealer, distributor' | downcase
+    assign b2b_tags_array = b2b_tags | split: ','
+    
+    for tag in b2b_tags_array
+      assign tag_clean = tag | strip
+      if customer_tags_string contains tag_clean
+        assign is_b2b_customer = true
+        break
+      endif
+    endfor
+    
+    # Check for tier-specific tags
+    if customer_tags_string contains 'tier-gold' or customer_tags_string contains 'gold-tier'
+      assign b2b_tier = 'gold'
+      assign b2b_discount = settings.b2b_gold_discount | default: 20
+    elsif customer_tags_string contains 'tier-silver' or customer_tags_string contains 'silver-tier'
+      assign b2b_tier = 'silver'
+      assign b2b_discount = settings.b2b_silver_discount | default: 15
+    elsif customer_tags_string contains 'tier-bronze' or customer_tags_string contains 'bronze-tier'
+      assign b2b_tier = 'bronze'
+      assign b2b_discount = settings.b2b_bronze_discount | default: 10
+    elsif is_b2b_customer
+      assign b2b_tier = 'standard'
+      assign b2b_discount = settings.b2b_standard_discount | default: 5
+    endif
+    
+    # Check for company in default address
+    if customer.default_address.company != blank
+      assign b2b_company = customer.default_address.company
+      # If company exists and B2B auto-detection is enabled, mark as potential B2B
+      if settings.b2b_auto_detect_company and is_b2b_customer == false
+        assign is_b2b_customer = true
+        assign b2b_tier = 'pending'
+        assign b2b_account_type = 'business-pending'
+      endif
+    endif
+    
+    # Check B2B metafields
+    if customer.metafields.b2b.verified == true
+      assign is_b2b_customer = true
+      assign b2b_account_type = 'verified'
+    endif
+    
+    if customer.metafields.b2b.tier != blank
+      assign b2b_tier = customer.metafields.b2b.tier
+    endif
+    
+    if customer.metafields.b2b.discount != blank
+      assign b2b_discount = customer.metafields.b2b.discount | plus: 0
+    endif
+    
+    # Set account type
+    if is_b2b_customer
+      assign b2b_account_type = 'b2b'
+    endif
+    
+  else
+    # Not logged in - check for B2B session cookie (set by JavaScript)
+    # This allows B2B-specific content to show during browsing before login
+    assign b2b_account_type = 'guest'
+  endif
+-%}
+
+{% comment %}
+  Output data attributes for JavaScript use (optional)
+  Include this snippet at the top of theme.liquid to make data available globally
+{% endcomment %}
+
+{%- if request.design_mode or settings.debug_mode -%}
+  <!-- B2B Detection Debug:
+    is_b2b_customer: {{ is_b2b_customer }}
+    b2b_tier: {{ b2b_tier }}
+    b2b_discount: {{ b2b_discount }}%
+    b2b_company: {{ b2b_company }}
+    b2b_account_type: {{ b2b_account_type }}
+  -->
+{%- endif -%}
+
+<script type="application/json" data-b2b-customer-data>
+  {
+    "isB2B": {{ is_b2b_customer | json }},
+    "tier": {{ b2b_tier | json }},
+    "discount": {{ b2b_discount | json }},
+    "company": {{ b2b_company | json }},
+    "accountType": {{ b2b_account_type | json }},
+    "customerId": {{ customer.id | default: 'null' }},
+    "customerEmail": {{ customer.email | json | default: 'null' }}
+  }
+</script>

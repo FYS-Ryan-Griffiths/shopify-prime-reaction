@@ -1,0 +1,204 @@
+{% comment %}
+  Customer Addresses Section
+{% endcomment %}
+
+<section class="customer-addresses section">
+  <div class="container">
+    <header class="customer-addresses__header">
+      <h1 class="customer-addresses__title h2">{{ 'customer.addresses.title' | t }}</h1>
+      <button type="button" class="button button--primary" data-add-address>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        {{ 'customer.addresses.add_new' | t }}
+      </button>
+    </header>
+    
+    <div class="customer-addresses__grid">
+      {%- comment -%} Account Navigation {%- endcomment -%}
+      <aside class="customer-account__sidebar">
+        <nav class="customer-account__nav">
+          <a href="{{ routes.account_url }}" class="customer-account__nav-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            {{ 'customer.account.orders' | t }}
+          </a>
+          <a href="{{ routes.account_addresses_url }}" class="customer-account__nav-link is-active">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            {{ 'customer.addresses.title' | t }}
+          </a>
+          <a href="{{ routes.account_logout_url }}" class="customer-account__nav-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            {{ 'customer.account.logout' | t }}
+          </a>
+        </nav>
+      </aside>
+      
+      {%- comment -%} Addresses List {%- endcomment -%}
+      <div class="customer-addresses__content">
+        {%- comment -%} Add New Address Form {%- endcomment -%}
+        <div class="customer-addresses__form-wrapper" id="AddAddressForm" style="display: none;">
+          <h2 class="customer-addresses__form-title h4">{{ 'customer.addresses.add_new' | t }}</h2>
+          
+          {%- form 'customer_address', customer.new_address, class: 'customer-addresses__form' -%}
+            {% render 'address-form', form: form %}
+            
+            <div class="form-field form-field--actions">
+              <button type="submit" class="button button--primary">
+                {{ 'customer.addresses.add' | t }}
+              </button>
+              <button type="button" class="button button--secondary" data-cancel-address>
+                {{ 'customer.addresses.cancel' | t }}
+              </button>
+            </div>
+          {%- endform -%}
+        </div>
+        
+        {%- comment -%} Existing Addresses {%- endcomment -%}
+        {%- if customer.addresses.size > 0 -%}
+          <div class="customer-addresses__list">
+            {%- for address in customer.addresses -%}
+              <div class="customer-addresses__card" data-address-id="{{ address.id }}">
+                {%- if address == customer.default_address -%}
+                  <span class="customer-addresses__default-badge">
+                    {{ 'customer.addresses.default' | t }}
+                  </span>
+                {%- endif -%}
+                
+                <address class="customer-addresses__address">
+                  {{ address | format_address }}
+                </address>
+                
+                <div class="customer-addresses__actions">
+                  <button type="button" class="customer-addresses__edit" data-edit-address="{{ address.id }}">
+                    {{ 'customer.addresses.edit' | t }}
+                  </button>
+                  <button type="button" class="customer-addresses__delete" data-delete-address data-form-id="delete-{{ address.id }}">
+                    {{ 'customer.addresses.delete' | t }}
+                  </button>
+                </div>
+                
+                {%- comment -%} Edit Form (hidden by default) {%- endcomment -%}
+                <div class="customer-addresses__edit-form" id="EditAddress-{{ address.id }}" style="display: none;">
+                  {%- form 'customer_address', address, class: 'customer-addresses__form' -%}
+                    {% render 'address-form', form: form %}
+                    
+                    <div class="form-field form-field--checkbox">
+                      <label class="form-checkbox-label">
+                        <input type="checkbox" name="address[default]" value="1" class="form-checkbox" {% if address == customer.default_address %}checked{% endif %}>
+                        <span class="form-checkbox-custom"></span>
+                        <span>{{ 'customer.addresses.set_default' | t }}</span>
+                      </label>
+                    </div>
+                    
+                    <div class="form-field form-field--actions">
+                      <button type="submit" class="button button--primary">
+                        {{ 'customer.addresses.update' | t }}
+                      </button>
+                      <button type="button" class="button button--secondary" data-cancel-edit="{{ address.id }}">
+                        {{ 'customer.addresses.cancel' | t }}
+                      </button>
+                    </div>
+                  {%- endform -%}
+                </div>
+                
+                {%- comment -%} Delete Form {%- endcomment -%}
+                <form method="post" action="{{ address.url }}" id="delete-{{ address.id }}" style="display: none;">
+                  <input type="hidden" name="_method" value="delete">
+                </form>
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- else -%}
+          <div class="customer-addresses__empty">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <p>{{ 'customer.addresses.no_addresses' | t }}</p>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const addBtn = document.querySelector('[data-add-address]');
+    const addForm = document.getElementById('AddAddressForm');
+    const cancelBtns = document.querySelectorAll('[data-cancel-address]');
+    
+    // Show add form
+    if (addBtn && addForm) {
+      addBtn.addEventListener('click', () => {
+        addForm.style.display = 'block';
+        addBtn.style.display = 'none';
+        addForm.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+    
+    // Cancel add form
+    cancelBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        addForm.style.display = 'none';
+        addBtn.style.display = 'inline-flex';
+      });
+    });
+    
+    // Edit buttons
+    document.querySelectorAll('[data-edit-address]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const addressId = this.dataset.editAddress;
+        const editForm = document.getElementById(`EditAddress-${addressId}`);
+        const card = this.closest('.customer-addresses__card');
+        
+        // Hide address display, show edit form
+        card.querySelector('.customer-addresses__address').style.display = 'none';
+        card.querySelector('.customer-addresses__actions').style.display = 'none';
+        editForm.style.display = 'block';
+      });
+    });
+    
+    // Cancel edit
+    document.querySelectorAll('[data-cancel-edit]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const addressId = this.dataset.cancelEdit;
+        const editForm = document.getElementById(`EditAddress-${addressId}`);
+        const card = this.closest('.customer-addresses__card');
+        
+        editForm.style.display = 'none';
+        card.querySelector('.customer-addresses__address').style.display = 'block';
+        card.querySelector('.customer-addresses__actions').style.display = 'flex';
+      });
+    });
+    
+    // Delete buttons
+    document.querySelectorAll('[data-delete-address]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        if (confirm('{{ 'customer.addresses.delete_confirm' | t }}')) {
+          const formId = this.dataset.formId;
+          document.getElementById(formId).submit();
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Customer Addresses",
+  "tag": "section",
+  "class": "customer-addresses-section"
+}
+{% endschema %}

@@ -1,0 +1,38 @@
+{% comment %}
+  Scroll Progress Indicator
+  Shows reading progress at top of page
+  
+  Include in theme.liquid after header:
+  {% render 'scroll-progress' %}
+{% endcomment %}
+
+{%- if settings.show_scroll_progress -%}
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+<script>
+  (function() {
+    const progress = document.getElementById('scrollProgress');
+    if (!progress) return;
+
+    function updateProgress() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      progress.style.width = scrollPercent + '%';
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          updateProgress();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    updateProgress();
+  })();
+</script>
+{%- endif -%}

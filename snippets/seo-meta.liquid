@@ -1,0 +1,110 @@
+{% comment %}
+  SEO Meta Tags
+  Open Graph, Twitter Cards, and essential meta tags
+  
+  Include in theme.liquid <head>:
+  {% render 'seo-meta' %}
+{% endcomment %}
+
+{%- liquid
+  # Page title
+  assign seo_title = page_title
+  if template.name == 'index'
+    assign seo_title = shop.name
+    if shop.description != blank
+      assign seo_title = shop.name | append: ' - ' | append: shop.description
+    endif
+  endif
+
+  # Description
+  assign seo_description = page_description | default: shop.description | strip_html | truncate: 160
+
+  # Image
+  assign seo_image = null
+  if template.name == 'product'
+    assign seo_image = product.featured_image | image_url: width: 1200
+  elsif template.name == 'collection'
+    assign seo_image = collection.image | image_url: width: 1200
+  elsif template.name == 'article'
+    assign seo_image = article.image | image_url: width: 1200
+  endif
+  
+  if seo_image == blank and settings.share_image != blank
+    assign seo_image = settings.share_image | image_url: width: 1200
+  endif
+
+  # URL
+  assign seo_url = canonical_url | default: request.origin | append: request.path
+-%}
+
+{%- comment -%} Essential Meta Tags {%- endcomment -%}
+<meta name="description" content="{{ seo_description }}">
+<meta name="author" content="{{ shop.name }}">
+
+{%- comment -%} Open Graph {%- endcomment -%}
+<meta property="og:site_name" content="{{ shop.name }}">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ seo_url }}">
+<meta property="og:locale" content="{{ request.locale.iso_code | replace: '-', '_' }}">
+
+{%- if seo_image != blank -%}
+  <meta property="og:image" content="{{ seo_image }}">
+  <meta property="og:image:secure_url" content="{{ seo_image }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+{%- endif -%}
+
+{%- case template.name -%}
+  {%- when 'product' -%}
+    <meta property="og:type" content="product">
+    <meta property="og:price:amount" content="{{ product.price | money_without_currency }}">
+    <meta property="og:price:currency" content="{{ cart.currency.iso_code }}">
+    {%- if product.available -%}
+      <meta property="og:availability" content="instock">
+    {%- else -%}
+      <meta property="og:availability" content="outofstock">
+    {%- endif -%}
+  {%- when 'article' -%}
+    <meta property="og:type" content="article">
+    <meta property="article:published_time" content="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}">
+    <meta property="article:author" content="{{ article.author }}">
+    {%- for tag in article.tags -%}
+      <meta property="article:tag" content="{{ tag }}">
+    {%- endfor -%}
+  {%- else -%}
+    <meta property="og:type" content="website">
+{%- endcase -%}
+
+{%- comment -%} Twitter Card {%- endcomment -%}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+{%- if seo_image != blank -%}
+  <meta name="twitter:image" content="{{ seo_image }}">
+{%- endif -%}
+{%- if settings.social_twitter != blank -%}
+  {%- assign twitter_handle = settings.social_twitter | split: 'twitter.com/' | last | split: 'x.com/' | last | prepend: '@' -%}
+  <meta name="twitter:site" content="{{ twitter_handle }}">
+  <meta name="twitter:creator" content="{{ twitter_handle }}">
+{%- endif -%}
+
+{%- comment -%} Additional Meta {%- endcomment -%}
+<meta name="theme-color" content="{{ settings.color_primary | default: '#000000' }}">
+<meta name="msapplication-TileColor" content="{{ settings.color_primary | default: '#000000' }}">
+
+{%- comment -%} Robots {%- endcomment -%}
+{%- if template.name == 'search' or template.name == 'cart' -%}
+  <meta name="robots" content="noindex, follow">
+{%- endif -%}
+
+{%- comment -%} Verification (add your codes in theme settings) {%- endcomment -%}
+{%- if settings.google_site_verification != blank -%}
+  <meta name="google-site-verification" content="{{ settings.google_site_verification }}">
+{%- endif -%}
+{%- if settings.bing_site_verification != blank -%}
+  <meta name="msvalidate.01" content="{{ settings.bing_site_verification }}">
+{%- endif -%}
+{%- if settings.pinterest_site_verification != blank -%}
+  <meta name="p:domain_verify" content="{{ settings.pinterest_site_verification }}">
+{%- endif -%}

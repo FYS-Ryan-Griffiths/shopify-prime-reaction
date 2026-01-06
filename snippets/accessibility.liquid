@@ -1,0 +1,246 @@
+{% comment %}
+  Accessibility Helpers
+  Skip links, ARIA live regions, and accessibility utilities
+  
+  Include at the start of <body> in theme.liquid:
+  {% render 'accessibility' %}
+{% endcomment %}
+
+{%- comment -%} Skip Links {%- endcomment -%}
+<a href="#main-content" class="skip-link visually-hidden-focusable">
+  {{ 'accessibility.skip_to_content' | t }}
+</a>
+<a href="#footer" class="skip-link visually-hidden-focusable">
+  {{ 'accessibility.skip_to_footer' | t }}
+</a>
+
+{%- comment -%} ARIA Live Regions for Dynamic Updates {%- endcomment -%}
+<div id="aria-live-polite" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+<div id="aria-live-assertive" class="visually-hidden" aria-live="assertive" aria-atomic="true"></div>
+
+{%- comment -%} Cart Count Announcer {%- endcomment -%}
+<div id="cart-live-region" class="visually-hidden" aria-live="polite" aria-atomic="true" role="status"></div>
+
+{%- comment -%} Loading Announcer {%- endcomment -%}
+<div id="loading-live-region" class="visually-hidden" aria-live="polite" aria-atomic="true" role="status"></div>
+
+<style>
+  /* Visually hidden but accessible to screen readers */
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  /* Visually hidden until focused */
+  .visually-hidden-focusable:not(:focus):not(:focus-within) {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  /* Skip link styling */
+  .skip-link {
+    position: fixed;
+    top: -100%;
+    left: var(--space-4);
+    z-index: 99999;
+    padding: var(--space-3) var(--space-5);
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    transition: top var(--transition-fast);
+  }
+
+  .skip-link:focus {
+    top: var(--space-4);
+    outline: 2px solid var(--color-background);
+    outline-offset: 2px;
+  }
+
+  /* Focus trap indicator */
+  .focus-trap-active {
+    position: relative;
+  }
+
+  .focus-trap-active::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: var(--z-overlay);
+    pointer-events: none;
+  }
+
+  /* High contrast mode support */
+  @media (forced-colors: active) {
+    .btn,
+    button {
+      border: 2px solid currentColor;
+    }
+    
+    a:focus,
+    button:focus,
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 3px solid currentColor;
+      outline-offset: 3px;
+    }
+    
+    .product-card,
+    .card {
+      border: 1px solid currentColor;
+    }
+  }
+
+  /* Focus indicators for interactive elements */
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--color-focus, var(--color-primary));
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  /**
+   * Accessibility Utilities
+   */
+  (function() {
+    'use strict';
+
+    // ARIA Live Region Helper
+    window.announceToScreenReader = function(message, priority = 'polite') {
+      const region = priority === 'assertive' 
+        ? document.getElementById('aria-live-assertive')
+        : document.getElementById('aria-live-polite');
+      
+      if (region) {
+        // Clear and set to ensure announcement
+        region.textContent = '';
+        setTimeout(() => {
+          region.textContent = message;
+        }, 50);
+      }
+    };
+
+    // Cart count announcer
+    window.announceCartUpdate = function(itemCount, action = 'updated') {
+      const region = document.getElementById('cart-live-region');
+      if (region) {
+        const message = action === 'added'
+          ? `Item added to cart. Cart now has ${itemCount} ${itemCount === 1 ? 'item' : 'items'}.`
+          : `Cart updated. ${itemCount} ${itemCount === 1 ? 'item' : 'items'} in cart.`;
+        region.textContent = message;
+      }
+    };
+
+    // Loading state announcer
+    window.announceLoading = function(isLoading, context = '') {
+      const region = document.getElementById('loading-live-region');
+      if (region) {
+        region.textContent = isLoading 
+          ? `Loading ${context}...` 
+          : `${context || 'Content'} loaded.`;
+      }
+    };
+
+    // Focus trap for modals
+    window.createFocusTrap = function(element) {
+      const focusableElements = element.querySelectorAll(
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      
+      const firstFocusable = focusableElements[0];
+      const lastFocusable = focusableElements[focusableElements.length - 1];
+
+      function handleKeyDown(e) {
+        if (e.key !== 'Tab') return;
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable.focus();
+          }
+        } else {
+          if (document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable.focus();
+          }
+        }
+      }
+
+      element.addEventListener('keydown', handleKeyDown);
+
+      return {
+        activate: () => {
+          firstFocusable?.focus();
+          document.body.classList.add('focus-trap-active');
+        },
+        deactivate: () => {
+          element.removeEventListener('keydown', handleKeyDown);
+          document.body.classList.remove('focus-trap-active');
+        }
+      };
+    };
+
+    // Escape key handler for modals/drawers
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        // Close any open modals
+        const activeModal = document.querySelector('.modal.is-active, .drawer.is-active, .quick-view.is-active');
+        if (activeModal) {
+          const closeBtn = activeModal.querySelector('[data-close], .modal-close, .drawer-close');
+          if (closeBtn) closeBtn.click();
+        }
+      }
+    });
+
+    // Keyboard navigation for product options
+    document.addEventListener('keydown', function(e) {
+      if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
+      
+      const target = e.target;
+      const group = target.closest('[role="radiogroup"], [role="listbox"]');
+      if (!group) return;
+
+      const items = [...group.querySelectorAll('[role="radio"], [role="option"]')];
+      const currentIndex = items.indexOf(target);
+      if (currentIndex === -1) return;
+
+      let newIndex;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        newIndex = (currentIndex + 1) % items.length;
+      } else {
+        newIndex = (currentIndex - 1 + items.length) % items.length;
+      }
+
+      e.preventDefault();
+      items[newIndex].focus();
+      items[newIndex].click?.();
+    });
+
+    // Ensure all images have alt text (fallback)
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('img:not([alt])').forEach(img => {
+        img.setAttribute('alt', '');
+        console.warn('Image missing alt attribute:', img);
+      });
+    });
+
+  })();
+</script>

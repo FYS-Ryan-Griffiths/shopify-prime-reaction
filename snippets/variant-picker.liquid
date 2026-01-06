@@ -1,0 +1,131 @@
+{% comment %}
+  Variant Picker Snippet
+  Displays product variant options as dropdowns or swatches
+  
+  Usage:
+  {% render 'variant-picker', product: product, current_variant: current_variant %}
+{% endcomment %}
+
+<div class="variant-picker" data-variant-picker>
+  {%- for option in product.options_with_values -%}
+    {%- liquid
+      assign option_index = forloop.index0
+      assign selected_value = current_variant.options[option_index]
+      assign option_name_downcase = option.name | downcase
+      assign is_color = false
+      if option_name_downcase == 'color' or option_name_downcase == 'colour'
+        assign is_color = true
+      endif
+    -%}
+    
+    <div class="variant-picker__option">
+      <label class="variant-picker__label" for="option-{{ option.name | handleize }}-{{ section.id }}">
+        {{ option.name }}: <span>{{ selected_value }}</span>
+      </label>
+      
+      {%- if is_color and option.values.size <= 10 -%}
+        {%- comment -%} Color Swatches {%- endcomment -%}
+        <div class="variant-picker__swatches">
+          {%- for value in option.values -%}
+            {%- liquid
+              assign color_handle = value | handleize
+              assign swatch_color = value | downcase
+              
+              # Map common color names to hex
+              case swatch_color
+                when 'black'
+                  assign swatch_color = '#000000'
+                when 'white'
+                  assign swatch_color = '#ffffff'
+                when 'red'
+                  assign swatch_color = '#e53935'
+                when 'blue'
+                  assign swatch_color = '#1e88e5'
+                when 'green'
+                  assign swatch_color = '#43a047'
+                when 'yellow'
+                  assign swatch_color = '#fdd835'
+                when 'orange'
+                  assign swatch_color = '#fb8c00'
+                when 'purple'
+                  assign swatch_color = '#8e24aa'
+                when 'pink'
+                  assign swatch_color = '#ec407a'
+                when 'grey', 'gray'
+                  assign swatch_color = '#757575'
+                when 'brown'
+                  assign swatch_color = '#6d4c41'
+                when 'navy'
+                  assign swatch_color = '#1a237e'
+                else
+                  assign swatch_color = '#cccccc'
+              endcase
+            -%}
+            
+            <div class="variant-picker__swatch variant-picker__swatch--color">
+              <input 
+                type="radio" 
+                name="option-{{ option.name | handleize }}" 
+                id="swatch-{{ option.name | handleize }}-{{ color_handle }}-{{ section.id }}"
+                value="{{ value | escape }}"
+                data-option-selector
+                data-option-index="{{ option_index }}"
+                {% if value == selected_value %}checked{% endif %}
+              >
+              <label 
+                for="swatch-{{ option.name | handleize }}-{{ color_handle }}-{{ section.id }}"
+                class="variant-picker__swatch-label"
+                style="background-color: {{ swatch_color }};"
+                title="{{ value }}"
+              >
+                <span class="visually-hidden">{{ value }}</span>
+              </label>
+            </div>
+          {%- endfor -%}
+        </div>
+        
+      {%- elsif option.values.size <= 6 -%}
+        {%- comment -%} Button Swatches for Size, etc {%- endcomment -%}
+        <div class="variant-picker__swatches">
+          {%- for value in option.values -%}
+            <div class="variant-picker__swatch">
+              <input 
+                type="radio" 
+                name="option-{{ option.name | handleize }}" 
+                id="swatch-{{ option.name | handleize }}-{{ value | handleize }}-{{ section.id }}"
+                value="{{ value | escape }}"
+                data-option-selector
+                data-option-index="{{ option_index }}"
+                {% if value == selected_value %}checked{% endif %}
+              >
+              <label 
+                for="swatch-{{ option.name | handleize }}-{{ value | handleize }}-{{ section.id }}"
+                class="variant-picker__swatch-label"
+              >
+                {{ value }}
+              </label>
+            </div>
+          {%- endfor -%}
+        </div>
+        
+      {%- else -%}
+        {%- comment -%} Dropdown for many options {%- endcomment -%}
+        <select 
+          id="option-{{ option.name | handleize }}-{{ section.id }}"
+          class="variant-picker__select"
+          data-option-selector
+          data-option-index="{{ option_index }}"
+        >
+          {%- for value in option.values -%}
+            <option 
+              value="{{ value | escape }}"
+              {% if value == selected_value %}selected{% endif %}
+            >
+              {{ value }}
+            </option>
+          {%- endfor -%}
+        </select>
+      {%- endif -%}
+    </div>
+  {%- endfor -%}
+</div>

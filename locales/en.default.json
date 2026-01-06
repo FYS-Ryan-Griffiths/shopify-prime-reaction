@@ -1,0 +1,420 @@
+{
+  "general": {
+    "menu": "Menu",
+    "account": "Account",
+    "login": "Log in",
+    "breadcrumbs": {
+      "home": "Home"
+    },
+    "newsletter": {
+      "email_placeholder": "Enter your email",
+      "subscribe": "Subscribe",
+      "success": "Thanks for subscribing!"
+    },
+    "footer": {
+      "rights": "All rights reserved."
+    }
+  },
+  "newsletter": {
+    "title": "Newsletter",
+    "email_placeholder": "Enter your email",
+    "subscribe": "Subscribe",
+    "subscribed": "Subscribed!",
+    "success_message": "Thanks for subscribing! Check your inbox for updates."
+  },
+  "popup": {
+    "your_code": "Your code:",
+    "email_placeholder": "Enter your email",
+    "name_placeholder": "First name",
+    "subscribe": "Get My Discount",
+    "success_message": "You're in! Check your inbox."
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "skip_to_footer": "Skip to footer",
+    "menu": "Menu",
+    "search": "Search",
+    "cart": "Cart",
+    "account": "Account",
+    "close": "Close",
+    "toggle_theme": "Toggle dark mode",
+    "main_navigation": "Main navigation",
+    "mobile_navigation": "Mobile navigation",
+    "pagination": "Pagination",
+    "previous_slide": "Previous slide",
+    "next_slide": "Next slide",
+    "previous_page": "Previous page",
+    "next_page": "Next page",
+    "loading": "Loading",
+    "item_added": "Item added to cart",
+    "item_removed": "Item removed from cart",
+    "cart_updated": "Cart updated",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "open_cart": "Open cart",
+    "close_cart": "Close cart",
+    "increase_quantity": "Increase quantity",
+    "decrease_quantity": "Decrease quantity",
+    "remove_item": "Remove item",
+    "show_more": "Show more",
+    "show_less": "Show less",
+    "play_video": "Play video",
+    "pause_video": "Pause video",
+    "zoom_image": "Zoom image",
+    "slide_number": "Slide {{ current }} of {{ total }}",
+    "back_to_top": "Back to top"
+  },
+  "general": {
+    "or": "or"
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "quantity": "Quantity",
+      "request_quote": "Request a Quote",
+      "contact_for_price": "Contact for pricing",
+      "sale": "Sale",
+      "from": "From",
+      "compare_at": "Compare at",
+      "regular_price": "Regular price",
+      "unit_price": "Unit price",
+      "vendor": "Vendor",
+      "type": "Type",
+      "sku": "SKU",
+      "weight": "Weight",
+      "dimensions": "Dimensions",
+      "material": "Material",
+      "capacity": "Capacity",
+      "price": {
+        "regular_price": "Regular price",
+        "sale_price": "Sale price"
+      },
+      "save_percent": "Save {{ percent }}%",
+      "price_range": "{{ min }} - {{ max }}",
+      "tax_included": "Tax included.",
+      "shipping_calculated": "Shipping calculated at checkout.",
+      "shipping_policy": "Shipping policy",
+      "back_in_stock": {
+        "title": "Get Notified",
+        "description": "Sign up to be notified when this product is back in stock.",
+        "email_placeholder": "Enter your email",
+        "submit": "Notify Me",
+        "privacy": "We'll only use this email to notify you.",
+        "success": "We'll email you when this item is back!"
+      }
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Your Cart",
+      "empty": "Your cart is empty",
+      "continue_shopping": "Continue Shopping",
+      "start_shopping": "Start Shopping",
+      "subtotal": "Subtotal",
+      "total": "Total",
+      "checkout": "Checkout",
+      "discount_code": "Have a discount code?",
+      "discount_placeholder": "Discount code",
+      "apply": "Apply",
+      "note": "Add a note",
+      "note_placeholder": "Special instructions for your order...",
+      "taxes_included": "Taxes included.",
+      "taxes_calculated": "Taxes and shipping calculated at checkout.",
+      "secure_checkout": "Secure checkout",
+      "remove": "Remove",
+      "decrease": "Decrease quantity",
+      "increase": "Increase quantity"
+    },
+    "label": {
+      "product": "Product",
+      "price": "Price",
+      "quantity": "Quantity",
+      "total": "Total"
+    },
+    "shipping": {
+      "threshold_remaining": "Add {{ amount }} more for free shipping!",
+      "free_shipping": "You qualify for free shipping!"
+    },
+    "trust": {
+      "secure": "Secure Checkout",
+      "shipping": "Free Shipping Available"
+    },
+    "upsell": {
+      "title": "You might also like"
+    },
+    "quote": {
+      "convert": "Convert to Quote Request"
+    }
+  },
+  "quote": {
+    "items": "Items",
+    "items_in_quote": "Items in Quote",
+    "add_more": "Add more items",
+    "add_products": "Add Products",
+    "no_items": "No items added yet. Browse products and click \"Request Quote\" to add.",
+    "clear_all": "Clear All",
+    "clear": "Clear",
+    "confirm_clear": "Clear all items from quote?",
+    "why_request": "Why Request a Quote?",
+    "contact_info": "Contact Information",
+    "business_info": "Business Information",
+    "company": "Company/Organization",
+    "job_title": "Job Title",
+    "business_type": "Business Type",
+    "select_type": "Select...",
+    "type_gym": "Gym/Fitness Center",
+    "type_studio": "Training Studio",
+    "type_school": "School/University",
+    "type_corporate": "Corporate Wellness",
+    "type_sports": "Sports Team/Club",
+    "type_rehab": "Rehabilitation Center",
+    "type_hotel": "Hotel/Resort",
+    "type_personal": "Personal/Home Use",
+    "type_other": "Other",
+    "project_details": "Project Details",
+    "estimated_quantity": "Estimated Quantity",
+    "select_quantity": "Select...",
+    "units": "units",
+    "timeline": "Timeline",
+    "select_timeline": "Select...",
+    "timeline_immediate": "Immediate",
+    "timeline_1month": "Within 1 month",
+    "timeline_3months": "1-3 months",
+    "timeline_6months": "3-6 months",
+    "timeline_future": "6+ months",
+    "additional_info": "Additional Information",
+    "message_placeholder": "Tell us about your project, specific requirements, or any questions...",
+    "privacy_notice": "By submitting this form, you agree to be contacted regarding your quote request.",
+    "submit": "Submit Quote Request",
+    "submitting": "Submitting...",
+    "drawer_title": "Quote Request",
+    "total_items": "Total items",
+    "proceed": "Request Quote",
+    "convert_cart": "Convert cart to quote",
+    "cart_empty": "Your cart is empty",
+    "remove_item": "Remove item",
+    "empty_title": "Your quote is empty",
+    "empty_text": "Browse products and click \"Request Quote\" to add items.",
+    "browse_products": "Browse Products",
+    "view_quote": "View quote",
+    "success_title": "Quote Request Received!",
+    "success_message": "Thank you for your quote request. Our team will review your requirements and get back to you within 24-48 business hours.",
+    "what_happens_next": "What happens next?",
+    "step_1": "Our team reviews your request (usually within 24 hours)",
+    "step_2": "You'll receive a detailed quote via email",
+    "step_3": "Approve the quote to complete your order",
+    "questions": "Have questions?",
+    "continue_shopping": "Continue Shopping",
+    "view_account": "View Account"
+  },
+  "collections": {
+    "general": {
+      "title": "Collections",
+      "all_products": "All Products",
+      "product_count": "{{ count }} products",
+      "showing_count": "{{ count }} products",
+      "no_products": "No products found in this collection.",
+      "browse_all": "Browse all products",
+      "view_all": "View All"
+    },
+    "sorting": {
+      "sort_by": "Sort by"
+    },
+    "filtering": {
+      "filter": "Filter",
+      "from": "From",
+      "to": "To",
+      "apply": "Apply Filters",
+      "clear_all": "Clear all"
+    }
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search products...",
+    "no_results": "No results found for \"{{ terms }}\"",
+    "results_count": "{{ count }} results for \"{{ terms }}\"",
+    "results_for": "Results for",
+    "search_button": "Search",
+    "type_article": "Article",
+    "type_page": "Page",
+    "try_again": "Try searching for something else"
+  },
+  "customer": {
+    "account": {
+      "title": "My Account",
+      "orders": "Order History",
+      "addresses": "Addresses",
+      "logout": "Log Out",
+      "welcome": "Welcome back",
+      "no_orders": "You haven't placed any orders yet.",
+      "start_shopping": "Start Shopping",
+      "order_number": "Order",
+      "order_date": "Date",
+      "order_status": "Status",
+      "order_total": "Total"
+    },
+    "login": {
+      "title": "Login",
+      "subtitle": "Welcome back",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "forgot_password": "Forgot your password?",
+      "create_account": "Create Account",
+      "no_account": "Don't have an account?",
+      "recover_title": "Reset Password",
+      "recover_subtitle": "We'll send you an email to reset your password",
+      "recover_submit": "Submit",
+      "recover_cancel": "Cancel",
+      "recover_success": "We've sent you an email with a link to reset your password."
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Join us today",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create",
+      "has_account": "Already have an account?",
+      "newsletter": "Sign up for news and updates"
+    },
+    "addresses": {
+      "title": "Your Addresses",
+      "add_new": "Add New Address",
+      "edit": "Edit",
+      "delete": "Delete",
+      "delete_confirm": "Are you sure you want to delete this address?",
+      "default": "Default",
+      "set_default": "Set as default",
+      "no_addresses": "You haven't saved any addresses yet.",
+      "add_first": "Add your first address"
+    },
+    "order": {
+      "title": "Order",
+      "back_to_account": "Back to Account",
+      "date": "Placed on",
+      "order_items": "Order Items",
+      "product": "Product",
+      "sku": "SKU",
+      "price": "Price",
+      "quantity": "Qty",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "tax": "Tax",
+      "discount": "Discount",
+      "cancelled_at": "Cancelled on",
+      "cancelled_reason": "Reason",
+      "billing_address": "Billing Address",
+      "shipping_address": "Shipping Address",
+      "payment_status": "Payment",
+      "fulfillment_status": "Fulfillment",
+      "fulfilled": "Fulfilled",
+      "unfulfilled": "Unfulfilled",
+      "paid": "Paid",
+      "pending": "Pending",
+      "track_shipment": "Track shipment"
+    },
+    "reset_password": {
+      "title": "Reset Your Password",
+      "subtitle": "Enter your new password below",
+      "password": "New Password",
+      "password_confirm": "Confirm New Password",
+      "submit": "Reset Password"
+    },
+    "activate": {
+      "title": "Activate Your Account",
+      "subtitle": "Create your password to activate your account",
+      "password": "Password",
+      "password_confirm": "Confirm Password",
+      "submit": "Activate Account",
+      "decline_title": "Decline Invitation",
+      "decline_description": "If you don't want to accept this invitation, you can ignore it or decline.",
+      "decline_button": "Decline"
+    },
+    "quote_history": {
+      "title": "Quote Requests",
+      "subtitle": "View your past quote requests and their status.",
+      "empty": "You haven't submitted any quote requests yet.",
+      "browse_products": "Browse Products",
+      "login_required": "Please log in to view your quote history.",
+      "status_pending": "Pending Review",
+      "status_reviewed": "Under Review",
+      "status_approved": "Approved",
+      "status_declined": "Declined"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Message",
+    "submit": "Send Message",
+    "success": "Thanks for contacting us. We'll get back to you shortly."
+  },
+  "404": {
+    "title": "Page Not Found",
+    "message": "Sorry, the page you're looking for doesn't exist or has been moved.",
+    "search_placeholder": "Search our store",
+    "go_home": "Go to Homepage",
+    "browse_collections": "Browse Collections",
+    "suggestions": "You might want to check out"
+  },
+  "quiz": {
+    "step_counter": "Step {{ current }} of {{ total }}",
+    "back": "Back",
+    "continue": "Continue",
+    "skip": "Skip",
+    "submit": "Submit",
+    "see_results": "See Results",
+    "restart": "Start Over",
+    "loading": "Finding your matches...",
+    "match_percent": "{{ percent }}% Match",
+    "view_product": "View Product",
+    "no_results": "No matches found",
+    "browse_all": "Browse All Products",
+    "email_label": "Email address",
+    "name_label": "First name",
+    "privacy_note": "We respect your privacy."
+  },
+  "training": {
+    "search_label": "Search training library",
+    "search_placeholder": "Search exercises, tutorials...",
+    "filter_all": "All",
+    "no_content": "No training content available yet.",
+    "no_results": "No results found for your search.",
+    "reset_filters": "Reset Filters",
+    "view_details": "View Details",
+    "hide_details": "Hide Details",
+    "instructions": "Instructions",
+    "tips": "Pro Tips",
+    "read_time": "min read",
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    }
+  },
+  "facility_locator": {
+    "search_label": "Search locations",
+    "search_placeholder": "Enter city or zip code",
+    "search": "Search",
+    "use_my_location": "Use my location",
+    "filter_by_type": "Filter by type",
+    "loading": "Finding locations...",
+    "no_results": "No locations found in this area.",
+    "location_error": "Could not get your location. Please enter a city or zip code.",
+    "get_directions": "Directions",
+    "visit_website": "Website",
+    "call": "Call",
+    "hours": "Hours",
+    "distance_mi": "{{ distance }} mi",
+    "distance_km": "{{ distance }} km"
+  }
+}

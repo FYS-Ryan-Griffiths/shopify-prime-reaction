@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "main": {
+      "type": "cart-main",
+      "settings": {}
+    },
+    "recommendations": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "You May Also Like",
+        "collection": "",
+        "products_to_show": 4,
+        "columns_desktop": 4
+      }
+    }
+  },
+  "order": ["main", "recommendations"]
+}

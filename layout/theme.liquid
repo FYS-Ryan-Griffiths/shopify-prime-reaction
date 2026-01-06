@@ -1,0 +1,210 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ settings.text_direction }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0">
+  
+  <title>
+    {{ page_title }}
+    {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+    {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+    {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+  </title>
+
+  {% if page_description %}
+    <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+
+  {% comment %} SEO Meta Tags - Open Graph, Twitter Cards {% endcomment %}
+  {% render 'seo-meta' %}
+
+  {% comment %} JSON-LD Structured Data {% endcomment %}
+  {% render 'json-ld' %}
+
+  {% render 'meta-tags' %}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {%- endif -%}
+
+  {% comment %} Critical CSS - Inline for faster FCP {% endcomment %}
+  {% render 'critical-css' %}
+
+  {% comment %} Preconnect to improve performance {% endcomment}
+  <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+
+  {% comment %} Preload critical assets {% endcomment %}
+  {{ 'variables.css' | asset_url | preload_tag: as: 'style' }}
+  {{ 'base.css' | asset_url | preload_tag: as: 'style' }}
+  
+  {% comment %} Typography - Editorial serif + clean sans-serif pairing {% endcomment %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  {% comment %} Theme Stylesheets {% endcomment %}
+  {{ 'variables.css' | asset_url | stylesheet_tag }}
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+  {{ 'typography.css' | asset_url | stylesheet_tag }}
+  {{ 'animations.css' | asset_url | stylesheet_tag }}
+  {{ 'skeleton.css' | asset_url | stylesheet_tag }}
+  
+  {% comment %} Template-specific CSS {% endcomment %}
+  {%- if template.name == 'product' -%}
+    {{ 'product-main.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
+  {%- if template.name == 'collection' or template.name == 'search' -%}
+    {{ 'collection.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
+  {%- if template.name == 'cart' -%}
+    {{ 'cart.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
+  {%- if template.directory == 'customers' -%}
+    {{ 'customer.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
+  {%- if template.name == 'page' or template.name == '404' or template.name == 'search' -%}
+    {{ 'pages.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
+
+  {% comment %} GTM Head Script {% endcomment %}
+  {%- if settings.gtm_container_id != blank -%}
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','{{ settings.gtm_container_id }}');</script>
+    <!-- End Google Tag Manager -->
+  {%- endif -%}
+
+  {{ content_for_header }}
+
+  {% comment %} Theme settings as CSS variables {% endcomment %}
+  <style>
+    :root {
+      --color-primary: {{ settings.color_primary }};
+      --color-secondary: {{ settings.color_secondary }};
+      --color-accent: {{ settings.color_accent }};
+      --color-background: {{ settings.color_background }};
+      --color-text: {{ settings.color_text }};
+      --color-text-muted: {{ settings.color_text_muted }};
+      --color-border: {{ settings.color_border }};
+    }
+  </style>
+
+  {% comment %} Dark mode detection {% endcomment %}
+  <script>
+    // Check for saved theme preference or default to system preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      document.documentElement.classList.add('dark-mode');
+    }
+    
+    // Remove no-js class
+    document.documentElement.classList.remove('no-js');
+    document.documentElement.classList.add('js');
+  </script>
+</head>
+
+<body class="template-{{ template.name | handle }}{% if template.suffix %} template-{{ template.name }}-{{ template.suffix }}{% endif %}">
+  {% comment %} Accessibility - Skip links and ARIA live regions {% endcomment %}
+  {% render 'accessibility' %}
+
+  {% comment %} Announcement Bar {% endcomment %}
+  {% section 'announcement-bar' %}
+
+  {% comment %} Header {% endcomment %}
+  {% section 'header' %}
+
+  {% comment %} Scroll Progress Indicator {% endcomment %}
+  {% render 'scroll-progress' %}
+
+  {% comment %} Main Content {% endcomment %}
+  <main id="MainContent" class="main-content" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {% comment %} Footer {% endcomment %}
+  {% section 'footer' %}
+
+  {% comment %} Cart Drawer {% endcomment %}
+  {% section 'cart-drawer-ajax' %}
+
+  {% comment %} Quick View Modal {% endcomment %}
+  {% render 'quick-view' %}
+
+  {% comment %} Quote Modal {% endcomment %}
+  {%- if settings.enable_quote_system -%}
+    {% section 'quote-modal' %}
+  {%- endif -%}
+
+  {% comment %} Search Modal {% endcomment %}
+  {% section 'predictive-search' %}
+
+  {% comment %} Email Capture Popup {% endcomment %}
+  {% section 'popup' %}
+
+  {% comment %} Global Scripts {% endcomment %}
+  <script src="{{ 'global.js' | asset_url }}" defer></script>
+  <script src="{{ 'lazy-load.js' | asset_url }}" defer></script>
+  <script src="{{ 'cart-drawer.js' | asset_url }}" defer></script>
+  <script src="{{ 'quick-view.js' | asset_url }}" defer></script>
+
+  {% comment %} Analytics & Tracking {% endcomment %}
+  {%- if settings.enable_analytics_tracking -%}
+    <script src="{{ 'analytics.js' | asset_url }}" defer></script>
+  {%- endif -%}
+
+  {% comment %} Klaviyo Integration {% endcomment %}
+  {%- if settings.klaviyo_public_key != blank -%}
+    <script async type="text/javascript" src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id={{ settings.klaviyo_public_key }}"></script>
+    {%- if settings.klaviyo_bis_list_id != blank -%}
+      <script>window.klaviyoBISKey = '{{ settings.klaviyo_bis_list_id }}';</script>
+    {%- endif -%}
+  {%- endif -%}
+
+  {% comment %} GTM Integration {% endcomment %}
+  {%- if settings.gtm_container_id != blank -%}
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ settings.gtm_container_id }}"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+  {%- endif -%}
+  
+  {%- if settings.enable_quote_system -%}
+    <script src="{{ 'quote-system.js' | asset_url }}" defer></script>
+    {% comment %} Quote Drawer - Global component {% endcomment %}
+    {% section 'quote-drawer' %}
+  {%- endif -%}
+
+  {%- if template.name == 'collection' -%}
+    <script src="{{ 'facets.js' | asset_url }}" defer></script>
+    <script src="{{ 'collection-pagination.js' | asset_url }}" defer></script>
+  {%- endif -%}
+
+  {% comment %} Shopify features {% endcomment %}
+  {%- if settings.predictive_search_enabled -%}
+    <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
+  {%- endif -%}
+
+  {% comment %} B2B Customer Detection {% endcomment %}
+  {% render 'b2b-detect' %}
+
+  {% comment %} Back to Top Button {% endcomment %}
+  {% render 'back-to-top' %}
+
+  {% comment %} Accessibility: focus visible polyfill {% endcomment %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add loaded class for CSS transitions
+      document.body.classList.add('loaded');
+    });
+  </script>
+</body>
+</html>

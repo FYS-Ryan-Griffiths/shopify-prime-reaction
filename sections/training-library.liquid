@@ -1,0 +1,686 @@
+{{ 'training-library.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign category_filter = section.settings.default_category
+  assign show_search = section.settings.show_search
+  assign show_filters = section.settings.show_filters
+  assign columns_desktop = section.settings.columns_desktop | default: 3
+  assign columns_mobile = section.settings.columns_mobile | default: 1
+-%}
+
+<div 
+  class="section-training-library color-{{ section.settings.color_scheme }}"
+  data-training-library
+  data-section-id="{{ section.id }}"
+>
+  <div class="container">
+    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+      <div class="training-library__header">
+        {%- if section.settings.subtitle != blank -%}
+          <p class="training-library__subtitle">{{ section.settings.subtitle }}</p>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="training-library__title h1">{{ section.settings.title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <div class="training-library__description rte">{{ section.settings.description }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="training-library__controls">
+      {%- if show_search -%}
+        <div class="training-library__search">
+          <label for="training-search-{{ section.id }}" class="visually-hidden">{{ 'training.search_label' | t }}</label>
+          <input 
+            type="search" 
+            id="training-search-{{ section.id }}"
+            class="training-library__search-input"
+            placeholder="{{ 'training.search_placeholder' | t }}"
+            data-training-search
+          >
+          <svg class="training-library__search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16ZM19 19l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      {%- endif -%}
+
+      {%- if show_filters -%}
+        <div class="training-library__filters" data-training-filters>
+          <button 
+            type="button" 
+            class="training-library__filter is-active" 
+            data-filter="all"
+          >
+            {{ 'training.filter_all' | t }}
+          </button>
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'category' -%}
+              <button 
+                type="button" 
+                class="training-library__filter{% if category_filter == block.settings.category_id %} is-active{% endif %}" 
+                data-filter="{{ block.settings.category_id }}"
+                {{ block.shopify_attributes }}
+              >
+                {{ block.settings.title }}
+              </button>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div 
+      class="training-library__grid"
+      style="--columns-desktop: {{ columns_desktop }}; --columns-mobile: {{ columns_mobile }};"
+      data-training-grid
+    >
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'video' -%}
+            <article 
+              class="training-card"
+              data-training-item
+              data-category="{{ block.settings.category }}"
+              data-tags="{{ block.settings.tags }}"
+              {{ block.shopify_attributes }}
+            >
+              <div class="training-card__media">
+                <a href="{{ block.settings.url | default: '#' }}" class="training-card__link" data-video-trigger>
+                  {%- if block.settings.thumbnail != blank -%}
+                    {{ block.settings.thumbnail | image_url: width: 600 | image_tag: 
+                      loading: 'lazy',
+                      widths: '300, 400, 600',
+                      class: 'training-card__image'
+                    }}
+                  {%- else -%}
+                    <div class="training-card__placeholder">
+                      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                        <rect width="48" height="48" rx="24" fill="currentColor" fill-opacity="0.1"/>
+                        <path d="M32 24L20 31V17L32 24Z" fill="currentColor"/>
+                      </svg>
+                    </div>
+                  {%- endif -%}
+                  
+                  <div class="training-card__play">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                      <circle cx="24" cy="24" r="23" stroke="currentColor" stroke-width="2"/>
+                      <path d="M32 24L20 31V17L32 24Z" fill="currentColor"/>
+                    </svg>
+                  </div>
+
+                  {%- if block.settings.duration != blank -%}
+                    <span class="training-card__duration">{{ block.settings.duration }}</span>
+                  {%- endif -%}
+                </a>
+              </div>
+
+              <div class="training-card__content">
+                {%- if block.settings.category != blank -%}
+                  <span class="training-card__category">{{ block.settings.category }}</span>
+                {%- endif -%}
+
+                <h3 class="training-card__title h4">
+                  <a href="{{ block.settings.url | default: '#' }}">{{ block.settings.title }}</a>
+                </h3>
+
+                {%- if block.settings.description != blank -%}
+                  <p class="training-card__description">{{ block.settings.description }}</p>
+                {%- endif -%}
+
+                <div class="training-card__meta">
+                  {%- if block.settings.difficulty != blank -%}
+                    <span class="training-card__difficulty training-card__difficulty--{{ block.settings.difficulty }}">
+                      {{ block.settings.difficulty | capitalize }}
+                    </span>
+                  {%- endif -%}
+                  
+                  {%- if block.settings.equipment != blank -%}
+                    <span class="training-card__equipment">{{ block.settings.equipment }}</span>
+                  {%- endif -%}
+                </div>
+              </div>
+            </article>
+
+          {%- when 'article' -%}
+            <article 
+              class="training-card training-card--article"
+              data-training-item
+              data-category="{{ block.settings.category }}"
+              data-tags="{{ block.settings.tags }}"
+              {{ block.shopify_attributes }}
+            >
+              <div class="training-card__media">
+                <a href="{{ block.settings.url | default: '#' }}" class="training-card__link">
+                  {%- if block.settings.thumbnail != blank -%}
+                    {{ block.settings.thumbnail | image_url: width: 600 | image_tag: 
+                      loading: 'lazy',
+                      widths: '300, 400, 600',
+                      class: 'training-card__image'
+                    }}
+                  {%- else -%}
+                    <div class="training-card__placeholder">
+                      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                        <rect width="48" height="48" rx="24" fill="currentColor" fill-opacity="0.1"/>
+                        <path d="M14 14h20v20H14z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M14 22h20M22 14v20" stroke="currentColor" stroke-width="2"/>
+                      </svg>
+                    </div>
+                  {%- endif -%}
+
+                  {%- if block.settings.read_time != blank -%}
+                    <span class="training-card__duration">{{ block.settings.read_time }} {{ 'training.read_time' | t }}</span>
+                  {%- endif -%}
+                </a>
+              </div>
+
+              <div class="training-card__content">
+                {%- if block.settings.category != blank -%}
+                  <span class="training-card__category">{{ block.settings.category }}</span>
+                {%- endif -%}
+
+                <h3 class="training-card__title h4">
+                  <a href="{{ block.settings.url | default: '#' }}">{{ block.settings.title }}</a>
+                </h3>
+
+                {%- if block.settings.description != blank -%}
+                  <p class="training-card__description">{{ block.settings.description }}</p>
+                {%- endif -%}
+              </div>
+            </article>
+
+          {%- when 'exercise' -%}
+            <article 
+              class="training-card training-card--exercise"
+              data-training-item
+              data-category="{{ block.settings.category }}"
+              data-tags="{{ block.settings.tags }}"
+              {{ block.shopify_attributes }}
+            >
+              <div class="training-card__media">
+                {%- if block.settings.thumbnail != blank -%}
+                  {{ block.settings.thumbnail | image_url: width: 600 | image_tag: 
+                    loading: 'lazy',
+                    widths: '300, 400, 600',
+                    class: 'training-card__image'
+                  }}
+                {%- elsif block.settings.video_url != blank -%}
+                  <div class="training-card__video">
+                    <video 
+                      src="{{ block.settings.video_url }}" 
+                      autoplay 
+                      loop 
+                      muted 
+                      playsinline
+                      class="training-card__video-player"
+                    ></video>
+                  </div>
+                {%- else -%}
+                  <div class="training-card__placeholder">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                      <rect width="48" height="48" rx="24" fill="currentColor" fill-opacity="0.1"/>
+                      <circle cx="24" cy="16" r="6" stroke="currentColor" stroke-width="2"/>
+                      <path d="M14 38c0-6 4-10 10-10s10 4 10 10" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </div>
+                {%- endif -%}
+              </div>
+
+              <div class="training-card__content">
+                {%- if block.settings.muscle_group != blank -%}
+                  <span class="training-card__category">{{ block.settings.muscle_group }}</span>
+                {%- endif -%}
+
+                <h3 class="training-card__title h4">{{ block.settings.title }}</h3>
+
+                {%- if block.settings.instructions != blank -%}
+                  <p class="training-card__description">{{ block.settings.instructions | truncate: 100 }}</p>
+                {%- endif -%}
+
+                <div class="training-card__meta">
+                  {%- if block.settings.difficulty != blank -%}
+                    <span class="training-card__difficulty training-card__difficulty--{{ block.settings.difficulty }}">
+                      {{ block.settings.difficulty | capitalize }}
+                    </span>
+                  {%- endif -%}
+                  
+                  {%- if block.settings.reps != blank -%}
+                    <span class="training-card__reps">{{ block.settings.reps }}</span>
+                  {%- endif -%}
+                </div>
+
+                {%- if block.settings.show_details -%}
+                  <button type="button" class="training-card__toggle" data-exercise-toggle>
+                    {{ 'training.view_details' | t }}
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                  </button>
+                  
+                  <div class="training-card__details" data-exercise-details hidden>
+                    {%- if block.settings.instructions != blank -%}
+                      <div class="training-card__instructions">
+                        <strong>{{ 'training.instructions' | t }}:</strong>
+                        {{ block.settings.instructions }}
+                      </div>
+                    {%- endif -%}
+                    
+                    {%- if block.settings.tips != blank -%}
+                      <div class="training-card__tips">
+                        <strong>{{ 'training.tips' | t }}:</strong>
+                        {{ block.settings.tips }}
+                      </div>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              </div>
+            </article>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.blocks.size == 0 -%}
+      <div class="training-library__empty">
+        <p>{{ 'training.no_content' | t }}</p>
+      </div>
+    {%- endif -%}
+
+    <div class="training-library__no-results" data-training-no-results hidden>
+      <p>{{ 'training.no_results' | t }}</p>
+      <button type="button" class="button button--secondary" data-training-reset>
+        {{ 'training.reset_filters' | t }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const container = document.querySelector('[data-training-library][data-section-id="{{ section.id }}"]');
+    if (!container) return;
+
+    const searchInput = container.querySelector('[data-training-search]');
+    const filters = container.querySelectorAll('[data-filter]');
+    const items = container.querySelectorAll('[data-training-item]');
+    const noResults = container.querySelector('[data-training-no-results]');
+    const resetBtn = container.querySelector('[data-training-reset]');
+    const exerciseToggles = container.querySelectorAll('[data-exercise-toggle]');
+
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    function filterItems() {
+      let visibleCount = 0;
+
+      items.forEach(item => {
+        const category = item.dataset.category?.toLowerCase() || '';
+        const tags = item.dataset.tags?.toLowerCase() || '';
+        const title = item.querySelector('.training-card__title')?.textContent.toLowerCase() || '';
+        const description = item.querySelector('.training-card__description')?.textContent.toLowerCase() || '';
+
+        const matchesFilter = currentFilter === 'all' || category.includes(currentFilter.toLowerCase());
+        const matchesSearch = !searchQuery || 
+          title.includes(searchQuery) || 
+          description.includes(searchQuery) ||
+          tags.includes(searchQuery) ||
+          category.includes(searchQuery);
+
+        if (matchesFilter && matchesSearch) {
+          item.hidden = false;
+          visibleCount++;
+        } else {
+          item.hidden = true;
+        }
+      });
+
+      if (noResults) {
+        noResults.hidden = visibleCount > 0;
+      }
+    }
+
+    // Filter buttons
+    filters.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filters.forEach(f => f.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        currentFilter = btn.dataset.filter;
+        filterItems();
+      });
+    });
+
+    // Search
+    if (searchInput) {
+      let debounceTimer;
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          searchQuery = e.target.value.toLowerCase().trim();
+          filterItems();
+        }, 200);
+      });
+    }
+
+    // Reset
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        searchQuery = '';
+        currentFilter = 'all';
+        filters.forEach(f => f.classList.remove('is-active'));
+        filters[0]?.classList.add('is-active');
+        filterItems();
+      });
+    }
+
+    // Exercise detail toggles
+    exerciseToggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const details = toggle.nextElementSibling;
+        if (details) {
+          const isHidden = details.hidden;
+          details.hidden = !isHidden;
+          toggle.textContent = isHidden 
+            ? '{{ 'training.hide_details' | t }}'
+            : '{{ 'training.view_details' | t }}';
+        }
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Training Library",
+  "tag": "section",
+  "class": "section-training-library-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "default": "Training Library",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "default": "Learn & Grow",
+      "label": "Subtitle"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "default": true,
+      "label": "Show search"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "default": true,
+      "label": "Show category filters"
+    },
+    {
+      "type": "text",
+      "id": "default_category",
+      "label": "Default category filter"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "Desktop columns"
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "default": 1,
+      "label": "Mobile columns"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "inverse", "label": "Inverse" },
+        { "value": "accent", "label": "Accent" }
+      ],
+      "default": "default",
+      "label": "Color scheme"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        {
+          "type": "text",
+          "id": "category_id",
+          "label": "Category ID",
+          "info": "Used for filtering (e.g., 'tutorials', 'exercises')"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Display name"
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Video Title"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Video URL"
+        },
+        {
+          "type": "image_picker",
+          "id": "thumbnail",
+          "label": "Thumbnail"
+        },
+        {
+          "type": "text",
+          "id": "duration",
+          "label": "Duration",
+          "placeholder": "5:30"
+        },
+        {
+          "type": "text",
+          "id": "category",
+          "label": "Category"
+        },
+        {
+          "type": "text",
+          "id": "tags",
+          "label": "Tags",
+          "info": "Comma-separated for search"
+        },
+        {
+          "type": "select",
+          "id": "difficulty",
+          "options": [
+            { "value": "", "label": "None" },
+            { "value": "beginner", "label": "Beginner" },
+            { "value": "intermediate", "label": "Intermediate" },
+            { "value": "advanced", "label": "Advanced" }
+          ],
+          "default": "",
+          "label": "Difficulty"
+        },
+        {
+          "type": "text",
+          "id": "equipment",
+          "label": "Equipment needed"
+        }
+      ]
+    },
+    {
+      "type": "article",
+      "name": "Article",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Article Title"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Article URL"
+        },
+        {
+          "type": "image_picker",
+          "id": "thumbnail",
+          "label": "Thumbnail"
+        },
+        {
+          "type": "text",
+          "id": "read_time",
+          "label": "Read time",
+          "placeholder": "5 min"
+        },
+        {
+          "type": "text",
+          "id": "category",
+          "label": "Category"
+        },
+        {
+          "type": "text",
+          "id": "tags",
+          "label": "Tags",
+          "info": "Comma-separated for search"
+        }
+      ]
+    },
+    {
+      "type": "exercise",
+      "name": "Exercise",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Exercise name",
+          "default": "Exercise Name"
+        },
+        {
+          "type": "textarea",
+          "id": "instructions",
+          "label": "Instructions"
+        },
+        {
+          "type": "textarea",
+          "id": "tips",
+          "label": "Pro tips"
+        },
+        {
+          "type": "image_picker",
+          "id": "thumbnail",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "video_url",
+          "label": "Demo video URL"
+        },
+        {
+          "type": "text",
+          "id": "muscle_group",
+          "label": "Muscle group/category"
+        },
+        {
+          "type": "text",
+          "id": "reps",
+          "label": "Reps/sets",
+          "placeholder": "3x12"
+        },
+        {
+          "type": "select",
+          "id": "difficulty",
+          "options": [
+            { "value": "", "label": "None" },
+            { "value": "beginner", "label": "Beginner" },
+            { "value": "intermediate", "label": "Intermediate" },
+            { "value": "advanced", "label": "Advanced" }
+          ],
+          "default": "",
+          "label": "Difficulty"
+        },
+        {
+          "type": "text",
+          "id": "category",
+          "label": "Category"
+        },
+        {
+          "type": "text",
+          "id": "tags",
+          "label": "Tags",
+          "info": "Comma-separated for search"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_details",
+          "default": true,
+          "label": "Show expandable details"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Training Library",
+      "blocks": [
+        {
+          "type": "category",
+          "settings": {
+            "category_id": "tutorials",
+            "title": "Tutorials"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "category_id": "exercises",
+            "title": "Exercises"
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "category_id": "guides",
+            "title": "Guides"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

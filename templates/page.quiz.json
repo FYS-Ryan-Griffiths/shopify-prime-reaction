@@ -1,0 +1,108 @@
+{
+  "sections": {
+    "banner": {
+      "type": "banner",
+      "settings": {
+        "title": "Find Your Perfect Product",
+        "subtitle": "Product Finder",
+        "description": "Answer a few questions and we'll recommend the best products for your needs",
+        "height": "small",
+        "text_alignment": "center",
+        "color_scheme": "inverse"
+      }
+    },
+    "quiz": {
+      "type": "quiz",
+      "blocks": {
+        "q1-goal": {
+          "type": "question_single",
+          "settings": {
+            "title": "What's your primary goal?",
+            "description": "Select the one that matters most to you",
+            "question_key": "goal",
+            "options": "Build strength|Improve cardio|Increase flexibility|General fitness",
+            "option_values": "strength|cardio|flexibility|general",
+            "option_icons": "💪|❤️|🧘|🏃",
+            "layout": "grid",
+            "required": true
+          }
+        },
+        "q2-space": {
+          "type": "question_single",
+          "settings": {
+            "title": "How much space do you have?",
+            "description": "This helps us recommend the right size equipment",
+            "question_key": "space",
+            "options": "Small (apartment)|Medium (spare room)|Large (garage/basement)|Commercial",
+            "option_values": "small|medium|large|commercial",
+            "option_icons": "🏠|🏡|🏗️|🏢",
+            "layout": "list",
+            "required": true
+          }
+        },
+        "q3-experience": {
+          "type": "question_slider",
+          "settings": {
+            "title": "What's your experience level?",
+            "description": "1 = Complete beginner, 10 = Professional athlete",
+            "question_key": "experience",
+            "min_value": 1,
+            "max_value": 10,
+            "default_value": 5,
+            "min_label": "Beginner",
+            "max_label": "Advanced"
+          }
+        },
+        "q4-focus": {
+          "type": "question_multiple",
+          "settings": {
+            "title": "Which areas do you want to focus on?",
+            "description": "Select up to 3 areas",
+            "question_key": "focus",
+            "options": "Upper body|Lower body|Core|Full body|Balance|Recovery",
+            "option_values": "upper|lower|core|full|balance|recovery",
+            "min_selections": 1,
+            "max_selections": 3
+          }
+        },
+        "email": {
+          "type": "email_capture",
+          "settings": {
+            "title": "Get your personalized recommendations",
+            "description": "Enter your email to receive your results and exclusive offers",
+            "show_name_field": true,
+            "name_placeholder": "First name",
+            "email_placeholder": "Email address",
+            "submit_text": "See My Results",
+            "allow_skip": true,
+            "skip_text": "Skip & see results",
+            "privacy_text": "We respect your privacy. Unsubscribe at any time."
+          }
+        }
+      },
+      "block_order": ["q1-goal", "q2-space", "q3-experience", "q4-focus", "email"],
+      "settings": {
+        "title": "",
+        "results_title": "Your Personalized Recommendations",
+        "results_description": "Based on your answers, we recommend these products:",
+        "results_count": 3,
+        "no_results_text": "We couldn't find a perfect match. Browse our full collection to find what you need.",
+        "restart_text": "Retake Quiz",
+        "collection": "all",
+        "color_scheme": "default"
+      }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Popular Products",
+        "description": "Top picks from our customers",
+        "collection": "best-sellers",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "color_scheme": "default"
+      }
+    }
+  },
+  "order": ["banner", "quiz", "featured-collection"]
+}

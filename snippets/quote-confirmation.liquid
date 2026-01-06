@@ -1,0 +1,230 @@
+{% comment %}
+  Quote Confirmation
+  Success message displayed after quote form submission
+  
+  Parameters:
+  - title: Custom title (optional)
+  - message: Custom message (optional)
+  - show_next_steps: Show next steps section (default: true)
+  - show_continue_shopping: Show continue shopping button (default: true)
+{% endcomment %}
+
+{%- liquid
+  assign title = title | default: 'quote.success_title' | t | default: 'Quote Request Received!'
+  assign message = message | default: 'quote.success_message' | t | default: 'Thank you for your quote request. Our team will review your requirements and get back to you within 24-48 business hours.'
+  assign show_next_steps = show_next_steps | default: true
+  assign show_continue_shopping = show_continue_shopping | default: true
+-%}
+
+<div class="quote-confirmation" data-quote-confirmation>
+  <div class="quote-confirmation__icon" aria-hidden="true">
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+      <circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="2" class="quote-confirmation__circle"/>
+      <polyline points="20,34 28,42 44,26" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="quote-confirmation__check"/>
+    </svg>
+  </div>
+  
+  <h2 class="quote-confirmation__title">{{ title }}</h2>
+  <p class="quote-confirmation__message">{{ message }}</p>
+
+  {%- if show_next_steps -%}
+    <div class="quote-confirmation__next-steps">
+      <h3 class="quote-confirmation__next-title h6">{{ 'quote.what_happens_next' | t | default: 'What happens next?' }}</h3>
+      <ol class="quote-confirmation__steps">
+        <li class="quote-confirmation__step">
+          <span class="quote-confirmation__step-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </span>
+          <span class="quote-confirmation__step-text">{{ 'quote.step_1' | t | default: 'Our team reviews your request (usually within 24 hours)' }}</span>
+        </li>
+        <li class="quote-confirmation__step">
+          <span class="quote-confirmation__step-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </span>
+          <span class="quote-confirmation__step-text">{{ 'quote.step_2' | t | default: 'You\'ll receive a detailed quote via email' }}</span>
+        </li>
+        <li class="quote-confirmation__step">
+          <span class="quote-confirmation__step-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </span>
+          <span class="quote-confirmation__step-text">{{ 'quote.step_3' | t | default: 'Approve the quote to complete your order' }}</span>
+        </li>
+      </ol>
+    </div>
+  {%- endif -%}
+
+  {%- if settings.quote_email != blank -%}
+    <p class="quote-confirmation__contact">
+      {{ 'quote.questions' | t | default: 'Have questions?' }}
+      <a href="mailto:{{ settings.quote_email }}">{{ settings.quote_email }}</a>
+    </p>
+  {%- endif -%}
+
+  {%- if show_continue_shopping -%}
+    <div class="quote-confirmation__actions">
+      <a href="{{ routes.collections_url }}" class="button button--primary">
+        {{ 'quote.continue_shopping' | t | default: 'Continue Shopping' }}
+      </a>
+      {%- if customer -%}
+        <a href="{{ routes.account_url }}" class="button button--outline">
+          {{ 'quote.view_account' | t | default: 'View Account' }}
+        </a>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .quote-confirmation {
+    text-align: center;
+    padding: var(--space-8);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .quote-confirmation__icon {
+    color: var(--color-success);
+    margin-bottom: var(--space-6);
+  }
+
+  .quote-confirmation__circle {
+    stroke-dasharray: 188;
+    stroke-dashoffset: 188;
+    animation: drawCircle 0.6s ease-out forwards;
+  }
+
+  .quote-confirmation__check {
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: drawCheck 0.4s ease-out 0.5s forwards;
+  }
+
+  @keyframes drawCircle {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes drawCheck {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .quote-confirmation__title {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-3);
+    color: var(--color-success);
+  }
+
+  .quote-confirmation__message {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-8);
+    line-height: 1.6;
+  }
+
+  .quote-confirmation__next-steps {
+    background: var(--color-background-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+    text-align: left;
+  }
+
+  .quote-confirmation__next-title {
+    margin-bottom: var(--space-4);
+  }
+
+  .quote-confirmation__steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: step;
+  }
+
+  .quote-confirmation__step {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    position: relative;
+  }
+
+  .quote-confirmation__step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: calc(var(--space-3) + 20px);
+    bottom: 0;
+    width: 1px;
+    background: var(--color-border);
+  }
+
+  .quote-confirmation__step-icon {
+    flex-shrink: 0;
+    color: var(--color-primary);
+    background: var(--color-background);
+    border-radius: var(--radius-full);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .quote-confirmation__step-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .quote-confirmation__step-text {
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+    padding-top: 2px;
+  }
+
+  .quote-confirmation__contact {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-6);
+  }
+
+  .quote-confirmation__contact a {
+    color: var(--color-primary);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .quote-confirmation__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .quote-confirmation__circle,
+    .quote-confirmation__check {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* Dark mode adjustments */
+  @media (prefers-color-scheme: dark) {
+    .quote-confirmation__step-icon {
+      background: var(--color-background-tertiary);
+    }
+  }
+</style>

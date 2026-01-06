@@ -1,0 +1,192 @@
+{% comment %}
+  Search Results Section
+{% endcomment %}
+
+{%- liquid
+  assign products_per_page = section.settings.products_per_page
+  assign show_vendor = section.settings.show_vendor
+  assign show_secondary_image = section.settings.show_secondary_image
+-%}
+
+<section class="search-results section">
+  <div class="container">
+    <header class="search-results__header">
+      <h1 class="search-results__title h2">{{ 'search.title' | t }}</h1>
+      
+      <form action="{{ routes.search_url }}" method="get" class="search-results__form">
+        <div class="search-results__input-wrapper">
+          <input 
+            type="search" 
+            name="q" 
+            value="{{ search.terms | escape }}"
+            placeholder="{{ 'search.placeholder' | t }}"
+            class="search-results__input"
+            autofocus
+          >
+          <button type="submit" class="search-results__submit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span class="visually-hidden">{{ 'search.submit' | t }}</span>
+          </button>
+        </div>
+        <input type="hidden" name="type" value="product">
+      </form>
+    </header>
+    
+    {%- if search.performed -%}
+      {%- if search.results_count > 0 -%}
+        <p class="search-results__count">
+          {{ 'search.results_count' | t: count: search.results_count, terms: search.terms }}
+        </p>
+        
+        {%- paginate search.results by products_per_page -%}
+          <div class="search-results__grid">
+            {%- for result in search.results -%}
+              {%- case result.object_type -%}
+                {%- when 'product' -%}
+                  <div class="search-results__item">
+                    {% render 'product-card', 
+                      product: result, 
+                      show_vendor: show_vendor,
+                      show_secondary_image: show_secondary_image 
+                    %}
+                  </div>
+                  
+                {%- when 'article' -%}
+                  <div class="search-results__item search-results__item--article">
+                    <article class="article-card">
+                      {%- if result.image -%}
+                        <a href="{{ result.url }}" class="article-card__image-link">
+                          <img 
+                            src="{{ result.image | image_url: width: 600 }}"
+                            alt="{{ result.image.alt | escape | default: result.title }}"
+                            width="300"
+                            height="200"
+                            loading="lazy"
+                            class="article-card__image"
+                          >
+                        </a>
+                      {%- endif -%}
+                      <div class="article-card__content">
+                        <span class="article-card__type">{{ 'search.article' | t }}</span>
+                        <h3 class="article-card__title h5">
+                          <a href="{{ result.url }}">{{ result.title }}</a>
+                        </h3>
+                        {%- if result.excerpt != blank -%}
+                          <p class="article-card__excerpt">{{ result.excerpt | strip_html | truncate: 150 }}</p>
+                        {%- endif -%}
+                      </div>
+                    </article>
+                  </div>
+                  
+                {%- when 'page' -%}
+                  <div class="search-results__item search-results__item--page">
+                    <article class="page-card">
+                      <span class="page-card__type">{{ 'search.page' | t }}</span>
+                      <h3 class="page-card__title h5">
+                        <a href="{{ result.url }}">{{ result.title }}</a>
+                      </h3>
+                      {%- if result.content != blank -%}
+                        <p class="page-card__excerpt">{{ result.content | strip_html | truncate: 150 }}</p>
+                      {%- endif -%}
+                    </article>
+                  </div>
+              {%- endcase -%}
+            {%- endfor -%}
+          </div>
+          
+          {%- if paginate.pages > 1 -%}
+            <nav class="search-results__pagination pagination" aria-label="{{ 'accessibility.pagination' | t }}">
+              <ul class="pagination__list">
+                {%- if paginate.previous -%}
+                  <li class="pagination__item pagination__item--prev">
+                    <a href="{{ paginate.previous.url }}" class="pagination__link" aria-label="{{ 'accessibility.previous_page' | t }}">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"/>
+                      </svg>
+                    </a>
+                  </li>
+                {%- endif -%}
+                
+                {%- for part in paginate.parts -%}
+                  <li class="pagination__item">
+                    {%- if part.is_link -%}
+                      <a href="{{ part.url }}" class="pagination__link">{{ part.title }}</a>
+                    {%- else -%}
+                      {%- if part.title == paginate.current_page -%}
+                        <span class="pagination__link pagination__link--current" aria-current="page">{{ part.title }}</span>
+                      {%- else -%}
+                        <span class="pagination__link pagination__link--ellipsis">{{ part.title }}</span>
+                      {%- endif -%}
+                    {%- endif -%}
+                  </li>
+                {%- endfor -%}
+                
+                {%- if paginate.next -%}
+                  <li class="pagination__item pagination__item--next">
+                    <a href="{{ paginate.next.url }}" class="pagination__link" aria-label="{{ 'accessibility.next_page' | t }}">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                      </svg>
+                    </a>
+                  </li>
+                {%- endif -%}
+              </ul>
+            </nav>
+          {%- endif -%}
+        {%- endpaginate -%}
+        
+      {%- else -%}
+        <div class="search-results__empty">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <p class="search-results__empty-message">
+            {{ 'search.no_results' | t: terms: search.terms }}
+          </p>
+          <a href="{{ routes.all_products_collection_url }}" class="button button--primary">
+            {{ 'search.browse_all' | t }}
+          </a>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div class="search-results__empty">
+        <p class="search-results__empty-message">{{ 'search.start_searching' | t }}</p>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Search Results",
+  "tag": "section",
+  "class": "search-results-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 4,
+      "max": 24,
+      "step": 4,
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "label": "Show secondary image on hover",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

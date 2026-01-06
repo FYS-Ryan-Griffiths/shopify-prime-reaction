@@ -1,0 +1,64 @@
+{% comment %}
+  404 Section
+  Error page with helpful navigation
+{% endcomment %}
+
+<section class="page-404 section">
+  <div class="container">
+    <div class="page-404__content">
+      <span class="page-404__code">404</span>
+      <h1 class="page-404__title h2">{{ 'general.404.title' | t }}</h1>
+      <p class="page-404__message">{{ 'general.404.message' | t }}</p>
+      
+      <div class="page-404__search">
+        <form action="{{ routes.search_url }}" method="get" class="page-404__search-form">
+          <input 
+            type="search" 
+            name="q" 
+            placeholder="{{ 'general.search.placeholder' | t }}"
+            class="page-404__search-input"
+          >
+          <button type="submit" class="page-404__search-button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span class="visually-hidden">{{ 'general.search.submit' | t }}</span>
+          </button>
+        </form>
+      </div>
+      
+      <div class="page-404__links">
+        <a href="{{ routes.root_url }}" class="button button--primary">
+          {{ 'general.404.back_home' | t }}
+        </a>
+        <a href="{{ routes.collections_url }}" class="button button--secondary">
+          {{ 'general.404.browse_products' | t }}
+        </a>
+      </div>
+      
+      <div class="page-404__suggestions">
+        <p class="page-404__suggestions-title">{{ 'general.404.suggestions' | t }}</p>
+        <ul class="page-404__suggestions-list">
+          <li>
+            <a href="{{ routes.all_products_collection_url }}">{{ 'general.404.all_products' | t }}</a>
+          </li>
+          {%- for collection in collections limit: 3 -%}
+            <li>
+              <a href="{{ collection.url }}">{{ collection.title }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "404 Page",
+  "tag": "section",
+  "class": "page-404-section",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,883 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Reaxing Prime Reaction",
+    "theme_version": "1.0.0",
+    "theme_author": "Prime Reaction",
+    "theme_documentation_url": "https://github.com/Mx7Zero/shopify-prime-reaction",
+    "theme_support_url": "https://github.com/Mx7Zero/shopify-prime-reaction/issues"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Primary Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary",
+        "default": "#1a1a1a"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary",
+        "default": "#f5f5f0"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent",
+        "default": "#c9a87c"
+      },
+      {
+        "type": "header",
+        "content": "Background"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "header",
+        "content": "Text"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text",
+        "default": "#1a1a1a"
+      },
+      {
+        "type": "color",
+        "id": "color_text_muted",
+        "label": "Muted text",
+        "default": "#6b6b6b"
+      },
+      {
+        "type": "header",
+        "content": "Border"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Border",
+        "default": "#e5e5e0"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Headings"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "header",
+        "content": "Body"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "select",
+        "id": "text_direction",
+        "label": "Text direction",
+        "options": [
+          {
+            "value": "ltr",
+            "label": "Left to right"
+          },
+          {
+            "value": "rtl",
+            "label": "Right to left"
+          }
+        ],
+        "default": "ltr"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Page Width"
+      },
+      {
+        "type": "range",
+        "id": "page_width",
+        "min": 1000,
+        "max": 1800,
+        "step": 50,
+        "default": 1400,
+        "unit": "px",
+        "label": "Max page width"
+      },
+      {
+        "type": "header",
+        "content": "Spacing"
+      },
+      {
+        "type": "range",
+        "id": "section_spacing",
+        "min": 20,
+        "max": 120,
+        "step": 10,
+        "default": 80,
+        "unit": "px",
+        "label": "Section spacing"
+      },
+      {
+        "type": "header",
+        "content": "Navigation Aids"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_scroll_progress",
+        "label": "Show scroll progress indicator",
+        "default": false,
+        "info": "Progress bar at top of page showing scroll position"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_back_to_top",
+        "label": "Show back to top button",
+        "default": true,
+        "info": "Floating button to scroll back to top"
+      }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon image",
+        "info": "32 x 32px .png recommended"
+      }
+    ]
+  },
+  {
+    "name": "Social Media",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Social accounts"
+      },
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "Instagram",
+        "info": "https://instagram.com/yourstore"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "Facebook",
+        "info": "https://facebook.com/yourstore"
+      },
+      {
+        "type": "url",
+        "id": "social_twitter",
+        "label": "X (Twitter)",
+        "info": "https://x.com/yourstore"
+      },
+      {
+        "type": "url",
+        "id": "social_youtube",
+        "label": "YouTube",
+        "info": "https://youtube.com/@yourstore"
+      },
+      {
+        "type": "url",
+        "id": "social_linkedin",
+        "label": "LinkedIn",
+        "info": "https://linkedin.com/company/yourstore"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok",
+        "label": "TikTok",
+        "info": "https://tiktok.com/@yourstore"
+      }
+    ]
+  },
+  {
+    "name": "Search",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Predictive search"
+      },
+      {
+        "type": "checkbox",
+        "id": "predictive_search_enabled",
+        "label": "Enable predictive search",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "predictive_search_show_vendor",
+        "label": "Show product vendor",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "predictive_search_show_price",
+        "label": "Show product price",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Cart type",
+        "options": [
+          {
+            "value": "drawer",
+            "label": "Drawer"
+          },
+          {
+            "value": "page",
+            "label": "Page"
+          }
+        ],
+        "default": "drawer"
+      },
+      {
+        "type": "header",
+        "content": "Cart Drawer"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_drawer_show_note",
+        "label": "Show order note field",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_drawer_show_upsells",
+        "label": "Show recommended products",
+        "default": true
+      },
+      {
+        "type": "collection",
+        "id": "cart_drawer_upsell_collection",
+        "label": "Upsell collection",
+        "info": "Products to recommend in cart drawer"
+      },
+      {
+        "type": "header",
+        "content": "Free Shipping"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_drawer_show_shipping_threshold",
+        "label": "Show free shipping progress",
+        "default": true
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free shipping threshold",
+        "default": 100,
+        "info": "Amount in your store's currency"
+      }
+    ]
+  },
+  {
+    "name": "Product",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Product cards"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_show_secondary_image",
+        "label": "Show secondary image on hover",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "product_show_vendor",
+        "label": "Show vendor",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "product_show_quick_view",
+        "label": "Enable quick view",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Badges"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_show_sale_badge",
+        "label": "Show sale badge",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "product_show_sold_out_badge",
+        "label": "Show sold out badge",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "B2B & Quotes",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Quote System"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_quote_system",
+        "label": "Enable quote request system",
+        "default": true,
+        "info": "Adds 'Request a Quote' button alongside Add to Cart"
+      },
+      {
+        "type": "select",
+        "id": "quote_display_mode",
+        "label": "Quote interface",
+        "options": [
+          { "value": "modal", "label": "Modal popup" },
+          { "value": "drawer", "label": "Slide-out drawer" },
+          { "value": "page", "label": "Dedicated page" }
+        ],
+        "default": "modal",
+        "info": "How the quote form is displayed"
+      },
+      {
+        "type": "text",
+        "id": "quote_button_text",
+        "label": "Quote button text",
+        "default": "Request a Quote"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_quote_on_collection",
+        "label": "Show quote button on collection pages",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Price Visibility"
+      },
+      {
+        "type": "checkbox",
+        "id": "hide_prices",
+        "label": "Hide prices store-wide",
+        "default": false,
+        "info": "For B2B stores that prefer quote-only pricing"
+      },
+      {
+        "type": "checkbox",
+        "id": "hide_prices_b2b_only",
+        "label": "Hide prices for B2B customers only",
+        "default": false,
+        "info": "Show prices to retail customers, hide for B2B"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_discount_percentage",
+        "label": "Show discount percentage on sale items",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_tax_notice",
+        "label": "Show tax/shipping notice",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_installments",
+        "label": "Show payment installments",
+        "default": true,
+        "info": "Shop Pay, Klarna, Afterpay, etc."
+      },
+      {
+        "type": "header",
+        "content": "B2B Customer Detection"
+      },
+      {
+        "type": "text",
+        "id": "b2b_customer_tags",
+        "label": "B2B customer tags",
+        "default": "b2b, wholesale, business, dealer, distributor",
+        "info": "Comma-separated list of tags that identify B2B customers"
+      },
+      {
+        "type": "checkbox",
+        "id": "b2b_auto_detect_company",
+        "label": "Auto-detect business customers",
+        "default": false,
+        "info": "Treat customers with company name as B2B"
+      },
+      {
+        "type": "header",
+        "content": "B2B Tier Discounts"
+      },
+      {
+        "type": "range",
+        "id": "b2b_standard_discount",
+        "label": "Standard B2B discount (%)",
+        "min": 0,
+        "max": 50,
+        "step": 5,
+        "default": 5
+      },
+      {
+        "type": "range",
+        "id": "b2b_bronze_discount",
+        "label": "Bronze tier discount (%)",
+        "min": 0,
+        "max": 50,
+        "step": 5,
+        "default": 10
+      },
+      {
+        "type": "range",
+        "id": "b2b_silver_discount",
+        "label": "Silver tier discount (%)",
+        "min": 0,
+        "max": 50,
+        "step": 5,
+        "default": 15
+      },
+      {
+        "type": "range",
+        "id": "b2b_gold_discount",
+        "label": "Gold tier discount (%)",
+        "min": 0,
+        "max": 50,
+        "step": 5,
+        "default": 20
+      },
+      {
+        "type": "header",
+        "content": "Quote Notifications"
+      },
+      {
+        "type": "text",
+        "id": "quote_email",
+        "label": "Quote notification email",
+        "info": "Email to receive quote requests"
+      },
+      {
+        "type": "text",
+        "id": "quote_cc_email",
+        "label": "CC email (optional)",
+        "info": "Additional email to copy on quote requests"
+      },
+      {
+        "type": "checkbox",
+        "id": "quote_send_customer_copy",
+        "label": "Send copy to customer",
+        "default": true,
+        "info": "Customer receives confirmation email"
+      },
+      {
+        "type": "header",
+        "content": "Quote Form Fields"
+      },
+      {
+        "type": "checkbox",
+        "id": "quote_require_company",
+        "label": "Require company name",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "quote_require_phone",
+        "label": "Require phone number",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "quote_show_business_type",
+        "label": "Show business type field",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "quote_show_quantity_range",
+        "label": "Show quantity range field",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "quote_show_timeline",
+        "label": "Show timeline field",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "quote_show_address",
+        "label": "Show shipping address fields",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Advanced"
+      },
+      {
+        "type": "checkbox",
+        "id": "quote_enable_file_upload",
+        "label": "Allow file attachments",
+        "default": false,
+        "info": "Let customers attach specifications, drawings, etc."
+      },
+      {
+        "type": "checkbox",
+        "id": "quote_save_to_customer",
+        "label": "Save quotes to customer account",
+        "default": true,
+        "info": "Logged-in customers can view quote history"
+      },
+      {
+        "type": "checkbox",
+        "id": "debug_mode",
+        "label": "Enable debug mode",
+        "default": false,
+        "info": "Shows B2B detection info in HTML comments"
+      }
+    ]
+  },
+  {
+    "name": "SEO & Social Sharing",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Default Share Image"
+      },
+      {
+        "type": "image_picker",
+        "id": "share_image",
+        "label": "Default social share image",
+        "info": "1200 x 630px recommended. Used when page has no image."
+      },
+      {
+        "type": "header",
+        "content": "Site Verification"
+      },
+      {
+        "type": "text",
+        "id": "google_site_verification",
+        "label": "Google Search Console",
+        "info": "Enter the content value from Google's meta tag"
+      },
+      {
+        "type": "text",
+        "id": "bing_site_verification",
+        "label": "Bing Webmaster Tools",
+        "info": "Enter the content value from Bing's meta tag"
+      },
+      {
+        "type": "text",
+        "id": "pinterest_site_verification",
+        "label": "Pinterest verification",
+        "info": "Enter the content value from Pinterest's meta tag"
+      },
+      {
+        "type": "header",
+        "content": "Local Business (Optional)"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_local_business_schema",
+        "label": "Enable local business schema",
+        "default": false,
+        "info": "Add structured data for physical store locations"
+      },
+      {
+        "type": "text",
+        "id": "business_street",
+        "label": "Street address"
+      },
+      {
+        "type": "text",
+        "id": "business_city",
+        "label": "City"
+      },
+      {
+        "type": "text",
+        "id": "business_state",
+        "label": "State/Province"
+      },
+      {
+        "type": "text",
+        "id": "business_zip",
+        "label": "Postal code"
+      },
+      {
+        "type": "text",
+        "id": "business_country",
+        "label": "Country",
+        "default": "US"
+      }
+    ]
+  },
+  {
+    "name": "Popup & Email Capture",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Popup Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "popup_enabled",
+        "label": "Enable popup",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "popup_heading",
+        "label": "Heading",
+        "default": "Get 10% Off"
+      },
+      {
+        "type": "textarea",
+        "id": "popup_subheading",
+        "label": "Subheading",
+        "default": "Subscribe to our newsletter and receive 10% off your first order."
+      },
+      {
+        "type": "text",
+        "id": "popup_button_text",
+        "label": "Button text",
+        "default": "Get My Discount"
+      },
+      {
+        "type": "text",
+        "id": "popup_discount_code",
+        "label": "Discount code to display",
+        "info": "Leave blank to hide"
+      },
+      {
+        "type": "text",
+        "id": "popup_custom_tag",
+        "label": "Custom subscriber tag",
+        "default": "popup"
+      },
+      {
+        "type": "textarea",
+        "id": "popup_disclaimer",
+        "label": "Disclaimer text",
+        "default": "By subscribing, you agree to receive marketing emails."
+      },
+      {
+        "type": "image_picker",
+        "id": "popup_image",
+        "label": "Popup image",
+        "info": "600 x 600px recommended"
+      },
+      {
+        "type": "checkbox",
+        "id": "popup_collect_name",
+        "label": "Collect first name",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Display Triggers"
+      },
+      {
+        "type": "range",
+        "id": "popup_delay",
+        "label": "Show after (seconds)",
+        "min": 0,
+        "max": 60,
+        "step": 5,
+        "default": 5,
+        "unit": "s"
+      },
+      {
+        "type": "checkbox",
+        "id": "popup_exit_intent",
+        "label": "Show on exit intent",
+        "default": true,
+        "info": "Trigger when mouse leaves viewport"
+      },
+      {
+        "type": "range",
+        "id": "popup_scroll_trigger",
+        "label": "Show after scroll (%)",
+        "min": 0,
+        "max": 100,
+        "step": 10,
+        "default": 0,
+        "unit": "%",
+        "info": "0 to disable"
+      },
+      {
+        "type": "header",
+        "content": "Frequency"
+      },
+      {
+        "type": "checkbox",
+        "id": "popup_show_once",
+        "label": "Show only once per visitor",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "popup_cookie_days",
+        "label": "Don't show again for (days)",
+        "min": 1,
+        "max": 30,
+        "step": 1,
+        "default": 7,
+        "unit": "days"
+      },
+      {
+        "type": "checkbox",
+        "id": "popup_hide_for_customers",
+        "label": "Hide for logged-in customers",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Email Integrations",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Klaviyo"
+      },
+      {
+        "type": "text",
+        "id": "klaviyo_public_key",
+        "label": "Klaviyo Public API Key",
+        "info": "Found in Klaviyo Account → Settings → API Keys"
+      },
+      {
+        "type": "text",
+        "id": "klaviyo_bis_list_id",
+        "label": "Back in Stock List ID",
+        "info": "List ID for back-in-stock notifications"
+      },
+      {
+        "type": "header",
+        "content": "Analytics"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_analytics_tracking",
+        "label": "Enable analytics tracking",
+        "default": true,
+        "info": "Pushes e-commerce events to data layer"
+      },
+      {
+        "type": "text",
+        "id": "gtm_container_id",
+        "label": "GTM Container ID",
+        "info": "e.g., GTM-XXXXXXX"
+      }
+    ]
+  },
+  {
+    "name": "Supporting Pages",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Product Finder Quiz"
+      },
+      {
+        "type": "checkbox",
+        "id": "quiz_enable_tracking",
+        "label": "Enable quiz analytics",
+        "default": true,
+        "info": "Track quiz completions and answers"
+      },
+      {
+        "type": "checkbox",
+        "id": "quiz_send_to_klaviyo",
+        "label": "Send quiz results to Klaviyo",
+        "default": true,
+        "info": "Requires Klaviyo integration to be configured"
+      },
+      {
+        "type": "header",
+        "content": "Facility Locator"
+      },
+      {
+        "type": "select",
+        "id": "facility_map_provider",
+        "label": "Default map provider",
+        "options": [
+          { "value": "mapbox", "label": "Mapbox" },
+          { "value": "google", "label": "Google Maps" }
+        ],
+        "default": "mapbox"
+      },
+      {
+        "type": "text",
+        "id": "facility_google_maps_key",
+        "label": "Google Maps API Key",
+        "info": "Required if using Google Maps"
+      },
+      {
+        "type": "text",
+        "id": "facility_mapbox_token",
+        "label": "Mapbox Access Token",
+        "info": "Required if using Mapbox (free tier available)"
+      },
+      {
+        "type": "select",
+        "id": "facility_distance_unit",
+        "label": "Distance unit",
+        "options": [
+          { "value": "miles", "label": "Miles" },
+          { "value": "km", "label": "Kilometers" }
+        ],
+        "default": "miles"
+      },
+      {
+        "type": "header",
+        "content": "Training Library"
+      },
+      {
+        "type": "checkbox",
+        "id": "training_show_difficulty",
+        "label": "Show difficulty badges",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "training_autoplay_videos",
+        "label": "Autoplay video previews on hover",
+        "default": false,
+        "info": "Videos will be muted"
+      }
+    ]
+  }
+]

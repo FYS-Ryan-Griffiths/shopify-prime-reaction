@@ -1,0 +1,94 @@
+{% comment %}
+  Product Gallery Snippet
+  Displays product images with thumbnail navigation
+  
+  Usage:
+  {% render 'product-gallery', product: product, current_variant: current_variant %}
+{% endcomment %}
+
+{%- liquid
+  assign featured_image = current_variant.featured_image | default: product.featured_image
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+  endif
+-%}
+
+<div class="product-gallery" data-product-gallery>
+  
+  {%- comment -%} Main Image {%- endcomment -%}
+  <div class="product-gallery__main">
+    {%- if product.featured_image != blank -%}
+      <img 
+        src="{{ featured_image | image_url: width: 1200 }}"
+        srcset="{{ featured_image | image_url: width: 600 }} 600w,
+                {{ featured_image | image_url: width: 900 }} 900w,
+                {{ featured_image | image_url: width: 1200 }} 1200w"
+        sizes="(min-width: 768px) 50vw, 100vw"
+        alt="{{ featured_image.alt | escape | default: product.title }}"
+        class="product-gallery__main-image"
+        width="{{ featured_image.width }}"
+        height="{{ featured_image.height }}"
+        loading="eager"
+        data-main-image
+      >
+    {%- else -%}
+      <div class="product-gallery__placeholder">
+        {{ 'product-1' | placeholder_svg_tag }}
+      </div>
+    {%- endif -%}
+    
+    {%- comment -%} Badges {%- endcomment -%}
+    <div class="product-gallery__badges">
+      {%- if product.available == false -%}
+        <span class="product-gallery__badge">{{ 'products.sold_out' | t }}</span>
+      {%- elsif on_sale -%}
+        <span class="product-gallery__badge product-gallery__badge--sale">{{ 'products.sale' | t }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} Thumbnails {%- endcomment -%}
+  {%- if product.images.size > 1 -%}
+    <div class="product-gallery__thumbnails" data-thumbnails>
+      {%- for image in product.images -%}
+        <button 
+          type="button"
+          class="product-gallery__thumbnail{% if image == featured_image %} is-active{% endif %}"
+          data-thumbnail
+          data-image-src="{{ image | image_url: width: 1200 }}"
+          aria-label="View image {{ forloop.index }}"
+        >
+          <img 
+            src="{{ image | image_url: width: 160 }}"
+            alt="{{ image.alt | escape | default: product.title }}"
+            loading="lazy"
+            width="80"
+            height="80"
+          >
+        </button>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+<script>
+  (function() {
+    const gallery = document.querySelector('[data-product-gallery]');
+    if (!gallery) return;
+
+    const mainImage = gallery.querySelector('[data-main-image]');
+    const thumbnails = gallery.querySelectorAll('[data-thumbnail]');
+
+    thumbnails.forEach(thumb => {
+      thumb.addEventListener('click', () => {
+        const newSrc = thumb.dataset.imageSrc;
+        if (mainImage && newSrc) {
+          mainImage.src = newSrc;
+          thumbnails.forEach(t => t.classList.remove('is-active'));
+          thumb.classList.add('is-active');
+        }
+      });
+    });
+  })();
+</script>

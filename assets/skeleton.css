@@ -1,0 +1,346 @@
+/* ==========================================================================
+   Skeleton Loading States
+   CSS-only loading placeholders for better perceived performance
+   ========================================================================== */
+
+/* Base Skeleton Animation */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-border-light) 37%,
+    var(--color-surface) 63%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* Skeleton Variants */
+.skeleton--text {
+  height: 1em;
+  margin-bottom: 0.5em;
+  border-radius: var(--radius-xs);
+}
+
+.skeleton--text-sm {
+  height: 0.875em;
+  width: 60%;
+}
+
+.skeleton--text-lg {
+  height: 1.5em;
+  width: 80%;
+}
+
+.skeleton--title {
+  height: 2em;
+  width: 70%;
+  margin-bottom: 1em;
+}
+
+.skeleton--image {
+  aspect-ratio: 1;
+  width: 100%;
+}
+
+.skeleton--image-landscape {
+  aspect-ratio: 16/9;
+  width: 100%;
+}
+
+.skeleton--image-portrait {
+  aspect-ratio: 3/4;
+  width: 100%;
+}
+
+.skeleton--button {
+  height: 48px;
+  width: 100%;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton--avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.skeleton--badge {
+  height: 24px;
+  width: 60px;
+  border-radius: var(--radius-full);
+}
+
+/* Product Card Skeleton */
+.skeleton-product-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-product-card__image {
+  aspect-ratio: 1;
+  margin-bottom: var(--space-3);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-product-card__vendor {
+  height: 0.75em;
+  width: 30%;
+  margin-bottom: var(--space-2);
+}
+
+.skeleton-product-card__title {
+  height: 1em;
+  width: 90%;
+  margin-bottom: var(--space-2);
+}
+
+.skeleton-product-card__price {
+  height: 1em;
+  width: 40%;
+}
+
+/* Collection Grid Skeleton */
+.skeleton-collection-grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 768px) {
+  .skeleton-collection-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .skeleton-collection-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Cart Item Skeleton */
+.skeleton-cart-item {
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.skeleton-cart-item__image {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-cart-item__details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.skeleton-cart-item__title {
+  height: 1em;
+  width: 80%;
+}
+
+.skeleton-cart-item__variant {
+  height: 0.875em;
+  width: 40%;
+}
+
+.skeleton-cart-item__price {
+  height: 1em;
+  width: 30%;
+}
+
+.skeleton-cart-item__quantity {
+  width: 80px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+}
+
+/* Search Results Skeleton */
+.skeleton-search-results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.skeleton-search-item {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+.skeleton-search-item__image {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.skeleton-search-item__details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.skeleton-search-item__title {
+  height: 1em;
+  width: 70%;
+}
+
+.skeleton-search-item__meta {
+  height: 0.875em;
+  width: 40%;
+}
+
+/* Article Card Skeleton */
+.skeleton-article-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-article-card__image {
+  aspect-ratio: 16/9;
+  margin-bottom: var(--space-4);
+  border-radius: var(--radius-md);
+}
+
+.skeleton-article-card__meta {
+  height: 0.75em;
+  width: 25%;
+  margin-bottom: var(--space-2);
+}
+
+.skeleton-article-card__title {
+  height: 1.25em;
+  width: 85%;
+  margin-bottom: var(--space-2);
+}
+
+.skeleton-article-card__excerpt {
+  height: 0.875em;
+  width: 100%;
+  margin-bottom: var(--space-1);
+}
+
+.skeleton-article-card__excerpt:last-child {
+  width: 60%;
+}
+
+/* Form Skeleton */
+.skeleton-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.skeleton-form__label {
+  height: 0.875em;
+  width: 30%;
+  margin-bottom: var(--space-2);
+}
+
+.skeleton-form__input {
+  height: 48px;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-form__textarea {
+  height: 120px;
+  border-radius: var(--radius-sm);
+}
+
+/* Loading Container States */
+.is-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.is-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--color-background-rgb), 0.7);
+  backdrop-filter: blur(2px);
+  z-index: 10;
+}
+
+.is-loading .spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 11;
+}
+
+/* Spinner */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.spinner--small {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.spinner--large {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Pulse Animation (alternative to shimmer) */
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeleton--pulse {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  background: var(--color-surface);
+}
+
+/* Hide skeleton when content loads */
+[data-loaded] .skeleton,
+[data-loaded] [class*="skeleton-"] {
+  display: none;
+}
+
+/* Fade in content after loading */
+.fade-in-on-load {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+[data-loaded] .fade-in-on-load {
+  opacity: 1;
+}

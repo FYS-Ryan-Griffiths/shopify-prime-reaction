@@ -1,0 +1,70 @@
+{% comment %}
+  Product Price Snippet
+  Displays product price with sale/compare pricing
+  
+  Usage:
+  {% render 'product-price', product: product, current_variant: current_variant %}
+{% endcomment %}
+
+{%- liquid
+  assign variant = current_variant | default: product.selected_or_first_available_variant
+  assign compare_at_price = variant.compare_at_price
+  assign price = variant.price
+  assign available = variant.available
+  assign money_price = price | money
+  assign money_compare_at_price = compare_at_price | money
+  
+  # Calculate discount percentage
+  if compare_at_price > price
+    assign discount = compare_at_price | minus: price | times: 100.0 | divided_by: compare_at_price | round
+  endif
+-%}
+
+<div class="product-price {% if compare_at_price > price %}product-price--on-sale{% endif %}" data-product-price>
+  <div class="product-price__wrapper">
+    {%- if compare_at_price > price -%}
+      <span class="product-price__compare visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+      <s class="product-price__compare-value">{{ money_compare_at_price }}</s>
+    {%- endif -%}
+    
+    <span class="product-price__regular visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
+    <span class="product-price__value {% if compare_at_price > price %}product-price__value--sale{% endif %}">
+      {{ money_price }}
+    </span>
+    
+    {%- if compare_at_price > price -%}
+      <span class="product-price__badge">
+        {{ 'products.product.save_percent' | t: percent: discount }}
+      </span>
+    {%- endif -%}
+  </div>
+  
+  {%- if product.variants.size > 1 -%}
+    {%- liquid
+      assign min_price = product.price_min | money
+      assign max_price = product.price_max | money
+    -%}
+    {%- if product.price_min != product.price_max -%}
+      <span class="product-price__range">
+        {{ 'products.product.price_range' | t: min: min_price, max: max_price }}
+      </span>
+    {%- endif -%}
+  {%- endif -%}
+  
+  {%- if shop.taxes_included -%}
+    <span class="product-price__tax">{{ 'products.product.tax_included' | t }}</span>
+  {%- endif -%}
+  
+  {%- if shop.shipping_policy.body != blank -%}
+    <span class="product-price__shipping">
+      {{ 'products.product.shipping_calculated' | t }}
+      <a href="{{ shop.shipping_policy.url }}" class="product-price__shipping-link">
+        {{ 'products.product.shipping_policy' | t }}
+      </a>
+    </span>
+  {%- endif -%}
+  
+  {%- unless available -%}
+    <span class="product-price__unavailable">{{ 'products.product.sold_out' | t }}</span>
+  {%- endunless -%}
+</div>

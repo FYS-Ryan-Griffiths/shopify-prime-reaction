@@ -1,0 +1,159 @@
+{% comment %}
+  Brand Values Section
+{% endcomment %}
+
+<section class="brand-values section">
+  <div class="container">
+    {%- if section.settings.heading != blank -%}
+      <header class="brand-values__header">
+        <h2 class="brand-values__title h2">{{ section.settings.heading }}</h2>
+        {%- if section.settings.subheading != blank -%}
+          <p class="brand-values__subtitle">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+    
+    <div class="brand-values__grid">
+      {%- for block in section.blocks -%}
+        <div class="brand-values__item" {{ block.shopify_attributes }}>
+          <div class="brand-values__icon">
+            {%- case block.settings.icon -%}
+              {%- when 'innovation' -%}
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                </svg>
+              {%- when 'quality' -%}
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              {%- when 'science' -%}
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M9 3h6v2H9z"/>
+                  <path d="M10 5v6l-5 8h14l-5-8V5"/>
+                  <circle cx="8" cy="17" r="1"/>
+                  <circle cx="14" cy="15" r="1"/>
+                </svg>
+              {%- when 'sustainability' -%}
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M12 22c4-4 8-7.5 8-12a8 8 0 1 0-16 0c0 4.5 4 8 8 12z"/>
+                  <path d="M12 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                </svg>
+              {%- when 'community' -%}
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              {%- when 'trust' -%}
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <polyline points="9 12 11 14 15 10"/>
+                </svg>
+              {%- else -%}
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+            {%- endcase -%}
+          </div>
+          
+          <h3 class="brand-values__item-title h4">{{ block.settings.heading }}</h3>
+          
+          {%- if block.settings.content != blank -%}
+            <p class="brand-values__item-content">{{ block.settings.content }}</p>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Brand Values",
+  "tag": "section",
+  "class": "brand-values-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our Values"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "Value",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "innovation", "label": "Innovation" },
+            { "value": "quality", "label": "Quality" },
+            { "value": "science", "label": "Science" },
+            { "value": "sustainability", "label": "Sustainability" },
+            { "value": "community", "label": "Community" },
+            { "value": "trust", "label": "Trust" }
+          ],
+          "default": "innovation"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Our Value"
+        },
+        {
+          "type": "textarea",
+          "id": "content",
+          "label": "Content",
+          "default": "Description of this value and what it means to your brand."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand Values",
+      "blocks": [
+        {
+          "type": "value",
+          "settings": {
+            "icon": "innovation",
+            "heading": "Innovation",
+            "content": "Constantly pushing boundaries"
+          }
+        },
+        {
+          "type": "value",
+          "settings": {
+            "icon": "quality",
+            "heading": "Quality",
+            "content": "Premium materials and craftsmanship"
+          }
+        },
+        {
+          "type": "value",
+          "settings": {
+            "icon": "science",
+            "heading": "Science",
+            "content": "Research-backed products"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

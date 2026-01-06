@@ -1,0 +1,399 @@
+/* ============================================================================
+   TYPOGRAPHY.CSS - Editorial Type System
+   Inspired by postfamiliar.com - Bold serif headlines, clean sans-serif body
+   ============================================================================ */
+
+/* =============================================================================
+   HEADINGS - Elegant Serif
+   ============================================================================= */
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+
+h1, .h1 {
+  font-size: var(--font-size-5xl);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: var(--space-6);
+}
+
+h2, .h2 {
+  font-size: var(--font-size-4xl);
+  letter-spacing: -0.025em;
+}
+
+h3, .h3 {
+  font-size: var(--font-size-3xl);
+  letter-spacing: -0.02em;
+}
+
+h4, .h4 {
+  font-size: var(--font-size-2xl);
+}
+
+h5, .h5 {
+  font-size: var(--font-size-xl);
+}
+
+h6, .h6 {
+  font-size: var(--font-size-lg);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-normal);
+}
+
+/* Heading with italic accent - postfamiliar style */
+.heading-italic {
+  font-style: italic;
+}
+
+.heading-italic em,
+.heading-italic i {
+  font-style: normal;
+}
+
+/* Display headings - Extra large for hero sections */
+.display-lg {
+  font-size: var(--font-size-5xl);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.display-xl {
+  font-size: clamp(4rem, 3rem + 8vw, 10rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+}
+
+/* =============================================================================
+   BODY TEXT
+   ============================================================================= */
+
+p {
+  margin-bottom: var(--space-4);
+  line-height: var(--line-height-relaxed);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+/* Lead/intro text */
+.lead {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-muted);
+}
+
+/* Small text */
+small, .small {
+  font-size: var(--font-size-sm);
+}
+
+.text-xs {
+  font-size: var(--font-size-xs);
+}
+
+/* Muted text */
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.text-light {
+  color: var(--color-text-light);
+}
+
+/* =============================================================================
+   LINKS
+   ============================================================================= */
+
+a {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color var(--transition-fast), opacity var(--transition-fast);
+}
+
+/* Underline link style - postfamiliar aesthetic */
+.link {
+  position: relative;
+  display: inline;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--transition-base) var(--ease-out);
+}
+
+.link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Always underlined link */
+.link--underline::after {
+  transform: scaleX(1);
+}
+
+.link--underline:hover::after {
+  transform: scaleX(0);
+}
+
+/* =============================================================================
+   LABELS & TAGS
+   ============================================================================= */
+
+.label-text {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  background-color: var(--color-background-tertiary);
+  border-radius: var(--radius-sm);
+}
+
+.tag--accent {
+  background-color: var(--color-accent);
+  color: var(--color-text-inverse);
+}
+
+/* =============================================================================
+   LISTS
+   ============================================================================= */
+
+.list {
+  margin-bottom: var(--space-4);
+}
+
+.list li {
+  margin-bottom: var(--space-2);
+  padding-left: var(--space-6);
+  position: relative;
+}
+
+.list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-text-muted);
+  border-radius: 50%;
+}
+
+/* Numbered list */
+.list--numbered {
+  counter-reset: list-counter;
+}
+
+.list--numbered li {
+  counter-increment: list-counter;
+}
+
+.list--numbered li::before {
+  content: counter(list-counter) ".";
+  width: auto;
+  height: auto;
+  background: none;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  top: 0;
+}
+
+/* =============================================================================
+   BLOCKQUOTES
+   ============================================================================= */
+
+blockquote, .blockquote {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-style: italic;
+  line-height: var(--line-height-snug);
+  color: var(--color-text);
+  padding-left: var(--space-8);
+  border-left: 2px solid var(--color-border-dark);
+  margin: var(--space-8) 0;
+}
+
+blockquote cite,
+.blockquote cite {
+  display: block;
+  margin-top: var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-style: normal;
+  color: var(--color-text-muted);
+}
+
+/* Pull quote - Large, centered */
+.pull-quote {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  font-style: italic;
+  line-height: var(--line-height-snug);
+  text-align: center;
+  padding: var(--space-12) var(--space-8);
+  border: none;
+}
+
+/* =============================================================================
+   RICH TEXT / PROSE
+   ============================================================================= */
+
+.prose {
+  max-width: 65ch;
+}
+
+.prose > * + * {
+  margin-top: var(--space-6);
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  margin-top: var(--space-12);
+}
+
+.prose a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose a:hover {
+  color: var(--color-text-muted);
+}
+
+.prose img {
+  margin: var(--space-8) 0;
+  border-radius: var(--radius-md);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: var(--space-6);
+}
+
+.prose ul li,
+.prose ol li {
+  margin-bottom: var(--space-2);
+}
+
+/* =============================================================================
+   SPECIAL TEXT STYLES
+   ============================================================================= */
+
+/* Strikethrough for sale prices */
+.price-compare {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+/* Sale price */
+.price-sale {
+  color: var(--color-error);
+}
+
+/* Monospace */
+code, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+/* Uppercase utility */
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+}
+
+/* Capitalize */
+.capitalize {
+  text-transform: capitalize;
+}
+
+/* No wrap */
+.nowrap {
+  white-space: nowrap;
+}
+
+/* Truncate text */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Line clamp - multiline truncate */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =============================================================================
+   FONT WEIGHTS
+   ============================================================================= */
+
+.font-light { font-weight: var(--font-weight-light); }
+.font-normal { font-weight: var(--font-weight-normal); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+/* =============================================================================
+   RESPONSIVE TYPOGRAPHY
+   ============================================================================= */
+
+@media (max-width: 768px) {
+  h1, .h1 {
+    margin-bottom: var(--space-4);
+  }
+  
+  .display-xl {
+    font-size: clamp(2.5rem, 2rem + 5vw, 5rem);
+  }
+  
+  blockquote, .blockquote {
+    font-size: var(--font-size-xl);
+    padding-left: var(--space-4);
+  }
+  
+  .pull-quote {
+    font-size: var(--font-size-2xl);
+    padding: var(--space-8) var(--space-4);
+  }
+}

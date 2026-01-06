@@ -1,0 +1,62 @@
+{
+  "sections": {
+    "hero": {
+      "type": "page-banner",
+      "settings": {
+        "heading": "Our Story",
+        "subheading": "Redefining functional training"
+      }
+    },
+    "story": {
+      "type": "image-with-text",
+      "settings": {
+        "image_position": "left",
+        "heading": "The Science of Movement",
+        "content": "<p>Born from a passion for innovation in functional training, Reaxing develops cutting-edge equipment that challenges your body in new ways. Our patented Sudden Dynamic Impulse (SDI) technology creates unpredictable resistance, activating more muscle fibers and improving neuromuscular coordination.</p>",
+        "button_label": "Explore Products",
+        "button_link": "shopify://collections/all"
+      }
+    },
+    "values": {
+      "type": "brand-values",
+      "settings": {
+        "heading": "What We Stand For"
+      },
+      "blocks": {
+        "v1": {
+          "type": "value",
+          "settings": {
+            "icon": "innovation",
+            "heading": "Innovation",
+            "content": "Pioneering new approaches to functional fitness"
+          }
+        },
+        "v2": {
+          "type": "value",
+          "settings": {
+            "icon": "quality",
+            "heading": "Quality",
+            "content": "Premium materials built to last"
+          }
+        },
+        "v3": {
+          "type": "value",
+          "settings": {
+            "icon": "science",
+            "heading": "Science-Backed",
+            "content": "Every product grounded in research"
+          }
+        }
+      },
+      "block_order": ["v1", "v2", "v3"]
+    },
+    "team": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "Join the Movement",
+        "content": "<p>Used by elite athletes, professional teams, and fitness enthusiasts worldwide, Reaxing equipment is trusted to deliver results. Join thousands who have transformed their training.</p>"
+      }
+    }
+  },
+  "order": ["hero", "story", "values", "team"]
+}

@@ -1,0 +1,1073 @@
+{% comment %}
+  Product Finder Quiz
+  Multi-step questionnaire to recommend products based on user preferences
+  Features:
+  - Animated step transitions
+  - Progress indicator
+  - Email capture option
+  - Smart product matching based on tags/metafields
+{% endcomment %}
+
+<section 
+  class="quiz section-padding" 
+  data-quiz
+  data-section-id="{{ section.id }}"
+  id="quiz-{{ section.id }}"
+>
+  <div class="container container--narrow">
+    
+    {%- if section.settings.show_header -%}
+      <header class="quiz__header text-center">
+        {%- if section.settings.title != blank -%}
+          <h2 class="quiz__title h1">{{ section.settings.title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.subtitle != blank -%}
+          <p class="quiz__subtitle">{{ section.settings.subtitle }}</p>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    <!-- Progress Bar -->
+    <div class="quiz__progress" data-quiz-progress>
+      <div class="quiz__progress-bar">
+        <div class="quiz__progress-fill" data-quiz-progress-fill style="width: 0%"></div>
+      </div>
+      <span class="quiz__progress-text" data-quiz-progress-text>
+        {{ 'quiz.step' | t | default: 'Step' }} <span data-quiz-current-step>1</span> {{ 'quiz.of' | t | default: 'of' }} <span data-quiz-total-steps>{{ section.blocks | size }}</span>
+      </span>
+    </div>
+
+    <!-- Quiz Container -->
+    <div class="quiz__container" data-quiz-container>
+      
+      {%- comment -%} Quiz Steps {%- endcomment -%}
+      {%- assign step_index = 0 -%}
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          
+          {%- when 'question_single' -%}
+            {%- assign step_index = step_index | plus: 1 -%}
+            <div 
+              class="quiz__step" 
+              data-quiz-step="{{ step_index }}" 
+              data-question-type="single"
+              data-question-key="{{ block.settings.question_key | default: block.id }}"
+              {% if step_index > 1 %}hidden{% endif %}
+              {{ block.shopify_attributes }}
+            >
+              <div class="quiz__question">
+                <h3 class="quiz__question-text">{{ block.settings.question }}</h3>
+                {%- if block.settings.description != blank -%}
+                  <p class="quiz__question-desc">{{ block.settings.description }}</p>
+                {%- endif -%}
+              </div>
+              
+              <div class="quiz__options quiz__options--{{ block.settings.layout }}">
+                {%- assign options = block.settings.options | split: '|' -%}
+                {%- assign values = block.settings.option_values | split: '|' -%}
+                {%- assign icons = block.settings.option_icons | split: '|' -%}
+                {%- for option in options -%}
+                  {%- assign opt_value = values[forloop.index0] | default: option | handle -%}
+                  {%- assign opt_icon = icons[forloop.index0] | strip -%}
+                  <button 
+                    type="button" 
+                    class="quiz__option"
+                    data-quiz-option
+                    data-value="{{ opt_value }}"
+                  >
+                    {%- if opt_icon != blank -%}
+                      <span class="quiz__option-icon">{{ opt_icon }}</span>
+                    {%- endif -%}
+                    <span class="quiz__option-label">{{ option }}</span>
+                  </button>
+                {%- endfor -%}
+              </div>
+            </div>
+
+          {%- when 'question_multiple' -%}
+            {%- assign step_index = step_index | plus: 1 -%}
+            <div 
+              class="quiz__step" 
+              data-quiz-step="{{ step_index }}" 
+              data-question-type="multiple"
+              data-question-key="{{ block.settings.question_key | default: block.id }}"
+              data-min-selections="{{ block.settings.min_selections | default: 1 }}"
+              data-max-selections="{{ block.settings.max_selections | default: 3 }}"
+              {% if step_index > 1 %}hidden{% endif %}
+              {{ block.shopify_attributes }}
+            >
+              <div class="quiz__question">
+                <h3 class="quiz__question-text">{{ block.settings.question }}</h3>
+                {%- if block.settings.description != blank -%}
+                  <p class="quiz__question-desc">{{ block.settings.description }}</p>
+                {%- endif -%}
+                <p class="quiz__question-hint">
+                  {{ 'quiz.select_multiple' | t | default: 'Select up to' }} {{ block.settings.max_selections | default: 3 }}
+                </p>
+              </div>
+              
+              <div class="quiz__options quiz__options--{{ block.settings.layout }} quiz__options--multiple">
+                {%- assign options = block.settings.options | split: '|' -%}
+                {%- assign values = block.settings.option_values | split: '|' -%}
+                {%- for option in options -%}
+                  {%- assign opt_value = values[forloop.index0] | default: option | handle -%}
+                  <button 
+                    type="button" 
+                    class="quiz__option"
+                    data-quiz-option-multi
+                    data-value="{{ opt_value }}"
+                  >
+                    <span class="quiz__option-checkbox">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                    <span class="quiz__option-label">{{ option }}</span>
+                  </button>
+                {%- endfor -%}
+              </div>
+              
+              <button type="button" class="quiz__continue button button--primary" data-quiz-continue disabled>
+                {{ 'quiz.continue' | t | default: 'Continue' }}
+              </button>
+            </div>
+
+          {%- when 'question_slider' -%}
+            {%- assign step_index = step_index | plus: 1 -%}
+            <div 
+              class="quiz__step" 
+              data-quiz-step="{{ step_index }}" 
+              data-question-type="slider"
+              data-question-key="{{ block.settings.question_key | default: block.id }}"
+              {% if step_index > 1 %}hidden{% endif %}
+              {{ block.shopify_attributes }}
+            >
+              <div class="quiz__question">
+                <h3 class="quiz__question-text">{{ block.settings.question }}</h3>
+                {%- if block.settings.description != blank -%}
+                  <p class="quiz__question-desc">{{ block.settings.description }}</p>
+                {%- endif -%}
+              </div>
+              
+              <div class="quiz__slider">
+                <input 
+                  type="range" 
+                  class="quiz__slider-input"
+                  data-quiz-slider
+                  min="{{ block.settings.min_value | default: 1 }}"
+                  max="{{ block.settings.max_value | default: 10 }}"
+                  value="{{ block.settings.default_value | default: 5 }}"
+                  step="1"
+                >
+                <div class="quiz__slider-labels">
+                  <span>{{ block.settings.min_label | default: block.settings.min_value }}</span>
+                  <span class="quiz__slider-value" data-quiz-slider-value>{{ block.settings.default_value | default: 5 }}</span>
+                  <span>{{ block.settings.max_label | default: block.settings.max_value }}</span>
+                </div>
+              </div>
+              
+              <button type="button" class="quiz__continue button button--primary" data-quiz-continue>
+                {{ 'quiz.continue' | t | default: 'Continue' }}
+              </button>
+            </div>
+
+          {%- when 'email_capture' -%}
+            {%- assign step_index = step_index | plus: 1 -%}
+            <div 
+              class="quiz__step quiz__step--email" 
+              data-quiz-step="{{ step_index }}" 
+              data-question-type="email"
+              {% if step_index > 1 %}hidden{% endif %}
+              {{ block.shopify_attributes }}
+            >
+              <div class="quiz__question">
+                <h3 class="quiz__question-text">{{ block.settings.heading | default: 'Almost there!' }}</h3>
+                <p class="quiz__question-desc">{{ block.settings.description | default: 'Enter your email to see your personalized recommendations.' }}</p>
+              </div>
+              
+              <form class="quiz__email-form" data-quiz-email-form>
+                <div class="form-group">
+                  <input 
+                    type="email" 
+                    class="quiz__email-input"
+                    name="email"
+                    placeholder="{{ block.settings.placeholder | default: 'your@email.com' }}"
+                    required
+                  >
+                </div>
+                
+                {%- if block.settings.show_name -%}
+                  <div class="form-group">
+                    <input 
+                      type="text" 
+                      class="quiz__name-input"
+                      name="first_name"
+                      placeholder="{{ 'quiz.name_placeholder' | t | default: 'First name (optional)' }}"
+                    >
+                  </div>
+                {%- endif -%}
+                
+                <div class="quiz__email-actions">
+                  <button type="submit" class="button button--primary">
+                    {{ block.settings.button_text | default: 'See My Results' }}
+                  </button>
+                  {%- if block.settings.allow_skip -%}
+                    <button type="button" class="quiz__skip link-underline" data-quiz-skip-email>
+                      {{ 'quiz.skip' | t | default: 'Skip this step' }}
+                    </button>
+                  {%- endif -%}
+                </div>
+                
+                {%- if block.settings.privacy_text != blank -%}
+                  <p class="quiz__privacy">{{ block.settings.privacy_text }}</p>
+                {%- endif -%}
+              </form>
+            </div>
+
+        {%- endcase -%}
+      {%- endfor -%}
+
+      {%- comment -%} Results Step {%- endcomment -%}
+      <div class="quiz__step quiz__step--results" data-quiz-step="results" hidden>
+        <div class="quiz__results-header">
+          <h3 class="quiz__results-title">{{ section.settings.results_title | default: 'Your Perfect Match' }}</h3>
+          <p class="quiz__results-subtitle">{{ section.settings.results_subtitle | default: 'Based on your answers, we recommend:' }}</p>
+        </div>
+        
+        <div class="quiz__results-products" data-quiz-results>
+          <!-- Products injected via JavaScript -->
+        </div>
+        
+        <div class="quiz__results-actions">
+          <button type="button" class="quiz__restart link-underline" data-quiz-restart>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+            {{ 'quiz.retake' | t | default: 'Retake Quiz' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="quiz__nav" data-quiz-nav hidden>
+      <button type="button" class="quiz__back" data-quiz-back>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        {{ 'quiz.back' | t | default: 'Back' }}
+      </button>
+    </div>
+  </div>
+</section>
+
+{%- comment -%} Product data for recommendations {%- endcomment -%}
+<script type="application/json" data-quiz-products>
+  [
+    {%- for product in collections.all.products limit: 50 -%}
+      {
+        "id": {{ product.id | json }},
+        "title": {{ product.title | json }},
+        "handle": {{ product.handle | json }},
+        "url": {{ product.url | json }},
+        "price": {{ product.price | json }},
+        "priceFormatted": {{ product.price | money | json }},
+        "comparePrice": {{ product.compare_at_price | json }},
+        "image": {{ product.featured_image | image_url: width: 600 | json }},
+        "tags": {{ product.tags | json }},
+        "type": {{ product.type | json }},
+        "vendor": {{ product.vendor | json }},
+        "available": {{ product.available | json }},
+        "metafields": {
+          "quiz_score_strength": {{ product.metafields.quiz.strength | default: 5 | json }},
+          "quiz_score_cardio": {{ product.metafields.quiz.cardio | default: 5 | json }},
+          "quiz_score_balance": {{ product.metafields.quiz.balance | default: 5 | json }},
+          "quiz_score_rehab": {{ product.metafields.quiz.rehab | default: 5 | json }},
+          "quiz_experience_level": {{ product.metafields.quiz.experience | default: "all" | json }},
+          "quiz_space_required": {{ product.metafields.quiz.space | default: "small" | json }}
+        }
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+</script>
+
+<style>
+  .quiz {
+    --quiz-max-width: 700px;
+    --quiz-option-gap: var(--space-3);
+  }
+
+  .quiz__header {
+    margin-bottom: var(--space-10);
+  }
+
+  .quiz__title {
+    margin-bottom: var(--space-3);
+  }
+
+  .quiz__subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    max-width: 500px;
+    margin-inline: auto;
+  }
+
+  /* Progress Bar */
+  .quiz__progress {
+    margin-bottom: var(--space-8);
+  }
+
+  .quiz__progress-bar {
+    height: 4px;
+    background: var(--color-border);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--space-2);
+  }
+
+  .quiz__progress-fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: var(--radius-full);
+    transition: width 0.4s ease;
+  }
+
+  .quiz__progress-text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-align: center;
+    display: block;
+  }
+
+  /* Quiz Steps */
+  .quiz__container {
+    max-width: var(--quiz-max-width);
+    margin: 0 auto;
+  }
+
+  .quiz__step {
+    animation: fadeInUp 0.4s ease;
+  }
+
+  .quiz__step[hidden] {
+    display: none;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Question */
+  .quiz__question {
+    text-align: center;
+    margin-bottom: var(--space-8);
+  }
+
+  .quiz__question-text {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .quiz__question-desc {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+  }
+
+  .quiz__question-hint {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    margin-top: var(--space-2);
+  }
+
+  /* Options */
+  .quiz__options {
+    display: grid;
+    gap: var(--quiz-option-gap);
+  }
+
+  .quiz__options--grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .quiz__options--list {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz__options--cards {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .quiz__option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    background: var(--color-background);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: center;
+    min-height: 80px;
+  }
+
+  .quiz__options--list .quiz__option {
+    flex-direction: row;
+    justify-content: flex-start;
+    min-height: auto;
+    padding: var(--space-4);
+  }
+
+  .quiz__option:hover {
+    border-color: var(--color-primary);
+    background: var(--color-background-secondary);
+  }
+
+  .quiz__option.is-selected {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-primary-contrast);
+  }
+
+  .quiz__option-icon {
+    font-size: 2rem;
+  }
+
+  .quiz__option-label {
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* Multiple Select */
+  .quiz__options--multiple .quiz__option {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: var(--space-3);
+  }
+
+  .quiz__option-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+  }
+
+  .quiz__option-checkbox svg {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all var(--transition-fast);
+  }
+
+  .quiz__option.is-selected .quiz__option-checkbox {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .quiz__option.is-selected .quiz__option-checkbox svg {
+    opacity: 1;
+    transform: scale(1);
+    color: var(--color-primary-contrast);
+  }
+
+  /* Slider */
+  .quiz__slider {
+    max-width: 400px;
+    margin: 0 auto var(--space-6);
+  }
+
+  .quiz__slider-input {
+    width: 100%;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: var(--color-border);
+    appearance: none;
+    cursor: pointer;
+  }
+
+  .quiz__slider-input::-webkit-slider-thumb {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+  }
+
+  .quiz__slider-input::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+  }
+
+  .quiz__slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .quiz__slider-value {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+  }
+
+  /* Continue Button */
+  .quiz__continue {
+    display: block;
+    margin: var(--space-6) auto 0;
+    min-width: 200px;
+  }
+
+  .quiz__continue:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Email Capture */
+  .quiz__email-form {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .quiz__email-form .form-group {
+    margin-bottom: var(--space-3);
+  }
+
+  .quiz__email-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .quiz__email-actions .button {
+    width: 100%;
+  }
+
+  .quiz__skip {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+  }
+
+  .quiz__privacy {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    text-align: center;
+    margin-top: var(--space-4);
+  }
+
+  /* Results */
+  .quiz__step--results {
+    text-align: center;
+  }
+
+  .quiz__results-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .quiz__results-title {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .quiz__results-subtitle {
+    color: var(--color-text-secondary);
+  }
+
+  .quiz__results-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+
+  .quiz__result-card {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .quiz__result-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .quiz__result-card__image {
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  .quiz__result-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .quiz__result-card__content {
+    padding: var(--space-4);
+  }
+
+  .quiz__result-card__match {
+    display: inline-block;
+    background: var(--color-success);
+    color: white;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    padding: 0.25em 0.75em;
+    border-radius: var(--radius-full);
+    margin-bottom: var(--space-2);
+  }
+
+  .quiz__result-card__title {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  .quiz__result-card__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .quiz__result-card__title a:hover {
+    text-decoration: underline;
+  }
+
+  .quiz__result-card__price {
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-3);
+  }
+
+  .quiz__result-card__action .button {
+    width: 100%;
+  }
+
+  .quiz__results-actions {
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .quiz__restart {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+  }
+
+  .quiz__restart:hover {
+    color: var(--color-primary);
+  }
+
+  /* Navigation */
+  .quiz__nav {
+    max-width: var(--quiz-max-width);
+    margin: var(--space-6) auto 0;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .quiz__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    padding: var(--space-2);
+    transition: color var(--transition-fast);
+  }
+
+  .quiz__back:hover {
+    color: var(--color-text);
+  }
+
+  /* Mobile */
+  @media (max-width: 767px) {
+    .quiz__question-text {
+      font-size: var(--font-size-xl);
+    }
+
+    .quiz__options--grid {
+      grid-template-columns: 1fr;
+    }
+
+    .quiz__option {
+      padding: var(--space-4);
+    }
+
+    .quiz__results-products {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .quiz__step {
+      animation: none;
+    }
+
+    .quiz__progress-fill {
+      transition: none;
+    }
+  }
+</style>
+
+<script src="{{ 'quiz.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Product Quiz",
+  "tag": "section",
+  "class": "section-quiz",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_header",
+      "label": "Show header",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Find Your Perfect Training Tool"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Answer a few questions and we'll recommend the best equipment for your goals."
+    },
+    {
+      "type": "header",
+      "content": "Results"
+    },
+    {
+      "type": "text",
+      "id": "results_title",
+      "label": "Results title",
+      "default": "Your Perfect Match"
+    },
+    {
+      "type": "text",
+      "id": "results_subtitle",
+      "label": "Results subtitle",
+      "default": "Based on your answers, we recommend:"
+    },
+    {
+      "type": "range",
+      "id": "results_count",
+      "label": "Number of products to show",
+      "min": 1,
+      "max": 6,
+      "default": 3
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question_single",
+      "name": "Single Choice Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What's your primary training goal?"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description (optional)"
+        },
+        {
+          "type": "text",
+          "id": "question_key",
+          "label": "Question key",
+          "info": "Used for matching answers to products (e.g., 'goal', 'experience')",
+          "default": "goal"
+        },
+        {
+          "type": "textarea",
+          "id": "options",
+          "label": "Options (separated by |)",
+          "default": "Build Strength|Improve Cardio|Better Balance|Rehabilitation"
+        },
+        {
+          "type": "textarea",
+          "id": "option_values",
+          "label": "Option values (separated by |)",
+          "info": "Internal values for matching (e.g., strength, cardio, balance, rehab)",
+          "default": "strength|cardio|balance|rehab"
+        },
+        {
+          "type": "textarea",
+          "id": "option_icons",
+          "label": "Option icons/emojis (separated by |)",
+          "default": "💪|🏃|⚖️|🏥"
+        },
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "Layout",
+          "options": [
+            { "value": "grid", "label": "Grid (2 columns)" },
+            { "value": "list", "label": "List" },
+            { "value": "cards", "label": "Cards (auto-fit)" }
+          ],
+          "default": "grid"
+        }
+      ]
+    },
+    {
+      "type": "question_multiple",
+      "name": "Multiple Choice Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What areas do you want to focus on?"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description (optional)"
+        },
+        {
+          "type": "text",
+          "id": "question_key",
+          "label": "Question key",
+          "default": "focus_areas"
+        },
+        {
+          "type": "textarea",
+          "id": "options",
+          "label": "Options (separated by |)",
+          "default": "Core|Upper Body|Lower Body|Full Body|Coordination"
+        },
+        {
+          "type": "textarea",
+          "id": "option_values",
+          "label": "Option values (separated by |)",
+          "default": "core|upper|lower|full|coordination"
+        },
+        {
+          "type": "range",
+          "id": "min_selections",
+          "label": "Minimum selections",
+          "min": 1,
+          "max": 5,
+          "default": 1
+        },
+        {
+          "type": "range",
+          "id": "max_selections",
+          "label": "Maximum selections",
+          "min": 1,
+          "max": 10,
+          "default": 3
+        },
+        {
+          "type": "select",
+          "id": "layout",
+          "label": "Layout",
+          "options": [
+            { "value": "grid", "label": "Grid (2 columns)" },
+            { "value": "list", "label": "List" }
+          ],
+          "default": "list"
+        }
+      ]
+    },
+    {
+      "type": "question_slider",
+      "name": "Slider Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What's your fitness experience level?"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description (optional)"
+        },
+        {
+          "type": "text",
+          "id": "question_key",
+          "label": "Question key",
+          "default": "experience"
+        },
+        {
+          "type": "number",
+          "id": "min_value",
+          "label": "Minimum value",
+          "default": 1
+        },
+        {
+          "type": "number",
+          "id": "max_value",
+          "label": "Maximum value",
+          "default": 10
+        },
+        {
+          "type": "number",
+          "id": "default_value",
+          "label": "Default value",
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "min_label",
+          "label": "Minimum label",
+          "default": "Beginner"
+        },
+        {
+          "type": "text",
+          "id": "max_label",
+          "label": "Maximum label",
+          "default": "Advanced"
+        }
+      ]
+    },
+    {
+      "type": "email_capture",
+      "name": "Email Capture",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Almost there!"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Enter your email to see your personalized recommendations and save them for later."
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Email placeholder",
+          "default": "your@email.com"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_name",
+          "label": "Show name field",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text",
+          "default": "See My Results"
+        },
+        {
+          "type": "checkbox",
+          "id": "allow_skip",
+          "label": "Allow skipping email",
+          "default": true
+        },
+        {
+          "type": "textarea",
+          "id": "privacy_text",
+          "label": "Privacy text",
+          "default": "We'll send your results and occasional product updates. Unsubscribe anytime."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Quiz",
+      "blocks": [
+        {
+          "type": "question_single",
+          "settings": {
+            "question": "What's your primary training goal?",
+            "question_key": "goal",
+            "options": "Build Strength|Improve Cardio|Better Balance|Rehabilitation",
+            "option_values": "strength|cardio|balance|rehab",
+            "option_icons": "💪|🏃|⚖️|🏥",
+            "layout": "grid"
+          }
+        },
+        {
+          "type": "question_single",
+          "settings": {
+            "question": "How much space do you have?",
+            "question_key": "space",
+            "options": "Small (apartment)|Medium (home gym)|Large (studio/gym)",
+            "option_values": "small|medium|large",
+            "option_icons": "🏠|🏡|🏢",
+            "layout": "grid"
+          }
+        },
+        {
+          "type": "question_slider",
+          "settings": {
+            "question": "What's your fitness experience level?",
+            "question_key": "experience",
+            "min_value": 1,
+            "max_value": 10,
+            "default_value": 5,
+            "min_label": "Beginner",
+            "max_label": "Advanced"
+          }
+        },
+        {
+          "type": "question_multiple",
+          "settings": {
+            "question": "What areas do you want to focus on?",
+            "question_key": "focus",
+            "options": "Core Strength|Upper Body|Lower Body|Full Body|Coordination & Balance",
+            "option_values": "core|upper|lower|full|coordination",
+            "min_selections": 1,
+            "max_selections": 3,
+            "layout": "list"
+          }
+        },
+        {
+          "type": "email_capture",
+          "settings": {
+            "heading": "Almost there!",
+            "description": "Enter your email to see your personalized recommendations.",
+            "allow_skip": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

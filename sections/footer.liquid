@@ -1,0 +1,317 @@
+{% comment %}
+  Footer Section
+  Clean, minimal footer with newsletter signup, navigation, and social links
+  Inspired by postfamiliar.com
+{% endcomment %}
+
+{{ 'footer.css' | asset_url | stylesheet_tag }}
+
+<footer class="footer section" data-footer>
+  
+  {%- comment -%} Optional Marquee {%- endcomment -%}
+  {%- if section.settings.show_marquee and section.settings.marquee_text != blank -%}
+    <div class="footer__marquee">
+      <div class="marquee">
+        <div class="marquee__content" aria-hidden="true">
+          {%- for i in (1..10) -%}
+            <span class="marquee__item">{{ section.settings.marquee_text }}</span>
+          {%- endfor -%}
+        </div>
+        <div class="marquee__content" aria-hidden="true">
+          {%- for i in (1..10) -%}
+            <span class="marquee__item">{{ section.settings.marquee_text }}</span>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="footer__inner container">
+    
+    {%- comment -%} Footer Top - Newsletter & Branding {%- endcomment -%}
+    <div class="footer__top">
+      <div class="footer__brand">
+        {%- if section.settings.logo != blank -%}
+          <img 
+            src="{{ section.settings.logo | image_url: width: 300 }}"
+            alt="{{ shop.name }}"
+            class="footer__logo"
+            width="150"
+            height="auto"
+            loading="lazy"
+          >
+        {%- else -%}
+          <span class="footer__logo-text">{{ shop.name }}</span>
+        {%- endif -%}
+        
+        {%- if section.settings.tagline != blank -%}
+          <p class="footer__tagline">{{ section.settings.tagline }}</p>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.show_newsletter -%}
+        <div class="footer__newsletter">
+          <h3 class="footer__newsletter-title">{{ section.settings.newsletter_title | default: 'Stay in the loop' }}</h3>
+          {%- if section.settings.newsletter_text != blank -%}
+            <p class="footer__newsletter-text">{{ section.settings.newsletter_text }}</p>
+          {%- endif -%}
+          
+          {% form 'customer', id: 'footer-newsletter' %}
+            <div class="footer__newsletter-form">
+              <input 
+                type="email" 
+                name="contact[email]" 
+                placeholder="{{ 'general.newsletter.email_placeholder' | t }}"
+                class="footer__newsletter-input"
+                required
+                autocomplete="email"
+                aria-label="{{ 'general.newsletter.email_placeholder' | t }}"
+              >
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              <button type="submit" class="footer__newsletter-btn btn btn--primary">
+                {{ 'general.newsletter.subscribe' | t | default: 'Subscribe' }}
+              </button>
+            </div>
+            {%- if form.posted_successfully? -%}
+              <p class="footer__newsletter-success">{{ 'general.newsletter.success' | t }}</p>
+            {%- endif -%}
+          {% endform %}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Footer Middle - Navigation Columns {%- endcomment -%}
+    <div class="footer__middle">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'menu' -%}
+            <div class="footer__column" {{ block.shopify_attributes }}>
+              {%- if block.settings.title != blank -%}
+                <h4 class="footer__column-title">{{ block.settings.title }}</h4>
+              {%- endif -%}
+              {%- if block.settings.menu != blank -%}
+                <ul class="footer__menu">
+                  {%- for link in block.settings.menu.links -%}
+                    <li class="footer__menu-item">
+                      <a href="{{ link.url }}" class="footer__menu-link link">
+                        {{ link.title }}
+                      </a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+          
+          {%- when 'text' -%}
+            <div class="footer__column footer__column--text" {{ block.shopify_attributes }}>
+              {%- if block.settings.title != blank -%}
+                <h4 class="footer__column-title">{{ block.settings.title }}</h4>
+              {%- endif -%}
+              {%- if block.settings.text != blank -%}
+                <div class="footer__text prose">{{ block.settings.text }}</div>
+              {%- endif -%}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} Footer Bottom - Copyright, Social, Payment {%- endcomment -%}
+    <div class="footer__bottom">
+      <div class="footer__copyright">
+        <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ 'general.footer.rights' | t | default: 'All rights reserved.' }}</p>
+      </div>
+
+      {%- if section.settings.show_social -%}
+        <div class="footer__social">
+          {%- if settings.social_instagram != blank -%}
+            <a href="{{ settings.social_instagram }}" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <rect x="2" y="2" width="16" height="16" rx="4" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="10" cy="10" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="14.5" cy="5.5" r="1" fill="currentColor"/>
+              </svg>
+            </a>
+          {%- endif -%}
+          
+          {%- if settings.social_facebook != blank -%}
+            <a href="{{ settings.social_facebook }}" class="footer__social-link" aria-label="Facebook" target="_blank" rel="noopener">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.0039 4.92686 17.3174 8.75 17.9028V12.3438H6.71875V10H8.75V8.20312C8.75 6.19844 9.94453 5.09375 11.7719 5.09375C12.6469 5.09375 13.5625 5.25 13.5625 5.25V7.21875H12.5531C11.5609 7.21875 11.25 7.83281 11.25 8.46328V10H13.4688L13.1141 12.3438H11.25V17.9028C15.0731 17.3174 18 14.0039 18 10Z" fill="currentColor"/>
+              </svg>
+            </a>
+          {%- endif -%}
+          
+          {%- if settings.social_twitter != blank -%}
+            <a href="{{ settings.social_twitter }}" class="footer__social-link" aria-label="X (Twitter)" target="_blank" rel="noopener">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M15.2033 3H17.7433L12.1033 9.47667L18.6667 17H13.5633L9.55 11.7113L4.97 17H2.42833L8.47167 10.0633L2.16667 3H7.40333L11.0167 7.82167L15.2033 3ZM14.3367 15.5H15.7733L6.56667 4.47333H5.02333L14.3367 15.5Z" fill="currentColor"/>
+              </svg>
+            </a>
+          {%- endif -%}
+          
+          {%- if settings.social_youtube != blank -%}
+            <a href="{{ settings.social_youtube }}" class="footer__social-link" aria-label="YouTube" target="_blank" rel="noopener">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M17.7638 5.87719C17.5565 5.07469 16.9302 4.44844 16.1277 4.24094C14.6652 3.85344 10.0002 3.85344 10.0002 3.85344C10.0002 3.85344 5.33519 3.85344 3.87269 4.24094C3.07019 4.44844 2.44394 5.07469 2.23644 5.87719C1.84894 7.33969 1.84894 10.3897 1.84894 10.3897C1.84894 10.3897 1.84894 13.4397 2.23644 14.9022C2.44394 15.7047 3.07019 16.3309 3.87269 16.5384C5.33519 16.9259 10.0002 16.9259 10.0002 16.9259C10.0002 16.9259 14.6652 16.9259 16.1277 16.5384C16.9302 16.3309 17.5565 15.7047 17.7638 14.9022C18.1515 13.4397 18.1515 10.3897 18.1515 10.3897C18.1515 10.3897 18.1515 7.33969 17.7638 5.87719ZM8.30894 13.0384V7.74094L12.6652 10.3897L8.30894 13.0384Z" fill="currentColor"/>
+              </svg>
+            </a>
+          {%- endif -%}
+          
+          {%- if settings.social_linkedin != blank -%}
+            <a href="{{ settings.social_linkedin }}" class="footer__social-link" aria-label="LinkedIn" target="_blank" rel="noopener">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M17.0391 17.0391H14.0781V12.4023C14.0781 11.2969 14.0547 9.87109 12.5352 9.87109C10.9922 9.87109 10.7578 11.0781 10.7578 12.3203V17.0391H7.79688V7.49609H10.6406V8.80078H10.6797C11.0742 8.05078 12.043 7.26172 13.4844 7.26172C16.4883 7.26172 17.0391 9.23828 17.0391 11.8047V17.0391ZM4.44922 6.18359C3.49609 6.18359 2.72656 5.41406 2.72656 4.46094C2.72656 3.50781 3.49609 2.73828 4.44922 2.73828C5.40234 2.73828 6.17188 3.50781 6.17188 4.46094C6.17188 5.41406 5.40234 6.18359 4.44922 6.18359ZM5.9375 17.0391H2.96094V7.49609H5.9375V17.0391Z" fill="currentColor"/>
+              </svg>
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_payment_icons -%}
+        <div class="footer__payment">
+          {%- for type in shop.enabled_payment_types -%}
+            {{ type | payment_type_svg_tag: class: 'footer__payment-icon' }}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "section-footer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Branding"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Premium neuromuscular training equipment"
+    },
+    {
+      "type": "header",
+      "content": "Marquee"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_marquee",
+      "default": false,
+      "label": "Show marquee"
+    },
+    {
+      "type": "text",
+      "id": "marquee_text",
+      "label": "Marquee text",
+      "default": "Free shipping on orders over $500 • As seen in Men's Health & Shape Magazine •"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "default": true,
+      "label": "Show newsletter signup"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "label": "Newsletter title",
+      "default": "Stay in the loop"
+    },
+    {
+      "type": "textarea",
+      "id": "newsletter_text",
+      "label": "Newsletter text",
+      "default": "Subscribe for training tips, new product launches, and exclusive offers."
+    },
+    {
+      "type": "header",
+      "content": "Footer Bottom"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "default": true,
+      "label": "Show social icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "default": true,
+      "label": "Show payment icons"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Quick Links"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "default": "footer"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "About"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Reaxing creates innovative training equipment that challenges both body and mind through unpredictable movements.</p>"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "menu",
+        "settings": {
+          "title": "Shop"
+        }
+      },
+      {
+        "type": "menu",
+        "settings": {
+          "title": "Support"
+        }
+      },
+      {
+        "type": "menu",
+        "settings": {
+          "title": "Company"
+        }
+      }
+    ]
+  }
+}
+{% endschema %}

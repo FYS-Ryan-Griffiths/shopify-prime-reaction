@@ -1,0 +1,124 @@
+{% comment %}
+  Predictive Search Section
+  Search modal with instant results
+{% endcomment %}
+
+<div class="search-modal" data-search-modal>
+  <div class="search-modal__overlay overlay" data-search-close></div>
+  <div class="search-modal__container">
+    <div class="search-modal__content">
+      <form action="{{ routes.search_url }}" method="get" class="search-modal__form" role="search">
+        <input 
+          type="search" 
+          name="q" 
+          placeholder="{{ 'search.placeholder' | t }}"
+          class="search-modal__input"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          data-search-input
+        >
+        <input type="hidden" name="type" value="product">
+        <button type="submit" class="search-modal__submit" aria-label="{{ 'accessibility.search' | t }}">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M13.5 13.5L17 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </form>
+      <button class="search-modal__close" aria-label="{{ 'accessibility.close' | t }}" data-search-close>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="search-modal__results" data-search-results>
+      <!-- Results loaded via JS -->
+    </div>
+  </div>
+</div>
+
+<style>
+  .search-modal {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-base), visibility var(--transition-base);
+  }
+  
+  .search-modal.is-active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .search-modal__container {
+    position: relative;
+    max-width: var(--container-lg);
+    margin: 0 auto;
+    padding: var(--space-24) var(--page-margin) var(--space-12);
+  }
+  
+  .search-modal__content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  
+  .search-modal__form {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    border-bottom: 2px solid var(--color-text-inverse);
+    padding-bottom: var(--space-4);
+  }
+  
+  .search-modal__input {
+    flex: 1;
+    font-family: var(--font-heading);
+    font-size: var(--font-size-3xl);
+    color: var(--color-text-inverse);
+    background: transparent;
+    border: none;
+  }
+  
+  .search-modal__input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .search-modal__input:focus {
+    outline: none;
+  }
+  
+  .search-modal__submit,
+  .search-modal__close {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-inverse);
+  }
+  
+  .search-modal__results {
+    margin-top: var(--space-8);
+    color: var(--color-text-inverse);
+  }
+  
+  @media (max-width: 768px) {
+    .search-modal__input {
+      font-size: var(--font-size-xl);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Predictive Search",
+  "class": "section-predictive-search",
+  "settings": []
+}
+{% endschema %}

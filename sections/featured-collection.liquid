@@ -1,0 +1,134 @@
+{% comment %}
+  Featured Collection Section
+  Display products from a collection in a grid
+{% endcomment %}
+
+{{ 'product-card.css' | asset_url | stylesheet_tag }}
+
+<section class="section featured-collection" data-section-id="{{ section.id }}">
+  <div class="container">
+    
+    {%- if section.settings.title != blank -%}
+      <div class="featured-collection__header" data-animate>
+        <h2 class="featured-collection__title h2">{{ section.settings.title }}</h2>
+        {%- if section.settings.show_view_all and section.settings.collection != blank -%}
+          <a href="{{ section.settings.collection.url }}" class="featured-collection__view-all link link--underline">
+            View All
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8H13M13 8L8 3M13 8L8 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.collection != blank -%}
+      <div class="product-grid product-grid--{{ section.settings.columns }}" data-animate-stagger>
+        {%- for product in section.settings.collection.products limit: section.settings.products_to_show -%}
+          {% render 'product-card', product: product %}
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      {%- comment -%} Placeholder products {%- endcomment -%}
+      <div class="product-grid product-grid--{{ section.settings.columns }}" data-animate-stagger>
+        {%- for i in (1..section.settings.products_to_show) -%}
+          <article class="product-card">
+            <div class="product-card__media">
+              {{ 'product-' | append: i | placeholder_svg_tag: 'product-card__placeholder-svg' }}
+            </div>
+            <div class="product-card__info">
+              <h3 class="product-card__title">Example Product {{ i }}</h3>
+              <div class="product-card__price">$99.00</div>
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+    
+  </div>
+</section>
+
+<style>
+  .featured-collection__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-6);
+    margin-bottom: var(--space-12);
+  }
+  
+  .featured-collection__title {
+    margin-bottom: 0;
+  }
+  
+  .featured-collection__view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  
+  @media (max-width: 768px) {
+    .featured-collection__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-4);
+      margin-bottom: var(--space-8);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Featured Collection",
+  "class": "section-featured-collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "label": "Products to show"
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Columns",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show 'View all' link",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection"
+    }
+  ]
+}
+{% endschema %}

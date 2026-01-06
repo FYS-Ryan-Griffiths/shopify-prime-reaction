@@ -1,0 +1,476 @@
+# ðŸ—ï¸ PROJECT FLOORPLAN: Reaxing Shopify Theme
+
+> **Design Direction:** Editorial, typography-forward aesthetic inspired by [Post Familiar](https://postfamiliar.com/)  
+> **Reference Store:** [prime-reaction-3.myshopify.com](https://prime-reaction-3.myshopify.com/)  
+> **Product Line:** Reaxing neuromuscular training equipment (Fluiball, Fluikettle, Reax Board, Reax Run, Reax Lights, Reax Chain, etc.)
+
+---
+
+## ðŸ“‹ PROJECT OVERVIEW
+
+### Design Aesthetic
+- **Bold, oversized typography** â€” Mix of elegant serif headlines + clean sans-serif body
+- **Generous whitespace** â€” Let products breathe
+- **Horizontal scrolling marquee** â€” For press quotes, product features, brand values
+- **Minimal product cards** â€” Elegant hover states with video previews
+- **Dark/Light mode** â€” Premium gym aesthetic option
+- **Fluid motion animations** â€” Subtle water/liquid effects matching the product theme
+- **Bento grid layouts** â€” Asymmetric, dynamic product showcases
+
+### Core Functionality
+- âœ… Full Shopify Online Store 2.0 compatibility
+- âœ… Mobile-first responsive design
+- âœ… B2B Quote Request system
+- âœ… Email marketing integration (Seguno-ready)
+- âœ… Back in Stock alerts
+- âœ… Product comparison tools
+- âœ… Smart product finder quiz
+
+---
+
+## ðŸ”§ PHASE BREAKDOWN
+
+---
+
+### **PHASE 1: Foundation & Core Structure**
+ðŸ“… *Chats 1-2*
+
+| Deliverable | Files | Notes |
+|-------------|-------|-------|
+| Theme scaffold | `layout/theme.liquid`, `config/settings_schema.json` | OS 2.0 architecture |
+| Base CSS architecture | `assets/base.css`, `assets/variables.css` | CSS custom properties |
+| Typography system | `assets/typography.css` | Serif + sans-serif pairing |
+| Color system | CSS custom properties | Product line color coding |
+| Header component | `sections/header.liquid` | Minimal, logo-centered |
+| Mega menu | `snippets/mega-menu.liquid` | Product previews on hover |
+| Footer component | `sections/footer.liquid` | Newsletter, links, marquee |
+| Mobile bottom nav | `snippets/mobile-nav.liquid` | Thumb-friendly fixed bar |
+| Dark/Light mode | `assets/theme-toggle.js` | User preference saved |
+| Base JS utilities | `assets/global.js` | Event handling, animations |
+
+**Key Design Elements:**
+- Logo centered or minimal "PF"-style monogram option
+- Sticky header that transforms on scroll
+- Hamburger menu with full-screen takeover on mobile
+- Press/features marquee in footer
+
+---
+
+### **PHASE 2: Homepage & Bento Grid**
+ðŸ“… *Chats 3-4*
+
+| Deliverable | Files | Notes |
+|-------------|-------|-------|
+| Hero section | `sections/hero.liquid` | Full-bleed image/video + oversized text |
+| Bento grid section | `sections/bento-grid.liquid` | Dynamic asymmetric layout |
+| Featured products | `sections/featured-products.liquid` | Editorial product cards |
+| Video hover thumbnails | `snippets/product-card.liquid`, `assets/product-card.js` | 3-sec loops on hover |
+| Scrolling marquee | `snippets/marquee.liquid` | Press quotes, features |
+| "The Science" section | `sections/science-explainer.liquid` | Animated SDI technology explainer |
+| Brand values section | `sections/brand-values.liquid` | Icon + text blocks |
+| Newsletter signup | `sections/newsletter.liquid` | Integrated with Seguno |
+| Homepage template | `templates/index.json` | Section ordering |
+
+**Key Design Elements:**
+- Hero with parallax or Ken Burns effect
+- Bento tiles randomize on each visit
+- "SOLD OUT" badges prominently displayed
+- Product cards with weight/color indicators
+- Smooth scroll-triggered animations
+
+---
+
+### **PHASE 3: Product Pages**
+ðŸ“… *Chats 5-6*
+
+| Deliverable | Files | Notes |
+|-------------|-------|-------|
+| Product template | `templates/product.json` | Main product layout |
+| Product main section | `sections/product-main.liquid` | Gallery + info + actions |
+| Image gallery | `snippets/product-gallery.liquid` | Swipe, zoom, video support |
+| Variant picker | `snippets/variant-picker.liquid` | Color-coded by weight |
+| Size/weight comparison | `sections/product-comparison.liquid` | Visual slider tool |
+| Add to cart | `snippets/add-to-cart.liquid` | Triggers cart drawer |
+| **Request a Quote button** | `snippets/quote-button.liquid` | B2B quote system |
+| **Quote form modal** | `sections/quote-modal.liquid` | Customizable RFQ form |
+| **Back in Stock form** | `snippets/back-in-stock.liquid` | Email notification signup |
+| Related products | `sections/related-products.liquid` | "Complete your setup" |
+| Product reviews | `sections/reviews.liquid` | With video upload option |
+| Product JSON-LD | `snippets/product-schema.liquid` | SEO structured data |
+
+**Key Design Elements:**
+- Large, cinematic product imagery
+- Sticky add-to-cart bar on scroll
+- Trust badges (shipping, returns, support)
+- Expandable product details (accordion)
+- "Trainers also bought" recommendations
+
+**Quote System Features:**
+- "Request a Quote" button alongside Add to Cart
+- Option to hide prices for specific products/collections
+- Customizable quote form fields
+- Company/business information capture
+- Quote notification system
+
+---
+
+### **PHASE 4: Collection & Catalog**
+ðŸ“… *Chats 7-8*
+
+| Deliverable | Files | Notes |
+|-------------|-------|-------|
+| Collection template | `templates/collection.json` | Grid + filters |
+| Collection grid | `sections/collection-grid.liquid` | Responsive masonry option |
+| Collection hero | `sections/collection-hero.liquid` | Category banners |
+| Filtering & sorting | `snippets/facets.liquid`, `assets/facets.js` | AJAX-powered |
+| Quick-view modal | `snippets/quick-view.liquid` | Preview without leaving page |
+| Load more | `assets/collection.js` | Infinite scroll or button |
+| Product card | `snippets/product-card.liquid` | Reusable, video hover |
+| Empty collection | `snippets/collection-empty.liquid` | Helpful empty state |
+| **Price visibility toggle** | `snippets/price-display.liquid` | Hide/show based on settings |
+
+**Key Design Elements:**
+- Category color accents (Fluiball = blue, Fluikettle = orange, etc.)
+- Filter sidebar that slides in on mobile
+- Grid/list view toggle
+- Product count and active filters display
+
+---
+
+### **PHASE 5: Cart & Checkout**
+ðŸ“… *Chats 9-10*
+
+| Deliverable | Files | Notes |
+|-------------|-------|-------|
+| Cart drawer | `sections/cart-drawer.liquid` | Slide-out, never leave page |
+| Cart page | `templates/cart.json`, `sections/cart-main.liquid` | Fallback full page |
+| Cart line items | `snippets/cart-line-item.liquid` | Qty adjust, remove |
+| Upsells | `snippets/cart-upsells.liquid` | Smart recommendations |
+| **B2B toggle** | `snippets/b2b-toggle.liquid` | Switch to quote mode |
+| **Cart to Quote** | `snippets/cart-quote.liquid` | Convert cart to RFQ |
+| Shipping calculator | `snippets/shipping-calc.liquid` | Estimate before checkout |
+| Discount code | Built into cart drawer | Apply codes inline |
+| Cart note | `snippets/cart-note.liquid` | Special instructions |
+| Trust elements | `snippets/cart-trust.liquid` | Security, shipping info |
+
+**Key Design Elements:**
+- Persistent cart icon with item count
+- Smooth slide-in animation
+- Product thumbnails in cart
+- Clear pricing breakdown
+- "You might also like" upsells
+
+**B2B Features:**
+- Toggle between "Add to Cart" and "Request Quote" modes
+- Quote cart that collects items for RFQ
+- Company details form integration
+- Bulk quantity inputs
+
+---
+
+### **PHASE 6: Quote System (B2B)**
+ðŸ“… *Chat 11*
+
+| Deliverable | Files | Notes |
+|-------------|-------|-------|
+| Quote button component | `snippets/quote-button.liquid` | Customizable styling |
+| Quote form section | `sections/quote-form.liquid` | Drag-and-drop fields |
+| Quote drawer | `sections/quote-drawer.liquid` | Alternative to modal |
+| Quote confirmation | `snippets/quote-confirmation.liquid` | Success message |
+| Quote settings | `config/settings_schema.json` | Admin controls |
+| Quote notification | Email templates | Alert store owner |
+| **Hide prices logic** | `snippets/price.liquid` | Conditional display |
+| B2B customer detection | `snippets/b2b-detect.liquid` | Tag-based logic |
+
+**Quote System Capabilities:**
+- Request a Quote button on product and collection pages
+- Customizable form fields (company, volume, timeline, etc.)
+- Auto-fill for logged-in B2B customers
+- Email notifications to store owner
+- Option to hide prices store-wide or per-product
+- Convert quotes to draft orders
+- PDF quote generation (future enhancement)
+
+---
+
+### **PHASE 7: Supporting Pages**
+ðŸ“… *Chats 12-13*
+
+| Deliverable | Files | Notes |
+|-------------|-------|-------|
+| About/Story page | `templates/page.about.json` | Brand narrative |
+| Contact page | `templates/page.contact.json` | Form + map |
+| FAQ page | `templates/page.faq.json` | Accordion style |
+| **Product finder quiz** | `sections/quiz.liquid`, `assets/quiz.js` | Smart recommendations |
+| Training library | `templates/page.training.json` | Exercise database |
+| Facility locator | `sections/facility-locator.liquid` | Gym finder map |
+| Shipping info | `templates/page.shipping.json` | Policy details |
+| 404 page | `templates/404.json` | Helpful error state |
+
+**Quiz Features:**
+- "Find Your Perfect Training Tool" flow
+- 4-5 questions about goals, experience, space
+- Personalized product recommendations
+- Email capture option for results
+
+---
+
+### **PHASE 8: Search & Account**
+ðŸ“… *Chat 14*
+
+| Deliverable | Files | Notes |
+|-------------|-------|-------|
+| Search page | `templates/search.json` | Results layout |
+| Predictive search | `sections/predictive-search.liquid` | Instant results |
+| Search results | `sections/search-results.liquid` | Products + pages |
+| Customer login | `templates/customers/login.json` | Clean auth forms |
+| Customer register | `templates/customers/register.json` | Account creation |
+| Customer account | `templates/customers/account.json` | Order history |
+| Customer addresses | `templates/customers/addresses.json` | Address book |
+| Order details | `templates/customers/order.json` | Order view |
+| **Quote history** | `snippets/quote-history.liquid` | Past RFQs (B2B) |
+
+---
+
+### **PHASE 9: Email Integration**
+ðŸ“… *Chat 15*
+
+| Deliverable | Files | Notes |
+|-------------|-------|-------|
+| Newsletter section | `sections/newsletter.liquid` | Seguno-ready forms |
+| Exit intent popup | `sections/popup.liquid` | Email capture |
+| **Back in Stock signup** | `snippets/back-in-stock.liquid` | Notify when available |
+| Footer signup | Built into footer | Persistent option |
+| Email preferences | Customer account | Manage subscriptions |
+| Data layer events | `assets/analytics.js` | Email platform tracking |
+
+**Email Features (Seguno Integration):**
+- Newsletter signup forms throughout site
+- Back in Stock restock alerts
+- Browse/cart abandonment triggers
+- Post-purchase follow-ups
+- Segment sync (customers, tags, etc.)
+- Klaviyo/Mailchimp/HubSpot compatible structure
+
+---
+
+### **PHASE 10: Polish & Performance**
+ðŸ“… *Chat 16*
+
+| Deliverable | Files | Notes |
+|-------------|-------|-------|
+| Lazy loading | `assets/lazy-load.js` | Images, videos |
+| Skeleton states | `assets/skeleton.css` | Loading placeholders |
+| Micro-interactions | `assets/animations.css` | Buttons, hovers, transitions |
+| Liquid animations | `assets/liquid-effects.js` | Water/fluid motion theme |
+| Accessibility audit | ARIA labels, focus states | WCAG compliance |
+| Performance optimization | Critical CSS, deferred JS | Core Web Vitals |
+| SEO meta tags | `snippets/seo.liquid` | Open Graph, Twitter |
+| Structured data | `snippets/json-ld.liquid` | Schema.org markup |
+| Theme documentation | `README.md` | Setup instructions |
+
+---
+
+## ðŸ”— SHOPIFY CONNECTION: GitHub Integration
+
+### Recommended Setup: GitHub + Shopify Sync
+
+```
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”      â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                     â”‚      â”‚                     â”‚      â”‚                     â”‚
+â”‚   GitHub Repo       â”‚â”€â”€â”€â”€â”€â”€â”‚   Shopify Admin     â”‚â”€â”€â”€â”€â”€â”€â”‚   Live Store        â”‚
+â”‚   reaxing-theme     â”‚ sync â”‚   Theme Editor      â”‚      â”‚   reaxing.com       â”‚
+â”‚                     â”‚      â”‚                     â”‚      â”‚                     â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜      â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+         â”‚                            â”‚
+         â”‚                            â”‚
+    You commit                  Auto-deploys
+    code here                   to preview
+```
+
+### Step-by-Step Setup
+
+#### 1. Create GitHub Repository
+
+```bash
+# Create new repo on GitHub: github.com/YOUR-USERNAME/reaxing-theme
+# Can be public or private
+```
+
+#### 2. Connect Shopify to GitHub
+
+1. Go to **Shopify Admin** â†’ **Online Store** â†’ **Themes**
+2. Click **Add theme** â†’ **Connect from GitHub**
+3. Authorize Shopify to access your GitHub account
+4. Select your `reaxing-theme` repository
+5. Choose the `main` branch
+
+#### 3. Development Workflow
+
+```bash
+# After each chat session, I provide you with files
+# You add them to your local repo:
+
+git add .
+git commit -m "Phase 1: Foundation complete"
+git push origin main
+
+# Shopify automatically pulls changes and updates your theme preview
+```
+
+#### 4. Preview & Publish
+
+- Changes auto-deploy to a **preview theme** (not live)
+- Test everything in preview mode
+- When ready, click **Publish** to go live
+- Full version history and rollback capability
+
+### Alternative: Shopify CLI (For Local Development)
+
+```bash
+# Install Shopify CLI
+npm install -g @shopify/cli @shopify/theme
+
+# Authenticate with your store
+shopify auth login --store reaxing.myshopify.com
+
+# Clone the connected theme locally
+shopify theme pull
+
+# Start local dev server with hot reload
+shopify theme dev
+
+# Push changes directly
+shopify theme push
+```
+
+---
+
+## ðŸ“ THEME FILE STRUCTURE
+
+```
+reaxing-theme/
+â”œâ”€â”€ assets/
+â”‚   â”œâ”€â”€ base.css
+â”‚   â”œâ”€â”€ variables.css
+â”‚   â”œâ”€â”€ typography.css
+â”‚   â”œâ”€â”€ animations.css
+â”‚   â”œâ”€â”€ skeleton.css
+â”‚   â”œâ”€â”€ global.js
+â”‚   â”œâ”€â”€ product-card.js
+â”‚   â”œâ”€â”€ cart-drawer.js
+â”‚   â”œâ”€â”€ quote-system.js
+â”‚   â”œâ”€â”€ quiz.js
+â”‚   â”œâ”€â”€ facets.js
+â”‚   â”œâ”€â”€ theme-toggle.js
+â”‚   â””â”€â”€ ... (images, fonts)
+â”‚
+â”œâ”€â”€ config/
+â”‚   â”œâ”€â”€ settings_schema.json    # Theme settings
+â”‚   â””â”€â”€ settings_data.json      # Default values
+â”‚
+â”œâ”€â”€ layout/
+â”‚   â””â”€â”€ theme.liquid            # Main layout wrapper
+â”‚
+â”œâ”€â”€ locales/
+â”‚   â””â”€â”€ en.default.json         # Translation strings
+â”‚
+â”œâ”€â”€ sections/
+â”‚   â”œâ”€â”€ header.liquid
+â”‚   â”œâ”€â”€ footer.liquid
+â”‚   â”œâ”€â”€ hero.liquid
+â”‚   â”œâ”€â”€ bento-grid.liquid
+â”‚   â”œâ”€â”€ featured-products.liquid
+â”‚   â”œâ”€â”€ science-explainer.liquid
+â”‚   â”œâ”€â”€ newsletter.liquid
+â”‚   â”œâ”€â”€ product-main.liquid
+â”‚   â”œâ”€â”€ product-comparison.liquid
+â”‚   â”œâ”€â”€ related-products.liquid
+â”‚   â”œâ”€â”€ reviews.liquid
+â”‚   â”œâ”€â”€ collection-grid.liquid
+â”‚   â”œâ”€â”€ collection-hero.liquid
+â”‚   â”œâ”€â”€ cart-drawer.liquid
+â”‚   â”œâ”€â”€ cart-main.liquid
+â”‚   â”œâ”€â”€ quote-form.liquid
+â”‚   â”œâ”€â”€ quote-modal.liquid
+â”‚   â”œâ”€â”€ quiz.liquid
+â”‚   â”œâ”€â”€ predictive-search.liquid
+â”‚   â”œâ”€â”€ popup.liquid
+â”‚   â””â”€â”€ ...
+â”‚
+â”œâ”€â”€ snippets/
+â”‚   â”œâ”€â”€ product-card.liquid
+â”‚   â”œâ”€â”€ variant-picker.liquid
+â”‚   â”œâ”€â”€ mega-menu.liquid
+â”‚   â”œâ”€â”€ mobile-nav.liquid
+â”‚   â”œâ”€â”€ quote-button.liquid
+â”‚   â”œâ”€â”€ back-in-stock.liquid
+â”‚   â”œâ”€â”€ price.liquid
+â”‚   â”œâ”€â”€ b2b-toggle.liquid
+â”‚   â”œâ”€â”€ cart-upsells.liquid
+â”‚   â”œâ”€â”€ facets.liquid
+â”‚   â”œâ”€â”€ quick-view.liquid
+â”‚   â”œâ”€â”€ marquee.liquid
+â”‚   â”œâ”€â”€ seo.liquid
+â”‚   â””â”€â”€ ...
+â”‚
+â”œâ”€â”€ templates/
+â”‚   â”œâ”€â”€ index.json
+â”‚   â”œâ”€â”€ product.json
+â”‚   â”œâ”€â”€ collection.json
+â”‚   â”œâ”€â”€ cart.json
+â”‚   â”œâ”€â”€ search.json
+â”‚   â”œâ”€â”€ page.json
+â”‚   â”œâ”€â”€ page.about.json
+â”‚   â”œâ”€â”€ page.contact.json
+â”‚   â”œâ”€â”€ page.faq.json
+â”‚   â”œâ”€â”€ page.training.json
+â”‚   â”œâ”€â”€ 404.json
+â”‚   â””â”€â”€ customers/
+â”‚       â”œâ”€â”€ account.json
+â”‚       â”œâ”€â”€ login.json
+â”‚       â”œâ”€â”€ register.json
+â”‚       â”œâ”€â”€ order.json
+â”‚       â””â”€â”€ addresses.json
+â”‚
+â””â”€â”€ README.md
+```
+
+---
+
+## âœ… PRE-BUILD CHECKLIST
+
+Before we start Phase 1, please confirm/provide:
+
+### Required
+- [ ] **GitHub repo created** and URL shared
+- [ ] **Shopify store connected** to GitHub
+- [ ] **Shopify plan confirmed** (some features vary by plan)
+
+### Brand Assets (When Available)
+- [ ] Logo files (SVG preferred, PNG fallback)
+- [ ] Brand colors (hex codes)
+- [ ] Font preferences (or approve my recommendation)
+- [ ] Product photography / lifestyle images
+- [ ] Any existing brand guidelines
+
+### Decisions Needed
+- [ ] **Primary domain**: What URL will this live at?
+- [ ] **Currency**: CAD, USD, multi-currency?
+- [ ] **B2B priority**: Is quote system critical for launch or Phase 2?
+- [ ] **Email platform**: Seguno, Klaviyo, Mailchimp, or other?
+
+---
+
+## ðŸš€ READY TO BUILD?
+
+Once you've:
+1. Created the GitHub repo
+2. Connected it to Shopify
+3. Shared the repo URL with me
+
+We'll kick off **Phase 1: Foundation & Core Structure** in the next chat!
+
+---
+
+*Last updated: January 2026*

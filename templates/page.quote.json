@@ -1,0 +1,127 @@
+{
+  "sections": {
+    "page-banner": {
+      "type": "page-banner",
+      "settings": {
+        "show_breadcrumbs": true,
+        "background_color": "secondary"
+      }
+    },
+    "quote-form": {
+      "type": "quote-form",
+      "blocks": {
+        "name-fields": {
+          "type": "name_fields"
+        },
+        "email-field": {
+          "type": "email_field",
+          "settings": {
+            "label": "Email",
+            "placeholder": "your@email.com"
+          }
+        },
+        "phone-field": {
+          "type": "phone_field",
+          "settings": {
+            "label": "Phone",
+            "placeholder": "+1 (555) 123-4567",
+            "required": false
+          }
+        },
+        "company-field": {
+          "type": "company_field",
+          "settings": {
+            "label": "Company / Organization",
+            "required": true
+          }
+        },
+        "business-type": {
+          "type": "business_type_field",
+          "settings": {
+            "label": "Business Type",
+            "required": false
+          }
+        },
+        "quantity-field": {
+          "type": "quantity_field",
+          "settings": {
+            "label": "Estimated Quantity",
+            "required": false
+          }
+        },
+        "timeline-field": {
+          "type": "timeline_field",
+          "settings": {
+            "label": "Timeline",
+            "required": false
+          }
+        },
+        "textarea-field": {
+          "type": "textarea_field",
+          "settings": {
+            "label": "Additional Information",
+            "placeholder": "Tell us about your project, specific requirements, or any questions...",
+            "rows": 4,
+            "required": false
+          }
+        },
+        "benefit-1": {
+          "type": "benefit",
+          "settings": {
+            "icon": "✓",
+            "text": "Volume discounts available"
+          }
+        },
+        "benefit-2": {
+          "type": "benefit",
+          "settings": {
+            "icon": "✓",
+            "text": "Custom configurations"
+          }
+        },
+        "benefit-3": {
+          "type": "benefit",
+          "settings": {
+            "icon": "✓",
+            "text": "Dedicated account manager"
+          }
+        },
+        "benefit-4": {
+          "type": "benefit",
+          "settings": {
+            "icon": "✓",
+            "text": "Priority support"
+          }
+        }
+      },
+      "block_order": [
+        "name-fields",
+        "email-field",
+        "phone-field",
+        "company-field",
+        "business-type",
+        "quantity-field",
+        "timeline-field",
+        "textarea-field",
+        "benefit-1",
+        "benefit-2",
+        "benefit-3",
+        "benefit-4"
+      ],
+      "settings": {
+        "title": "Request a Quote",
+        "subtitle": "Fill out the form below and our team will get back to you within 24-48 hours with a custom quote tailored to your needs.",
+        "show_benefits": true,
+        "show_privacy_notice": true,
+        "privacy_text": "By submitting this form, you agree to be contacted regarding your quote request. Your information will not be shared with third parties.",
+        "submit_text": "Submit Quote Request",
+        "success_title": "Quote Request Received!",
+        "success_message": "Thank you for your quote request. Our team will review your requirements and get back to you within 24-48 business hours."
+      }
+    }
+  },
+  "order": [
+    "page-banner",
+    "quote-form"
+  ]
+}

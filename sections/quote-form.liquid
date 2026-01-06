@@ -1,0 +1,1341 @@
+{% comment %}
+  Quote Form Section
+  Standalone quote request form for dedicated page or embedded sections
+  Features drag-and-drop field customization via section settings
+{% endcomment %}
+
+{%- liquid
+  assign is_b2b = false
+  if customer
+    if customer.tags contains 'b2b' or customer.tags contains 'wholesale' or customer.tags contains 'business'
+      assign is_b2b = true
+    endif
+  endif
+-%}
+
+<section class="quote-form-section section-padding" data-quote-form-section>
+  <div class="container container--narrow">
+    
+    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+      <header class="quote-form-section__header text-center">
+        {%- if section.settings.title != blank -%}
+          <h1 class="quote-form-section__title h2">{{ section.settings.title }}</h1>
+        {%- endif -%}
+        {%- if section.settings.subtitle != blank -%}
+          <p class="quote-form-section__subtitle">{{ section.settings.subtitle }}</p>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    <div class="quote-form-section__grid">
+      <!-- Quote Items Summary -->
+      <div class="quote-form-section__sidebar">
+        <div class="quote-items-card" data-quote-items-card>
+          <h2 class="quote-items-card__title h5">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            {{ 'quote.items_in_quote' | t | default: 'Items in Quote' }}
+            <span class="quote-items-card__count" data-quote-count>0</span>
+          </h2>
+          
+          <div class="quote-items-card__list" data-quote-items-list>
+            <p class="quote-items-card__empty" data-quote-empty>
+              {{ 'quote.no_items' | t | default: 'No items added yet. Browse products and click "Request Quote" to add.' }}
+            </p>
+          </div>
+
+          <div class="quote-items-card__actions">
+            <button type="button" class="button button--outline button--small" data-clear-quote-items>
+              {{ 'quote.clear_all' | t | default: 'Clear All' }}
+            </button>
+            <a href="{{ routes.collections_url }}" class="button button--secondary button--small">
+              {{ 'quote.add_products' | t | default: 'Add Products' }}
+            </a>
+          </div>
+        </div>
+
+        {%- if section.settings.show_benefits -%}
+          <div class="quote-benefits-card">
+            <h3 class="quote-benefits-card__title h6">{{ 'quote.why_request' | t | default: 'Why Request a Quote?' }}</h3>
+            <ul class="quote-benefits-card__list">
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'benefit' -%}
+                  <li class="quote-benefits-card__item" {{ block.shopify_attributes }}>
+                    {%- if block.settings.icon != blank -%}
+                      <span class="quote-benefits-card__icon">{{ block.settings.icon }}</span>
+                    {%- else -%}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    {%- endif -%}
+                    <span>{{ block.settings.text }}</span>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Quote Form -->
+      <div class="quote-form-section__main">
+        <form 
+          class="quote-form quote-form--standalone" 
+          data-quote-form
+          action="/contact#contact_form" 
+          method="post"
+          data-ajax-form
+        >
+          <input type="hidden" name="form_type" value="contact">
+          <input type="hidden" name="utf8" value="✓">
+          <input type="hidden" name="contact[subject]" value="Quote Request from {{ shop.name }}">
+          <input type="hidden" name="contact[quote_items]" data-quote-form-items value="">
+          <input type="hidden" name="contact[source_page]" value="{{ canonical_url }}">
+
+          {%- comment -%} Render form fields based on blocks order {%- endcomment -%}
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+
+              {%- when 'field_group' -%}
+                <fieldset class="quote-form__fieldset" {{ block.shopify_attributes }}>
+                  {%- if block.settings.title != blank -%}
+                    <legend class="quote-form__legend">{{ block.settings.title }}</legend>
+                  {%- endif -%}
+                  <div class="quote-form__fields quote-form__fields--{{ block.settings.columns }}">
+                    {%- comment -%} Fields are rendered by adjacent blocks {%- endcomment -%}
+                  </div>
+                </fieldset>
+
+              {%- when 'text_field' -%}
+                <div class="form-group" {{ block.shopify_attributes }}>
+                  <label for="quote-{{ block.settings.field_name | handle }}">
+                    {{ block.settings.label }}
+                    {%- if block.settings.required -%}<span class="required" aria-label="required">*</span>{%- endif -%}
+                  </label>
+                  <input 
+                    type="{{ block.settings.input_type }}" 
+                    id="quote-{{ block.settings.field_name | handle }}"
+                    name="contact[{{ block.settings.field_name | handle }}]"
+                    {%- if block.settings.placeholder != blank %} placeholder="{{ block.settings.placeholder }}"{% endif %}
+                    {%- if block.settings.required %} required{% endif %}
+                    {%- if block.settings.autocomplete != blank %} autocomplete="{{ block.settings.autocomplete }}"{% endif %}
+                    {%- if is_b2b and block.settings.b2b_autofill == 'company' %} value="{{ customer.default_address.company }}"{% endif %}
+                    {%- if is_b2b and block.settings.b2b_autofill == 'name' %} value="{{ customer.name }}"{% endif %}
+                    {%- if is_b2b and block.settings.b2b_autofill == 'email' %} value="{{ customer.email }}"{% endif %}
+                    {%- if is_b2b and block.settings.b2b_autofill == 'phone' %} value="{{ customer.default_address.phone }}"{% endif %}
+                  >
+                </div>
+
+              {%- when 'email_field' -%}
+                <div class="form-group" {{ block.shopify_attributes }}>
+                  <label for="quote-email">
+                    {{ block.settings.label | default: 'Email' }}
+                    <span class="required" aria-label="required">*</span>
+                  </label>
+                  <input 
+                    type="email" 
+                    id="quote-email"
+                    name="contact[email]"
+                    placeholder="{{ block.settings.placeholder | default: 'your@email.com' }}"
+                    required
+                    autocomplete="email"
+                    {%- if customer %} value="{{ customer.email }}"{% endif %}
+                  >
+                </div>
+
+              {%- when 'name_fields' -%}
+                <div class="form-row" {{ block.shopify_attributes }}>
+                  <div class="form-group">
+                    <label for="quote-first-name">
+                      {{ 'customer.register.first_name' | t }}
+                      <span class="required" aria-label="required">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="quote-first-name"
+                      name="contact[first_name]"
+                      required
+                      autocomplete="given-name"
+                      {%- if customer %} value="{{ customer.first_name }}"{% endif %}
+                    >
+                  </div>
+                  <div class="form-group">
+                    <label for="quote-last-name">
+                      {{ 'customer.register.last_name' | t }}
+                      <span class="required" aria-label="required">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="quote-last-name"
+                      name="contact[last_name]"
+                      required
+                      autocomplete="family-name"
+                      {%- if customer %} value="{{ customer.last_name }}"{% endif %}
+                    >
+                  </div>
+                </div>
+
+              {%- when 'phone_field' -%}
+                <div class="form-group" {{ block.shopify_attributes }}>
+                  <label for="quote-phone">
+                    {{ block.settings.label | default: 'Phone' }}
+                    {%- if block.settings.required -%}<span class="required" aria-label="required">*</span>{%- endif -%}
+                  </label>
+                  <input 
+                    type="tel" 
+                    id="quote-phone"
+                    name="contact[phone]"
+                    placeholder="{{ block.settings.placeholder | default: '+1 (555) 123-4567' }}"
+                    {%- if block.settings.required %} required{% endif %}
+                    autocomplete="tel"
+                    {%- if customer and customer.default_address %} value="{{ customer.default_address.phone }}"{% endif %}
+                  >
+                </div>
+
+              {%- when 'company_field' -%}
+                <div class="form-group" {{ block.shopify_attributes }}>
+                  <label for="quote-company">
+                    {{ block.settings.label | default: 'Company' }}
+                    {%- if block.settings.required -%}<span class="required" aria-label="required">*</span>{%- endif -%}
+                  </label>
+                  <input 
+                    type="text" 
+                    id="quote-company"
+                    name="contact[company]"
+                    placeholder="{{ block.settings.placeholder }}"
+                    {%- if block.settings.required %} required{% endif %}
+                    autocomplete="organization"
+                    {%- if customer and customer.default_address %} value="{{ customer.default_address.company }}"{% endif %}
+                  >
+                </div>
+
+              {%- when 'select_field' -%}
+                <div class="form-group" {{ block.shopify_attributes }}>
+                  <label for="quote-{{ block.settings.field_name | handle }}">
+                    {{ block.settings.label }}
+                    {%- if block.settings.required -%}<span class="required" aria-label="required">*</span>{%- endif -%}
+                  </label>
+                  <select 
+                    id="quote-{{ block.settings.field_name | handle }}"
+                    name="contact[{{ block.settings.field_name | handle }}]"
+                    {%- if block.settings.required %} required{% endif %}
+                  >
+                    <option value="">{{ block.settings.placeholder | default: 'Select...' }}</option>
+                    {%- assign options = block.settings.options | split: ',' -%}
+                    {%- for option in options -%}
+                      {%- assign opt_clean = option | strip -%}
+                      <option value="{{ opt_clean | handle }}">{{ opt_clean }}</option>
+                    {%- endfor -%}
+                  </select>
+                </div>
+
+              {%- when 'quantity_field' -%}
+                <div class="form-group" {{ block.shopify_attributes }}>
+                  <label for="quote-quantity">
+                    {{ block.settings.label | default: 'Estimated Quantity' }}
+                    {%- if block.settings.required -%}<span class="required" aria-label="required">*</span>{%- endif -%}
+                  </label>
+                  <select 
+                    id="quote-quantity"
+                    name="contact[quantity_range]"
+                    {%- if block.settings.required %} required{% endif %}
+                  >
+                    <option value="">{{ 'quote.select_quantity' | t | default: 'Select...' }}</option>
+                    <option value="1-5">1-5 {{ 'quote.units' | t | default: 'units' }}</option>
+                    <option value="6-10">6-10 {{ 'quote.units' | t | default: 'units' }}</option>
+                    <option value="11-25">11-25 {{ 'quote.units' | t | default: 'units' }}</option>
+                    <option value="26-50">26-50 {{ 'quote.units' | t | default: 'units' }}</option>
+                    <option value="51-100">51-100 {{ 'quote.units' | t | default: 'units' }}</option>
+                    <option value="100+">100+ {{ 'quote.units' | t | default: 'units' }}</option>
+                  </select>
+                </div>
+
+              {%- when 'timeline_field' -%}
+                <div class="form-group" {{ block.shopify_attributes }}>
+                  <label for="quote-timeline">
+                    {{ block.settings.label | default: 'Timeline' }}
+                    {%- if block.settings.required -%}<span class="required" aria-label="required">*</span>{%- endif -%}
+                  </label>
+                  <select 
+                    id="quote-timeline"
+                    name="contact[timeline]"
+                    {%- if block.settings.required %} required{% endif %}
+                  >
+                    <option value="">{{ 'quote.select_timeline' | t | default: 'Select...' }}</option>
+                    <option value="immediate">{{ 'quote.timeline_immediate' | t | default: 'Immediate' }}</option>
+                    <option value="1-month">{{ 'quote.timeline_1month' | t | default: 'Within 1 month' }}</option>
+                    <option value="1-3-months">{{ 'quote.timeline_3months' | t | default: '1-3 months' }}</option>
+                    <option value="3-6-months">{{ 'quote.timeline_6months' | t | default: '3-6 months' }}</option>
+                    <option value="6-months-plus">{{ 'quote.timeline_future' | t | default: '6+ months' }}</option>
+                  </select>
+                </div>
+
+              {%- when 'business_type_field' -%}
+                <div class="form-group" {{ block.shopify_attributes }}>
+                  <label for="quote-business-type">
+                    {{ block.settings.label | default: 'Business Type' }}
+                    {%- if block.settings.required -%}<span class="required" aria-label="required">*</span>{%- endif -%}
+                  </label>
+                  <select 
+                    id="quote-business-type"
+                    name="contact[business_type]"
+                    {%- if block.settings.required %} required{% endif %}
+                  >
+                    <option value="">{{ 'quote.select_type' | t | default: 'Select...' }}</option>
+                    <option value="gym">{{ 'quote.type_gym' | t | default: 'Gym/Fitness Center' }}</option>
+                    <option value="studio">{{ 'quote.type_studio' | t | default: 'Training Studio' }}</option>
+                    <option value="school">{{ 'quote.type_school' | t | default: 'School/University' }}</option>
+                    <option value="corporate">{{ 'quote.type_corporate' | t | default: 'Corporate Wellness' }}</option>
+                    <option value="sports">{{ 'quote.type_sports' | t | default: 'Sports Team/Club' }}</option>
+                    <option value="rehab">{{ 'quote.type_rehab' | t | default: 'Rehabilitation Center' }}</option>
+                    <option value="hotel">{{ 'quote.type_hotel' | t | default: 'Hotel/Resort' }}</option>
+                    <option value="personal">{{ 'quote.type_personal' | t | default: 'Personal/Home Use' }}</option>
+                    <option value="other">{{ 'quote.type_other' | t | default: 'Other' }}</option>
+                  </select>
+                </div>
+
+              {%- when 'textarea_field' -%}
+                <div class="form-group form-group--full" {{ block.shopify_attributes }}>
+                  <label for="quote-message">
+                    {{ block.settings.label | default: 'Message' }}
+                    {%- if block.settings.required -%}<span class="required" aria-label="required">*</span>{%- endif -%}
+                  </label>
+                  <textarea 
+                    id="quote-message"
+                    name="contact[body]"
+                    rows="{{ block.settings.rows | default: 4 }}"
+                    placeholder="{{ block.settings.placeholder }}"
+                    {%- if block.settings.required %} required{% endif %}
+                  ></textarea>
+                </div>
+
+              {%- when 'address_fields' -%}
+                <div class="form-group form-group--full" {{ block.shopify_attributes }}>
+                  <fieldset class="address-fieldset">
+                    <legend class="h6">{{ block.settings.title | default: 'Shipping Address' }}</legend>
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label for="quote-address1">{{ 'customer.addresses.address1' | t }}</label>
+                        <input 
+                          type="text" 
+                          id="quote-address1"
+                          name="contact[address1]"
+                          autocomplete="address-line1"
+                          {%- if customer and customer.default_address %} value="{{ customer.default_address.address1 }}"{% endif %}
+                        >
+                      </div>
+                      <div class="form-group">
+                        <label for="quote-address2">{{ 'customer.addresses.address2' | t }}</label>
+                        <input 
+                          type="text" 
+                          id="quote-address2"
+                          name="contact[address2]"
+                          autocomplete="address-line2"
+                          {%- if customer and customer.default_address %} value="{{ customer.default_address.address2 }}"{% endif %}
+                        >
+                      </div>
+                    </div>
+                    <div class="form-row form-row--3">
+                      <div class="form-group">
+                        <label for="quote-city">{{ 'customer.addresses.city' | t }}</label>
+                        <input 
+                          type="text" 
+                          id="quote-city"
+                          name="contact[city]"
+                          autocomplete="address-level2"
+                          {%- if customer and customer.default_address %} value="{{ customer.default_address.city }}"{% endif %}
+                        >
+                      </div>
+                      <div class="form-group">
+                        <label for="quote-province">{{ 'customer.addresses.province' | t }}</label>
+                        <input 
+                          type="text" 
+                          id="quote-province"
+                          name="contact[province]"
+                          autocomplete="address-level1"
+                          {%- if customer and customer.default_address %} value="{{ customer.default_address.province }}"{% endif %}
+                        >
+                      </div>
+                      <div class="form-group">
+                        <label for="quote-zip">{{ 'customer.addresses.zip' | t }}</label>
+                        <input 
+                          type="text" 
+                          id="quote-zip"
+                          name="contact[zip]"
+                          autocomplete="postal-code"
+                          {%- if customer and customer.default_address %} value="{{ customer.default_address.zip }}"{% endif %}
+                        >
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="quote-country">{{ 'customer.addresses.country' | t }}</label>
+                      <select id="quote-country" name="contact[country]" autocomplete="country-name">
+                        <option value="">Select country...</option>
+                        {%- for country in localization.available_countries -%}
+                          <option value="{{ country.name }}" {% if customer and customer.default_address.country == country.name %}selected{% endif %}>
+                            {{ country.name }}
+                          </option>
+                        {%- endfor -%}
+                      </select>
+                    </div>
+                  </fieldset>
+                </div>
+
+              {%- when 'checkbox_field' -%}
+                <div class="form-group form-group--checkbox" {{ block.shopify_attributes }}>
+                  <label class="checkbox-label">
+                    <input 
+                      type="checkbox" 
+                      name="contact[{{ block.settings.field_name | handle }}]"
+                      value="yes"
+                      {%- if block.settings.required %} required{% endif %}
+                    >
+                    <span>{{ block.settings.label }}</span>
+                  </label>
+                </div>
+
+              {%- when 'file_upload' -%}
+                <div class="form-group" {{ block.shopify_attributes }}>
+                  <label for="quote-file">
+                    {{ block.settings.label | default: 'Attach Files' }}
+                    {%- if block.settings.required -%}<span class="required" aria-label="required">*</span>{%- endif -%}
+                  </label>
+                  <div class="file-upload">
+                    <input 
+                      type="file" 
+                      id="quote-file"
+                      name="contact[attachments]"
+                      accept="{{ block.settings.accept | default: '.pdf,.doc,.docx,.jpg,.png' }}"
+                      {%- if block.settings.multiple %} multiple{% endif %}
+                      {%- if block.settings.required %} required{% endif %}
+                    >
+                    <p class="file-upload__hint">{{ block.settings.hint | default: 'PDF, Word, or images up to 10MB' }}</p>
+                  </div>
+                </div>
+
+            {%- endcase -%}
+          {%- endfor -%}
+
+          {%- if section.settings.show_privacy_notice -%}
+            <div class="quote-form__privacy">
+              <p>{{ section.settings.privacy_text | default: 'By submitting this form, you agree to be contacted regarding your quote request. Your information will not be shared with third parties.' }}</p>
+            </div>
+          {%- endif -%}
+
+          <div class="quote-form__submit">
+            <button type="submit" class="button button--primary button--large" data-quote-submit>
+              <span class="button__text">{{ section.settings.submit_text | default: 'Submit Quote Request' }}</span>
+              <span class="button__loading" aria-hidden="true">
+                <svg class="spinner" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" opacity="0.25"></circle>
+                  <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                </svg>
+                {{ 'quote.submitting' | t | default: 'Submitting...' }}
+              </span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Success Message (hidden by default) -->
+        <div class="quote-form__success" data-quote-success hidden>
+          {% render 'quote-confirmation', 
+            title: section.settings.success_title, 
+            message: section.settings.success_message 
+          %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .quote-form-section {
+    --form-gap: var(--space-6);
+  }
+
+  .quote-form-section__header {
+    margin-bottom: var(--space-10);
+  }
+
+  .quote-form-section__title {
+    margin-bottom: var(--space-3);
+  }
+
+  .quote-form-section__subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin-inline: auto;
+  }
+
+  .quote-form-section__grid {
+    display: grid;
+    gap: var(--space-8);
+  }
+
+  @media (min-width: 1024px) {
+    .quote-form-section__grid {
+      grid-template-columns: 300px 1fr;
+      gap: var(--space-12);
+    }
+  }
+
+  /* Quote Items Card */
+  .quote-items-card {
+    background: var(--color-background-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    position: sticky;
+    top: calc(var(--header-height, 80px) + var(--space-4));
+  }
+
+  .quote-items-card__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+
+  .quote-items-card__count {
+    background: var(--color-primary);
+    color: var(--color-primary-contrast);
+    font-size: var(--font-size-xs);
+    padding: 0.125em 0.5em;
+    border-radius: var(--radius-full);
+    min-width: 1.5em;
+    text-align: center;
+  }
+
+  .quote-items-card__list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: var(--space-4);
+  }
+
+  .quote-items-card__empty {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-style: italic;
+    padding: var(--space-4);
+    text-align: center;
+  }
+
+  .quote-items-card__item {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .quote-items-card__item:last-child {
+    border-bottom: 0;
+  }
+
+  .quote-items-card__item-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+  }
+
+  .quote-items-card__item-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .quote-items-card__item-title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .quote-items-card__item-variant {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+  }
+
+  .quote-items-card__item-remove {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: var(--space-1);
+    transition: color var(--transition-fast);
+  }
+
+  .quote-items-card__item-remove:hover {
+    color: var(--color-error);
+  }
+
+  .quote-items-card__actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  /* Benefits Card */
+  .quote-benefits-card {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-top: var(--space-4);
+  }
+
+  .quote-benefits-card__title {
+    margin-bottom: var(--space-3);
+  }
+
+  .quote-benefits-card__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .quote-benefits-card__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    padding: var(--space-2) 0;
+  }
+
+  .quote-benefits-card__item svg {
+    color: var(--color-success);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* Form Styles */
+  .quote-form--standalone {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+  }
+
+  .quote-form__fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 var(--space-6);
+  }
+
+  .quote-form__legend {
+    font-family: var(--font-heading);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+    width: 100%;
+  }
+
+  .quote-form__fields--2 {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .quote-form__privacy {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: var(--space-6) 0;
+    padding: var(--space-4);
+    background: var(--color-background-secondary);
+    border-radius: var(--radius-md);
+  }
+
+  .quote-form__submit {
+    text-align: center;
+    padding-top: var(--space-4);
+  }
+
+  .quote-form__submit .button {
+    min-width: 250px;
+  }
+
+  /* Success State */
+  .quote-form__success {
+    text-align: center;
+    padding: var(--space-12) var(--space-8);
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Loading State */
+  .quote-form.is-loading .button__text {
+    display: none;
+  }
+
+  .quote-form.is-loading .button__loading {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .button__loading {
+    display: none;
+  }
+
+  .button__loading .spinner {
+    width: 1em;
+    height: 1em;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Address Fields */
+  .address-fieldset {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+  }
+
+  .address-fieldset legend {
+    padding: 0 var(--space-2);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .form-row--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* File Upload */
+  .file-upload input[type="file"] {
+    width: 100%;
+  }
+
+  .file-upload__hint {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    margin-top: var(--space-1);
+  }
+
+  /* Checkbox */
+  .form-group--checkbox {
+    margin: var(--space-4) 0;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    width: auto;
+    margin-top: 3px;
+  }
+
+  /* Mobile */
+  @media (max-width: 767px) {
+    .quote-form--standalone {
+      padding: var(--space-5);
+    }
+
+    .quote-form__fields--2 {
+      grid-template-columns: 1fr;
+    }
+
+    .form-row--3 {
+      grid-template-columns: 1fr;
+    }
+
+    .quote-items-card {
+      position: static;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const section = document.querySelector('[data-quote-form-section]');
+    if (!section) return;
+
+    const form = section.querySelector('[data-quote-form]');
+    const itemsList = section.querySelector('[data-quote-items-list]');
+    const itemsInput = section.querySelector('[data-quote-form-items]');
+    const countEl = section.querySelector('[data-quote-count]');
+    const emptyEl = section.querySelector('[data-quote-empty]');
+    const successEl = section.querySelector('[data-quote-success]');
+    const clearBtn = section.querySelector('[data-clear-quote-items]');
+
+    // Load items from localStorage
+    function getItems() {
+      try {
+        return JSON.parse(localStorage.getItem('quoteItems')) || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveItems(items) {
+      localStorage.setItem('quoteItems', JSON.stringify(items));
+    }
+
+    function renderItems() {
+      const items = getItems();
+      
+      // Update count
+      if (countEl) countEl.textContent = items.length;
+      
+      // Show/hide empty state
+      if (emptyEl) emptyEl.hidden = items.length > 0;
+      
+      // Render items
+      const html = items.map(item => `
+        <div class="quote-items-card__item" data-item-id="${item.id}">
+          ${item.productImage ? `<img src="${item.productImage}" alt="" class="quote-items-card__item-image" loading="lazy">` : ''}
+          <div class="quote-items-card__item-info">
+            <div class="quote-items-card__item-title">${item.productTitle}</div>
+            ${item.variantTitle && item.variantTitle !== 'Default Title' ? `<div class="quote-items-card__item-variant">${item.variantTitle}</div>` : ''}
+          </div>
+          <button type="button" class="quote-items-card__item-remove" data-remove-item="${item.id}" aria-label="Remove">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      `).join('');
+
+      if (itemsList) {
+        // Keep empty element, add items after
+        const existingItems = itemsList.querySelectorAll('.quote-items-card__item');
+        existingItems.forEach(el => el.remove());
+        itemsList.insertAdjacentHTML('beforeend', html);
+      }
+
+      // Update form hidden input
+      if (itemsInput) {
+        itemsInput.value = JSON.stringify(items);
+      }
+    }
+
+    // Remove item
+    section.addEventListener('click', function(e) {
+      const removeBtn = e.target.closest('[data-remove-item]');
+      if (removeBtn) {
+        const itemId = removeBtn.dataset.removeItem;
+        const items = getItems().filter(item => item.id !== itemId);
+        saveItems(items);
+        renderItems();
+      }
+    });
+
+    // Clear all
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function() {
+        if (confirm('Clear all items from quote?')) {
+          saveItems([]);
+          renderItems();
+        }
+      });
+    }
+
+    // Form submission
+    if (form) {
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        form.classList.add('is-loading');
+        const submitBtn = form.querySelector('[data-quote-submit]');
+        if (submitBtn) submitBtn.disabled = true;
+
+        try {
+          const formData = new FormData(form);
+          
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Accept': 'application/json'
+            }
+          });
+
+          if (response.ok) {
+            // Clear quote items
+            saveItems([]);
+            
+            // Show success
+            form.hidden = true;
+            if (successEl) successEl.hidden = false;
+            
+            // Track event
+            if (window.dataLayer) {
+              window.dataLayer.push({
+                event: 'quote_request_submitted',
+                quote_items: getItems().length
+              });
+            }
+          } else {
+            throw new Error('Form submission failed');
+          }
+        } catch (error) {
+          console.error('Quote form error:', error);
+          alert('There was an error submitting your request. Please try again.');
+        } finally {
+          form.classList.remove('is-loading');
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      });
+    }
+
+    // Initial render
+    renderItems();
+
+    // Listen for quote updates from other parts of the site
+    window.addEventListener('quote:updated', renderItems);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Quote Form",
+  "tag": "section",
+  "class": "section-quote-form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Request a Quote"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Fill out the form below and our team will get back to you within 24-48 hours with a custom quote."
+    },
+    {
+      "type": "header",
+      "content": "Form Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_benefits",
+      "label": "Show benefits sidebar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_privacy_notice",
+      "label": "Show privacy notice",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "privacy_text",
+      "label": "Privacy notice text",
+      "default": "By submitting this form, you agree to be contacted regarding your quote request. Your information will not be shared with third parties."
+    },
+    {
+      "type": "text",
+      "id": "submit_text",
+      "label": "Submit button text",
+      "default": "Submit Quote Request"
+    },
+    {
+      "type": "header",
+      "content": "Success Message"
+    },
+    {
+      "type": "text",
+      "id": "success_title",
+      "label": "Success title",
+      "default": "Quote Request Received!"
+    },
+    {
+      "type": "textarea",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thank you for your quote request. Our team will review your requirements and get back to you within 24-48 business hours."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "name_fields",
+      "name": "Name Fields",
+      "limit": 1,
+      "settings": []
+    },
+    {
+      "type": "email_field",
+      "name": "Email Field",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Email"
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Placeholder",
+          "default": "your@email.com"
+        }
+      ]
+    },
+    {
+      "type": "phone_field",
+      "name": "Phone Field",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Phone"
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Placeholder",
+          "default": "+1 (555) 123-4567"
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "Required",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "company_field",
+      "name": "Company Field",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Company / Organization"
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Placeholder"
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "Required",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "business_type_field",
+      "name": "Business Type",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Business Type"
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "Required",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "quantity_field",
+      "name": "Quantity Field",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Estimated Quantity"
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "Required",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "timeline_field",
+      "name": "Timeline Field",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Timeline"
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "Required",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "text_field",
+      "name": "Text Field",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Field Label"
+        },
+        {
+          "type": "text",
+          "id": "field_name",
+          "label": "Field name (for form data)",
+          "default": "custom_field"
+        },
+        {
+          "type": "select",
+          "id": "input_type",
+          "label": "Input type",
+          "options": [
+            { "value": "text", "label": "Text" },
+            { "value": "email", "label": "Email" },
+            { "value": "tel", "label": "Phone" },
+            { "value": "number", "label": "Number" },
+            { "value": "url", "label": "URL" }
+          ],
+          "default": "text"
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Placeholder"
+        },
+        {
+          "type": "text",
+          "id": "autocomplete",
+          "label": "Autocomplete attribute",
+          "info": "e.g. 'given-name', 'organization'"
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "Required",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "b2b_autofill",
+          "label": "Auto-fill for B2B customers",
+          "options": [
+            { "value": "", "label": "None" },
+            { "value": "company", "label": "Company" },
+            { "value": "name", "label": "Full Name" },
+            { "value": "email", "label": "Email" },
+            { "value": "phone", "label": "Phone" }
+          ],
+          "default": ""
+        }
+      ]
+    },
+    {
+      "type": "select_field",
+      "name": "Dropdown Field",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Select Option"
+        },
+        {
+          "type": "text",
+          "id": "field_name",
+          "label": "Field name (for form data)",
+          "default": "custom_select"
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Placeholder",
+          "default": "Select..."
+        },
+        {
+          "type": "textarea",
+          "id": "options",
+          "label": "Options (comma-separated)",
+          "default": "Option 1, Option 2, Option 3"
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "Required",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "textarea_field",
+      "name": "Textarea Field",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Additional Information"
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Placeholder",
+          "default": "Tell us about your project, specific requirements, or any questions..."
+        },
+        {
+          "type": "range",
+          "id": "rows",
+          "label": "Rows",
+          "min": 2,
+          "max": 10,
+          "default": 4
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "Required",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "address_fields",
+      "name": "Address Fields",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Section title",
+          "default": "Shipping Address"
+        }
+      ]
+    },
+    {
+      "type": "checkbox_field",
+      "name": "Checkbox Field",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "I agree to the terms and conditions"
+        },
+        {
+          "type": "text",
+          "id": "field_name",
+          "label": "Field name",
+          "default": "terms_accepted"
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "Required",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "file_upload",
+      "name": "File Upload",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Attach Files"
+        },
+        {
+          "type": "text",
+          "id": "accept",
+          "label": "Accepted file types",
+          "default": ".pdf,.doc,.docx,.jpg,.png"
+        },
+        {
+          "type": "text",
+          "id": "hint",
+          "label": "Hint text",
+          "default": "PDF, Word, or images up to 10MB"
+        },
+        {
+          "type": "checkbox",
+          "id": "multiple",
+          "label": "Allow multiple files",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "required",
+          "label": "Required",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "benefit",
+      "name": "Benefit Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (emoji or text)",
+          "default": "✓"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Benefit text",
+          "default": "Volume discounts available"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Quote Form",
+      "blocks": [
+        { "type": "name_fields" },
+        { "type": "email_field" },
+        { "type": "phone_field" },
+        { "type": "company_field" },
+        { "type": "business_type_field" },
+        { "type": "quantity_field" },
+        { "type": "timeline_field" },
+        { "type": "textarea_field" },
+        { "type": "benefit", "settings": { "text": "Volume discounts available" } },
+        { "type": "benefit", "settings": { "text": "Custom configurations" } },
+        { "type": "benefit", "settings": { "text": "Dedicated account manager" } },
+        { "type": "benefit", "settings": { "text": "Priority support" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

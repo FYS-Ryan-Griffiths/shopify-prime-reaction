@@ -1,0 +1,294 @@
+{% comment %}
+  Product Main Section
+  Full product layout with gallery, info, and add to cart
+  Inspired by postfamiliar.com's clean, editorial product pages
+{% endcomment %}
+
+{{ 'product-main.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign featured_image = current_variant.featured_image | default: product.featured_image
+-%}
+
+<section class="product-main section" data-section-id="{{ section.id }}" data-product-section>
+  <div class="container">
+    <div class="product-main__grid">
+      
+      {%- comment -%} Product Gallery {%- endcomment -%}
+      <div class="product-main__media" data-animate>
+        {% render 'product-gallery', product: product, current_variant: current_variant %}
+      </div>
+
+      {%- comment -%} Product Info {%- endcomment -%}
+      <div class="product-main__info" data-animate>
+        
+        {%- comment -%} Breadcrumb {%- endcomment -%}
+        <nav class="product-main__breadcrumb" aria-label="Breadcrumb">
+          <a href="{{ routes.root_url }}">Home</a>
+          <span aria-hidden="true">/</span>
+          {%- if product.collections.first -%}
+            <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
+            <span aria-hidden="true">/</span>
+          {%- endif -%}
+          <span aria-current="page">{{ product.title }}</span>
+        </nav>
+
+        {%- comment -%} Vendor {%- endcomment -%}
+        {%- if settings.product_show_vendor and product.vendor != blank -%}
+          <p class="product-main__vendor label-text">{{ product.vendor }}</p>
+        {%- endif -%}
+
+        {%- comment -%} Title {%- endcomment -%}
+        <h1 class="product-main__title h2">{{ product.title }}</h1>
+
+        {%- comment -%} Price {%- endcomment -%}
+        {%- unless settings.hide_prices -%}
+          <div class="product-main__price" data-product-price>
+            {% render 'product-price', product: product, variant: current_variant %}
+          </div>
+        {%- endunless -%}
+
+        {%- comment -%} Short Description {%- endcomment -%}
+        {%- if product.metafields.custom.short_description != blank -%}
+          <div class="product-main__short-desc">
+            {{ product.metafields.custom.short_description }}
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Product Form {%- endcomment -%}
+        <div class="product-main__form-wrapper">
+          {%- form 'product', product, id: 'product-form', class: 'product-form', data-product-form: '' -%}
+            <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+            
+            {%- comment -%} Variant Picker {%- endcomment -%}
+            {%- unless product.has_only_default_variant -%}
+              {% render 'variant-picker', product: product, current_variant: current_variant %}
+            {%- endunless -%}
+
+            {%- comment -%} Quantity {%- endcomment -%}
+            <div class="product-form__group">
+              <label for="quantity" class="product-form__label">{{ 'products.quantity' | t }}</label>
+              <div class="product-form__quantity">
+                <button type="button" class="product-form__qty-btn" data-qty-minus aria-label="Decrease quantity">−</button>
+                <input 
+                  type="number" 
+                  id="quantity" 
+                  name="quantity" 
+                  value="1" 
+                  min="1" 
+                  class="product-form__qty-input"
+                  data-quantity-input
+                >
+                <button type="button" class="product-form__qty-btn" data-qty-plus aria-label="Increase quantity">+</button>
+              </div>
+            </div>
+
+            {%- comment -%} Add to Cart / Quote Buttons {%- endcomment -%}
+            <div class="product-form__buttons">
+              <button 
+                type="submit" 
+                name="add" 
+                class="product-form__submit btn btn--primary btn--lg btn--full"
+                {% unless current_variant.available %}disabled{% endunless %}
+                data-add-to-cart
+              >
+                {%- if current_variant.available -%}
+                  {{ 'products.add_to_cart' | t }}
+                {%- else -%}
+                  {{ 'products.sold_out' | t }}
+                {%- endif -%}
+              </button>
+              
+              {%- if settings.enable_quote_system -%}
+                <button 
+                  type="button" 
+                  class="product-form__quote btn btn--secondary btn--lg btn--full"
+                  data-quote-button
+                >
+                  {{ settings.quote_button_text | default: 'Request a Quote' }}
+                </button>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} Back in Stock {%- endcomment -%}
+            {%- unless current_variant.available -%}
+              <div class="product-form__back-in-stock">
+                {% render 'back-in-stock', variant: current_variant %}
+              </div>
+            {%- endunless -%}
+          {%- endform -%}
+        </div>
+
+        {%- comment -%} Trust Badges {%- endcomment -%}
+        <div class="product-main__trust">
+          <div class="product-main__trust-item">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 18.5C10 18.5 17 14 17 8V3.5L10 1.5L3 3.5V8C3 14 10 18.5 10 18.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M7 10L9 12L13 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Secure Checkout</span>
+          </div>
+          <div class="product-main__trust-item">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <rect x="2" y="5" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2 9H18" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M6 13H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span>Free Shipping $500+</span>
+          </div>
+          <div class="product-main__trust-item">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M3 7L10 3L17 7V13L10 17L3 13V7Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M10 17V10" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M17 7L10 10L3 7" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <span>Easy Returns</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Product JSON for JavaScript {%- endcomment -%}
+  <script type="application/json" data-product-json>
+    {{ product | json }}
+  </script>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const section = document.querySelector('[data-product-section]');
+    if (!section) return;
+
+    const form = section.querySelector('[data-product-form]');
+    const variantInput = section.querySelector('[data-variant-id]');
+    const productJson = JSON.parse(section.querySelector('[data-product-json]').textContent);
+    const addToCartBtn = section.querySelector('[data-add-to-cart]');
+    const priceContainer = section.querySelector('[data-product-price]');
+
+    // Quantity controls
+    const qtyInput = section.querySelector('[data-quantity-input]');
+    const qtyMinus = section.querySelector('[data-qty-minus]');
+    const qtyPlus = section.querySelector('[data-qty-plus]');
+
+    if (qtyMinus && qtyPlus && qtyInput) {
+      qtyMinus.addEventListener('click', () => {
+        const current = parseInt(qtyInput.value) || 1;
+        if (current > 1) qtyInput.value = current - 1;
+      });
+
+      qtyPlus.addEventListener('click', () => {
+        const current = parseInt(qtyInput.value) || 1;
+        qtyInput.value = current + 1;
+      });
+    }
+
+    // Variant change handler
+    section.addEventListener('change', function(e) {
+      if (e.target.matches('[data-option-selector]')) {
+        const selectedOptions = Array.from(section.querySelectorAll('[data-option-selector]'))
+          .map(select => select.value);
+        
+        const variant = productJson.variants.find(v => {
+          return v.options.every((opt, i) => opt === selectedOptions[i]);
+        });
+
+        if (variant) {
+          variantInput.value = variant.id;
+          
+          // Update URL
+          const url = new URL(window.location);
+          url.searchParams.set('variant', variant.id);
+          window.history.replaceState({}, '', url);
+
+          // Update button state
+          if (variant.available) {
+            addToCartBtn.disabled = false;
+            addToCartBtn.textContent = '{{ "products.add_to_cart" | t }}';
+          } else {
+            addToCartBtn.disabled = true;
+            addToCartBtn.textContent = '{{ "products.sold_out" | t }}';
+          }
+
+          // Update price (simple version)
+          const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+          if (priceContainer) {
+            let priceHtml = `<span class="product-price">${formatter.format(variant.price / 100)}</span>`;
+            if (variant.compare_at_price > variant.price) {
+              priceHtml = `<span class="product-price product-price--sale">${formatter.format(variant.price / 100)}</span>
+                          <span class="product-price product-price--compare">${formatter.format(variant.compare_at_price / 100)}</span>`;
+            }
+            priceContainer.innerHTML = priceHtml;
+          }
+
+          // Update gallery image
+          if (variant.featured_image) {
+            const mainImage = section.querySelector('[data-main-image]');
+            if (mainImage) {
+              mainImage.src = variant.featured_image.src;
+            }
+          }
+        }
+      }
+    });
+
+    // Add to cart AJAX
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      addToCartBtn.disabled = true;
+      addToCartBtn.textContent = 'Adding...';
+
+      try {
+        const formData = new FormData(form);
+        const response = await fetch('/cart/add.js', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          const cart = await fetch('/cart.js').then(r => r.json());
+          document.dispatchEvent(new CustomEvent('cart:updated', { 
+            detail: { itemCount: cart.item_count, cart: cart }
+          }));
+          document.dispatchEvent(new CustomEvent('cart:open'));
+          addToCartBtn.textContent = 'Added!';
+          setTimeout(() => {
+            addToCartBtn.textContent = '{{ "products.add_to_cart" | t }}';
+            addToCartBtn.disabled = false;
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Add to cart error:', error);
+        addToCartBtn.textContent = 'Error';
+        setTimeout(() => {
+          addToCartBtn.textContent = '{{ "products.add_to_cart" | t }}';
+          addToCartBtn.disabled = false;
+        }, 2000);
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Product Main",
+  "class": "section-product-main",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_zoom",
+      "label": "Enable image zoom",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_share_buttons",
+      "label": "Show share buttons",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

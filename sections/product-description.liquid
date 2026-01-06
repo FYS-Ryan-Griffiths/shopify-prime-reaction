@@ -1,0 +1,326 @@
+{% comment %}
+  Product Description Section
+  Expandable product details with accordion
+{% endcomment %}
+
+<section class="product-description section">
+  <div class="container">
+    {%- if section.blocks.size > 0 -%}
+      <div class="product-description__grid">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'description' -%}
+              <div class="product-description__accordion" {{ block.shopify_attributes }}>
+                <button 
+                  class="product-description__trigger"
+                  aria-expanded="true"
+                  aria-controls="description-content-{{ block.id }}"
+                  data-accordion-trigger
+                >
+                  <span class="product-description__trigger-text">
+                    {{ block.settings.title | default: 'Description' }}
+                  </span>
+                  <svg class="product-description__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                  </svg>
+                </button>
+                <div 
+                  id="description-content-{{ block.id }}"
+                  class="product-description__content is-open"
+                  data-accordion-content
+                >
+                  <div class="product-description__text rte">
+                    {{ product.description }}
+                  </div>
+                </div>
+              </div>
+              
+            {%- when 'specifications' -%}
+              <div class="product-description__accordion" {{ block.shopify_attributes }}>
+                <button 
+                  class="product-description__trigger"
+                  aria-expanded="false"
+                  aria-controls="specs-content-{{ block.id }}"
+                  data-accordion-trigger
+                >
+                  <span class="product-description__trigger-text">
+                    {{ block.settings.title | default: 'Specifications' }}
+                  </span>
+                  <svg class="product-description__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                  </svg>
+                </button>
+                <div 
+                  id="specs-content-{{ block.id }}"
+                  class="product-description__content"
+                  data-accordion-content
+                >
+                  <div class="product-description__specs">
+                    {%- if product.metafields.custom.weight != blank -%}
+                      <div class="product-description__spec-row">
+                        <span class="product-description__spec-label">{{ 'products.product.weight' | t }}</span>
+                        <span class="product-description__spec-value">{{ product.metafields.custom.weight }}</span>
+                      </div>
+                    {%- endif -%}
+                    
+                    {%- if product.metafields.custom.dimensions != blank -%}
+                      <div class="product-description__spec-row">
+                        <span class="product-description__spec-label">{{ 'products.product.dimensions' | t }}</span>
+                        <span class="product-description__spec-value">{{ product.metafields.custom.dimensions }}</span>
+                      </div>
+                    {%- endif -%}
+                    
+                    {%- if product.metafields.custom.material != blank -%}
+                      <div class="product-description__spec-row">
+                        <span class="product-description__spec-label">{{ 'products.product.material' | t }}</span>
+                        <span class="product-description__spec-value">{{ product.metafields.custom.material }}</span>
+                      </div>
+                    {%- endif -%}
+                    
+                    {%- if product.metafields.custom.capacity != blank -%}
+                      <div class="product-description__spec-row">
+                        <span class="product-description__spec-label">{{ 'products.product.capacity' | t }}</span>
+                        <span class="product-description__spec-value">{{ product.metafields.custom.capacity }}</span>
+                      </div>
+                    {%- endif -%}
+                    
+                    {%- if product.vendor != blank -%}
+                      <div class="product-description__spec-row">
+                        <span class="product-description__spec-label">{{ 'products.product.vendor' | t }}</span>
+                        <span class="product-description__spec-value">{{ product.vendor }}</span>
+                      </div>
+                    {%- endif -%}
+                    
+                    {%- if product.type != blank -%}
+                      <div class="product-description__spec-row">
+                        <span class="product-description__spec-label">{{ 'products.product.type' | t }}</span>
+                        <span class="product-description__spec-value">{{ product.type }}</span>
+                      </div>
+                    {%- endif -%}
+                    
+                    <div class="product-description__spec-row">
+                      <span class="product-description__spec-label">{{ 'products.product.sku' | t }}</span>
+                      <span class="product-description__spec-value" data-product-sku>{{ product.selected_or_first_available_variant.sku }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            {%- when 'shipping' -%}
+              <div class="product-description__accordion" {{ block.shopify_attributes }}>
+                <button 
+                  class="product-description__trigger"
+                  aria-expanded="false"
+                  aria-controls="shipping-content-{{ block.id }}"
+                  data-accordion-trigger
+                >
+                  <span class="product-description__trigger-text">
+                    {{ block.settings.title | default: 'Shipping & Returns' }}
+                  </span>
+                  <svg class="product-description__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                  </svg>
+                </button>
+                <div 
+                  id="shipping-content-{{ block.id }}"
+                  class="product-description__content"
+                  data-accordion-content
+                >
+                  <div class="product-description__text rte">
+                    {{ block.settings.content }}
+                  </div>
+                </div>
+              </div>
+              
+            {%- when 'care' -%}
+              <div class="product-description__accordion" {{ block.shopify_attributes }}>
+                <button 
+                  class="product-description__trigger"
+                  aria-expanded="false"
+                  aria-controls="care-content-{{ block.id }}"
+                  data-accordion-trigger
+                >
+                  <span class="product-description__trigger-text">
+                    {{ block.settings.title | default: 'Care Instructions' }}
+                  </span>
+                  <svg class="product-description__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                  </svg>
+                </button>
+                <div 
+                  id="care-content-{{ block.id }}"
+                  class="product-description__content"
+                  data-accordion-content
+                >
+                  <div class="product-description__text rte">
+                    {%- if product.metafields.custom.care_instructions != blank -%}
+                      {{ product.metafields.custom.care_instructions | metafield_tag }}
+                    {%- else -%}
+                      {{ block.settings.content }}
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+              
+            {%- when 'custom' -%}
+              <div class="product-description__accordion" {{ block.shopify_attributes }}>
+                <button 
+                  class="product-description__trigger"
+                  aria-expanded="false"
+                  aria-controls="custom-content-{{ block.id }}"
+                  data-accordion-trigger
+                >
+                  <span class="product-description__trigger-text">
+                    {{ block.settings.title }}
+                  </span>
+                  <svg class="product-description__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                  </svg>
+                </button>
+                <div 
+                  id="custom-content-{{ block.id }}"
+                  class="product-description__content"
+                  data-accordion-content
+                >
+                  <div class="product-description__text rte">
+                    {{ block.settings.content }}
+                  </div>
+                </div>
+              </div>
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const triggers = document.querySelectorAll('[data-accordion-trigger]');
+    
+    triggers.forEach(trigger => {
+      trigger.addEventListener('click', function() {
+        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+        const content = this.nextElementSibling;
+        
+        this.setAttribute('aria-expanded', !isExpanded);
+        content.classList.toggle('is-open', !isExpanded);
+        
+        // Animate icon
+        const icon = this.querySelector('.product-description__icon');
+        if (icon) {
+          icon.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(45deg)';
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Product Description",
+  "tag": "section",
+  "class": "product-description-section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Description"
+        }
+      ]
+    },
+    {
+      "type": "specifications",
+      "name": "Specifications",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Specifications"
+        }
+      ]
+    },
+    {
+      "type": "shipping",
+      "name": "Shipping & Returns",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Shipping & Returns"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Free shipping on orders over $50. Standard delivery 3-5 business days.</p><p>Returns accepted within 30 days of purchase.</p>"
+        }
+      ]
+    },
+    {
+      "type": "care",
+      "name": "Care Instructions",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Care Instructions"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Fallback Content",
+          "info": "Shown if product doesn't have care instructions metafield",
+          "default": "<p>Handle with care. Clean with a damp cloth.</p>"
+        }
+      ]
+    },
+    {
+      "type": "custom",
+      "name": "Custom Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Additional Info"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Description",
+      "blocks": [
+        {
+          "type": "description"
+        },
+        {
+          "type": "specifications"
+        },
+        {
+          "type": "shipping"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

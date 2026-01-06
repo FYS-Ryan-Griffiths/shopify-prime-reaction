@@ -1,0 +1,111 @@
+{% comment %}
+  Product Card Snippet
+  Minimal, editorial product card with hover effects
+  
+  Usage:
+  {% render 'product-card', product: product %}
+  
+  Optional parameters:
+  - show_vendor: boolean
+  - show_quick_view: boolean
+  - lazy_load: boolean (default: true)
+{% endcomment %}
+
+{%- liquid
+  assign show_vendor = show_vendor | default: settings.product_show_vendor
+  assign show_quick_view = show_quick_view | default: settings.product_show_quick_view
+  assign lazy_load = lazy_load | default: true
+  assign show_secondary_image = settings.product_show_secondary_image
+  
+  assign secondary_image = product.images[1]
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+  endif
+-%}
+
+<article class="product-card" data-product-card>
+  <a href="{{ product.url }}" class="product-card__link">
+    
+    {%- comment -%} Image Container {%- endcomment -%}
+    <div class="product-card__media hover-zoom">
+      {%- if product.featured_image != blank -%}
+        <img 
+          src="{{ product.featured_image | image_url: width: 600 }}"
+          srcset="{{ product.featured_image | image_url: width: 300 }} 300w,
+                  {{ product.featured_image | image_url: width: 450 }} 450w,
+                  {{ product.featured_image | image_url: width: 600 }} 600w,
+                  {{ product.featured_image | image_url: width: 900 }} 900w"
+          sizes="(min-width: 1200px) 25vw, (min-width: 768px) 33vw, 50vw"
+          alt="{{ product.featured_image.alt | escape | default: product.title }}"
+          class="product-card__image product-card__image--primary"
+          width="{{ product.featured_image.width }}"
+          height="{{ product.featured_image.height }}"
+          {% if lazy_load %}loading="lazy"{% endif %}
+        >
+        
+        {%- if secondary_image != blank and show_secondary_image -%}
+          <img 
+            src="{{ secondary_image | image_url: width: 600 }}"
+            alt="{{ secondary_image.alt | escape | default: product.title }}"
+            class="product-card__image product-card__image--secondary"
+            width="{{ secondary_image.width }}"
+            height="{{ secondary_image.height }}"
+            loading="lazy"
+          >
+        {%- endif -%}
+      {%- else -%}
+        <div class="product-card__placeholder">
+          {{ 'product-1' | placeholder_svg_tag: 'product-card__placeholder-svg' }}
+        </div>
+      {%- endif -%}
+      
+      {%- comment -%} Badges {%- endcomment -%}
+      <div class="product-card__badges">
+        {%- if product.available == false and settings.product_show_sold_out_badge -%}
+          <span class="product-card__badge product-card__badge--sold-out">
+            {{ 'products.sold_out' | t }}
+          </span>
+        {%- elsif on_sale and settings.product_show_sale_badge -%}
+          <span class="product-card__badge product-card__badge--sale">
+            {{ 'products.sale' | t }}
+          </span>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} Product Info {%- endcomment -%}
+    <div class="product-card__info">
+      {%- if show_vendor and product.vendor != blank -%}
+        <span class="product-card__vendor">{{ product.vendor }}</span>
+      {%- endif -%}
+      
+      <h3 class="product-card__title">{{ product.title }}</h3>
+      
+      {%- unless settings.hide_prices -%}
+        <div class="product-card__price">
+          {%- if on_sale -%}
+            <span class="price-sale">{{ product.price | money }}</span>
+            <span class="price-compare">{{ product.compare_at_price | money }}</span>
+          {%- elsif product.price_varies -%}
+            <span>{{ 'products.from' | t }} {{ product.price_min | money }}</span>
+          {%- else -%}
+            <span>{{ product.price | money }}</span>
+          {%- endif -%}
+        </div>
+      {%- endunless -%}
+    </div>
+  </a>
+  
+  {%- comment -%} Quick View Button {%- endcomment -%}
+  {%- if show_quick_view -%}
+    <button 
+      class="product-card__quick-view btn btn--sm btn--secondary"
+      data-quick-view
+      data-product-handle="{{ product.handle }}"
+      aria-label="Quick view {{ product.title }}"
+    >
+      Quick View
+    </button>
+  {%- endif -%}
+</article>

@@ -1,0 +1,44 @@
+{% comment %}
+  Quote Button
+  Renders a "Request a Quote" button for B2B functionality
+  
+  Required parameters:
+  - product: the product object
+  
+  Optional parameters:
+  - class: additional CSS classes
+  - show_price: whether to show price alongside (default: true based on settings)
+{% endcomment %}
+
+{%- liquid
+  assign show_quote = settings.enable_quote_system
+  assign hide_prices = settings.hide_prices
+  assign product_hide_price = product.metafields.custom.hide_price | default: false
+  assign should_hide_price = hide_prices or product_hide_price
+-%}
+
+{%- if show_quote -%}
+  <button 
+    type="button"
+    class="quote-button {{ class }}"
+    data-quote-button
+    data-product-id="{{ product.id }}"
+    data-product-title="{{ product.title | escape }}"
+    data-product-handle="{{ product.handle }}"
+    data-product-image="{{ product.featured_image | image_url: width: 200 }}"
+    data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+    data-variant-title="{{ product.selected_or_first_available_variant.title | escape }}"
+    {% if product.selected_or_first_available_variant.price %}
+      data-variant-price="{{ product.selected_or_first_available_variant.price | money }}"
+    {% endif %}
+  >
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+      <polyline points="10 9 9 9 8 9"></polyline>
+    </svg>
+    <span>{{ 'products.product.request_quote' | t }}</span>
+  </button>
+{%- endif -%}

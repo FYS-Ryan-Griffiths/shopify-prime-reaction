@@ -1,0 +1,293 @@
+{% comment %}
+  JSON-LD Structured Data
+  Schema.org markup for rich search results
+  
+  Include in theme.liquid before </head>:
+  {% render 'json-ld' %}
+{% endcomment %}
+
+{%- comment -%} Organization Schema {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ shop.name | json }},
+  "url": {{ shop.url | json }},
+  {%- if settings.logo != blank -%}
+  "logo": {{ settings.logo | image_url: width: 500 | json }},
+  {%- endif -%}
+  {%- if shop.phone != blank -%}
+  "telephone": {{ shop.phone | json }},
+  {%- endif -%}
+  {%- if shop.email != blank -%}
+  "email": {{ shop.email | json }},
+  {%- endif -%}
+  "sameAs": [
+    {%- if settings.social_facebook != blank -%}{{ settings.social_facebook | json }},{%- endif -%}
+    {%- if settings.social_instagram != blank -%}{{ settings.social_instagram | json }},{%- endif -%}
+    {%- if settings.social_twitter != blank -%}{{ settings.social_twitter | json }},{%- endif -%}
+    {%- if settings.social_youtube != blank -%}{{ settings.social_youtube | json }},{%- endif -%}
+    {%- if settings.social_linkedin != blank -%}{{ settings.social_linkedin | json }},{%- endif -%}
+    {%- if settings.social_tiktok != blank -%}{{ settings.social_tiktok | json }}{%- endif -%}
+  ]
+}
+</script>
+
+{%- comment -%} WebSite Schema with SearchAction {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": {{ shop.name | json }},
+  "url": {{ shop.url | json }},
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "{{ shop.url }}/search?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+{%- comment -%} BreadcrumbList Schema {%- endcomment -%}
+{%- unless template.name == 'index' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": {{ shop.url | json }}
+    }
+    {%- case template.name -%}
+      {%- when 'product' -%}
+        {%- if product.collections.first -%}
+        ,{
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ product.collections.first.title | json }},
+          "item": {{ product.collections.first.url | prepend: shop.url | json }}
+        }
+        ,{
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ product.title | json }},
+          "item": {{ product.url | prepend: shop.url | json }}
+        }
+        {%- else -%}
+        ,{
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ product.title | json }},
+          "item": {{ product.url | prepend: shop.url | json }}
+        }
+        {%- endif -%}
+      {%- when 'collection' -%}
+        ,{
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ collection.title | json }},
+          "item": {{ collection.url | prepend: shop.url | json }}
+        }
+      {%- when 'article' -%}
+        ,{
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ blog.title | json }},
+          "item": {{ blog.url | prepend: shop.url | json }}
+        }
+        ,{
+          "@type": "ListItem",
+          "position": 3,
+          "name": {{ article.title | json }},
+          "item": {{ article.url | prepend: shop.url | json }}
+        }
+      {%- when 'blog' -%}
+        ,{
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ blog.title | json }},
+          "item": {{ blog.url | prepend: shop.url | json }}
+        }
+      {%- when 'page' -%}
+        ,{
+          "@type": "ListItem",
+          "position": 2,
+          "name": {{ page.title | json }},
+          "item": {{ page.url | prepend: shop.url | json }}
+        }
+    {%- endcase -%}
+  ]
+}
+</script>
+{%- endunless -%}
+
+{%- comment -%} Product Schema {%- endcomment -%}
+{%- if template.name == 'product' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "url": {{ product.url | prepend: shop.url | json }},
+  "description": {{ product.description | strip_html | truncate: 5000 | json }},
+  {%- if product.featured_image -%}
+  "image": [
+    {%- for image in product.images limit: 5 -%}
+    {{ image | image_url: width: 1200 | json }}{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ],
+  {%- endif -%}
+  {%- if product.vendor != blank -%}
+  "brand": {
+    "@type": "Brand",
+    "name": {{ product.vendor | json }}
+  },
+  {%- endif -%}
+  {%- if product.sku != blank -%}
+  "sku": {{ product.selected_or_first_available_variant.sku | json }},
+  {%- endif -%}
+  {%- if product.barcode != blank -%}
+  "gtin": {{ product.selected_or_first_available_variant.barcode | json }},
+  {%- endif -%}
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": {{ cart.currency.iso_code | json }},
+    "lowPrice": {{ product.price_min | money_without_currency | json }},
+    "highPrice": {{ product.price_max | money_without_currency | json }},
+    "offerCount": {{ product.variants.size }},
+    {%- if product.available -%}
+    "availability": "https://schema.org/InStock",
+    {%- else -%}
+    "availability": "https://schema.org/OutOfStock",
+    {%- endif -%}
+    "url": {{ product.url | prepend: shop.url | json }},
+    "seller": {
+      "@type": "Organization",
+      "name": {{ shop.name | json }}
+    }
+  }
+  {%- comment -%} Add review data if available {%- endcomment -%}
+}
+</script>
+{%- endif -%}
+
+{%- comment -%} Article Schema {%- endcomment -%}
+{%- if template.name == 'article' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ article.title | json }},
+  "url": {{ article.url | prepend: shop.url | json }},
+  "description": {{ article.excerpt_or_content | strip_html | truncate: 200 | json }},
+  {%- if article.image -%}
+  "image": {{ article.image | image_url: width: 1200 | json }},
+  {%- endif -%}
+  "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
+  "dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
+  "author": {
+    "@type": "Person",
+    "name": {{ article.author | json }}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    {%- if settings.logo != blank -%}
+    "logo": {
+      "@type": "ImageObject",
+      "url": {{ settings.logo | image_url: width: 500 | json }}
+    },
+    {%- endif -%}
+    "url": {{ shop.url | json }}
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": {{ article.url | prepend: shop.url | json }}
+  }
+}
+</script>
+{%- endif -%}
+
+{%- comment -%} Collection Schema {%- endcomment -%}
+{%- if template.name == 'collection' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": {{ collection.title | json }},
+  "url": {{ collection.url | prepend: shop.url | json }},
+  "description": {{ collection.description | strip_html | truncate: 200 | json }},
+  {%- if collection.image -%}
+  "image": {{ collection.image | image_url: width: 1200 | json }},
+  {%- endif -%}
+  "numberOfItems": {{ collection.products_count }}
+}
+</script>
+{%- endif -%}
+
+{%- comment -%} Local Business Schema (if applicable) {%- endcomment -%}
+{%- if settings.enable_local_business_schema -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": {{ shop.name | json }},
+  "url": {{ shop.url | json }},
+  {%- if settings.logo != blank -%}
+  "image": {{ settings.logo | image_url: width: 500 | json }},
+  {%- endif -%}
+  {%- if shop.phone != blank -%}
+  "telephone": {{ shop.phone | json }},
+  {%- endif -%}
+  {%- if shop.email != blank -%}
+  "email": {{ shop.email | json }},
+  {%- endif -%}
+  {%- if settings.business_address != blank -%}
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": {{ settings.business_street | json }},
+    "addressLocality": {{ settings.business_city | json }},
+    "addressRegion": {{ settings.business_state | json }},
+    "postalCode": {{ settings.business_zip | json }},
+    "addressCountry": {{ settings.business_country | json }}
+  },
+  {%- endif -%}
+  "priceRange": "$$"
+}
+</script>
+{%- endif -%}
+
+{%- comment -%} FAQ Schema (for FAQ pages) {%- endcomment -%}
+{%- if template.suffix == 'faq' -%}
+  {%- assign faq_items = page.content | split: '<h3>' -%}
+  {%- if faq_items.size > 1 -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- for item in faq_items offset: 1 -%}
+      {%- assign question = item | split: '</h3>' | first | strip_html -%}
+      {%- assign answer = item | split: '</h3>' | last | strip_html | truncate: 500 -%}
+      {%- if question != blank and answer != blank -%}
+    {
+      "@type": "Question",
+      "name": {{ question | json }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ answer | json }}
+      }
+    }{% unless forloop.last %},{% endunless %}
+      {%- endif -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+  {%- endif -%}
+{%- endif -%}

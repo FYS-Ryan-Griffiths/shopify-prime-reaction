@@ -1,0 +1,126 @@
+{% comment %}
+  Marquee
+  Scrolling text marquee for press quotes, features, brand values
+  
+  Parameters:
+  - text: the text content to display
+  - speed: animation speed (default: 30s)
+  - direction: 'left' or 'right'
+  - separator: icon between items (default: star)
+{% endcomment %}
+
+{%- liquid
+  assign speed = speed | default: '30s'
+  assign direction = direction | default: 'left'
+  assign separator = separator | default: 'star'
+-%}
+
+<div class="marquee {% if pause_on_hover %}marquee--pause-on-hover{% endif %}" style="--marquee-speed: {{ speed }}; --marquee-direction: {% if direction == 'right' %}reverse{% else %}normal{% endif %}">
+  <div class="marquee__track" aria-hidden="true">
+    {%- for i in (1..3) -%}
+      <div class="marquee__content">
+        {%- if items -%}
+          {%- for item in items -%}
+            <span class="marquee__item">{{ item }}</span>
+            {%- unless forloop.last -%}
+              <span class="marquee__separator">
+                {%- case separator -%}
+                  {%- when 'star' -%}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                  {%- when 'dot' -%}
+                    <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"></circle></svg>
+                  {%- when 'dash' -%}
+                    <span>—</span>
+                  {%- when 'diamond' -%}
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="6" y="0" width="6" height="6" transform="rotate(45 6 6)"></rect></svg>
+                  {%- else -%}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                {%- endcase -%}
+              </span>
+            {%- endunless -%}
+          {%- endfor -%}
+        {%- else -%}
+          <span class="marquee__item">{{ text }}</span>
+          <span class="marquee__separator">
+            {%- case separator -%}
+              {%- when 'star' -%}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              {%- when 'dot' -%}
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"></circle></svg>
+              {%- when 'dash' -%}
+                <span>—</span>
+              {%- when 'diamond' -%}
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="6" y="0" width="6" height="6" transform="rotate(45 6 6)"></rect></svg>
+              {%- else -%}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            {%- endcase -%}
+          </span>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .marquee::before,
+  .marquee::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50px;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .marquee::before {
+    left: 0;
+    background: linear-gradient(to right, var(--color-background), transparent);
+  }
+
+  .marquee::after {
+    right: 0;
+    background: linear-gradient(to left, var(--color-background), transparent);
+  }
+
+  .marquee__track {
+    display: flex;
+    animation: marquee var(--marquee-speed, 30s) linear infinite;
+    animation-direction: var(--marquee-direction, normal);
+  }
+
+  .marquee--pause-on-hover:hover .marquee__track {
+    animation-play-state: paused;
+  }
+
+  .marquee__content {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .marquee__item {
+    padding: 0 var(--space-4);
+  }
+
+  .marquee__separator {
+    display: flex;
+    align-items: center;
+    opacity: 0.5;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-33.333%);
+    }
+  }
+</style>

@@ -1,0 +1,224 @@
+{% comment %}
+  Cart Drawer Section
+  Slide-out cart with upsells
+{% endcomment %}
+
+<div class="cart-drawer drawer" data-cart-drawer>
+  <div class="cart-drawer__header">
+    <h2 class="cart-drawer__title h5">{{ 'cart.title' | t }}</h2>
+    <button class="cart-drawer__close" aria-label="{{ 'accessibility.close' | t }}" data-cart-drawer-close>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  
+  <div class="cart-drawer__body" data-cart-drawer-body>
+    {%- if cart.item_count > 0 -%}
+      <div class="cart-drawer__items">
+        {%- for item in cart.items -%}
+          <div class="cart-drawer__item" data-cart-item data-variant-id="{{ item.variant_id }}">
+            <a href="{{ item.url }}" class="cart-drawer__item-image">
+              {%- if item.image -%}
+                <img src="{{ item.image | image_url: width: 120 }}" alt="{{ item.title | escape }}" loading="lazy">
+              {%- endif -%}
+            </a>
+            <div class="cart-drawer__item-details">
+              <a href="{{ item.url }}" class="cart-drawer__item-title">{{ item.product.title }}</a>
+              {%- unless item.product.has_only_default_variant -%}
+                <p class="cart-drawer__item-variant">{{ item.variant.title }}</p>
+              {%- endunless -%}
+              <div class="cart-drawer__item-price">{{ item.final_line_price | money }}</div>
+              <div class="cart-drawer__item-quantity">
+                <button class="cart-drawer__qty-btn" data-qty-minus>−</button>
+                <input type="number" value="{{ item.quantity }}" min="1" class="cart-drawer__qty-input" data-qty-input>
+                <button class="cart-drawer__qty-btn" data-qty-plus>+</button>
+              </div>
+            </div>
+            <button class="cart-drawer__item-remove" aria-label="Remove" data-cart-remove>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M4 4L12 12M4 12L12 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="cart-drawer__empty">
+        <p>{{ 'cart.empty' | t }}</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">{{ 'cart.continue_shopping' | t }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+  
+  {%- if cart.item_count > 0 -%}
+    <div class="cart-drawer__footer">
+      <div class="cart-drawer__subtotal">
+        <span>{{ 'cart.subtotal' | t }}</span>
+        <span data-cart-subtotal>{{ cart.total_price | money }}</span>
+      </div>
+      <p class="cart-drawer__shipping-note">{{ 'cart.shipping' | t }}</p>
+      <a href="{{ routes.cart_url }}" class="btn btn--secondary btn--full">View Cart</a>
+      <button type="submit" name="checkout" class="btn btn--primary btn--full" form="cart">
+        {{ 'cart.checkout' | t }}
+      </button>
+    </div>
+  {%- endif -%}
+</div>
+<div class="overlay" data-cart-overlay></div>
+
+<style>
+  .cart-drawer {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .cart-drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-6);
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+  
+  .cart-drawer__title {
+    margin: 0;
+  }
+  
+  .cart-drawer__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--color-text);
+  }
+  
+  .cart-drawer__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-6);
+  }
+  
+  .cart-drawer__empty {
+    text-align: center;
+    padding: var(--space-12) 0;
+  }
+  
+  .cart-drawer__empty p {
+    margin-bottom: var(--space-6);
+    color: var(--color-text-muted);
+  }
+  
+  .cart-drawer__item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    border-bottom: var(--border-width) solid var(--color-border);
+  }
+  
+  .cart-drawer__item-image {
+    aspect-ratio: 1;
+    background-color: var(--color-background-secondary);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  
+  .cart-drawer__item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .cart-drawer__item-title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    display: block;
+    margin-bottom: var(--space-1);
+  }
+  
+  .cart-drawer__item-variant {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+  }
+  
+  .cart-drawer__item-price {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-3);
+  }
+  
+  .cart-drawer__item-quantity {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  
+  .cart-drawer__qty-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-base);
+  }
+  
+  .cart-drawer__qty-input {
+    width: 40px;
+    text-align: center;
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-1);
+    font-size: var(--font-size-sm);
+  }
+  
+  .cart-drawer__item-remove {
+    color: var(--color-text-muted);
+  }
+  
+  .cart-drawer__item-remove:hover {
+    color: var(--color-error);
+  }
+  
+  .cart-drawer__footer {
+    padding: var(--space-6);
+    border-top: var(--border-width) solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  
+  .cart-drawer__subtotal {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+  }
+  
+  .cart-drawer__shipping-note {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    text-align: center;
+    margin: 0;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Cart Drawer",
+  "class": "section-cart-drawer",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_upsells",
+      "label": "Show upsell products",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

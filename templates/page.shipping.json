@@ -1,0 +1,96 @@
+{
+  "sections": {
+    "banner": {
+      "type": "banner",
+      "settings": {
+        "title": "Shipping & Returns",
+        "subtitle": "Delivery Information",
+        "description": "Everything you need to know about getting your order delivered",
+        "height": "small",
+        "text_alignment": "center",
+        "color_scheme": "inverse"
+      }
+    },
+    "shipping-info": {
+      "type": "rich-text",
+      "settings": {
+        "title": "Shipping Information",
+        "content": "<h3>Domestic Shipping</h3><p>We offer free standard shipping on all orders over $150. Standard shipping typically takes 5-7 business days. Expedited shipping options are available at checkout.</p><ul><li><strong>Standard Shipping:</strong> 5-7 business days (Free over $150)</li><li><strong>Expedited Shipping:</strong> 2-3 business days ($15)</li><li><strong>Overnight Shipping:</strong> Next business day ($35)</li></ul><h3>International Shipping</h3><p>We ship to most countries worldwide. International shipping rates and delivery times vary by destination. All duties and taxes are the responsibility of the recipient.</p>",
+        "width": "narrow",
+        "color_scheme": "default"
+      }
+    },
+    "processing": {
+      "type": "image-with-text",
+      "settings": {
+        "title": "Order Processing",
+        "text": "<p>Orders placed before 2pm EST Monday-Friday are typically processed the same day. Orders placed after 2pm EST or on weekends will be processed the next business day.</p><p>You'll receive a confirmation email with tracking information once your order ships. Please allow 24-48 hours for tracking information to update.</p>",
+        "button_label": "Track Your Order",
+        "button_link": "/pages/tracking",
+        "layout": "image-right",
+        "color_scheme": "default"
+      }
+    },
+    "returns": {
+      "type": "rich-text",
+      "settings": {
+        "title": "Returns & Exchanges",
+        "content": "<p>We want you to be completely satisfied with your purchase. If for any reason you're not happy, we offer hassle-free returns within 30 days of delivery.</p><h3>Return Policy</h3><ul><li>Items must be unused and in original packaging</li><li>Return shipping is free for defective items</li><li>Standard returns incur a $10 restocking fee</li><li>Refunds processed within 5-7 business days</li></ul><h3>How to Return</h3><ol><li>Email support@primereaction.com with your order number</li><li>Receive a prepaid return label</li><li>Pack items securely and drop off at any carrier location</li><li>Refund issued once we receive and inspect the item</li></ol>",
+        "width": "narrow",
+        "color_scheme": "default"
+      }
+    },
+    "warranty": {
+      "type": "collapsible-content",
+      "blocks": {
+        "warranty-1": {
+          "type": "row",
+          "settings": {
+            "heading": "What does the warranty cover?",
+            "content": "<p>Our warranty covers defects in materials and workmanship under normal use. This includes structural failures, manufacturing defects, and component malfunctions. Normal wear and tear, misuse, and unauthorized modifications are not covered.</p>"
+          }
+        },
+        "warranty-2": {
+          "type": "row",
+          "settings": {
+            "heading": "How long is the warranty period?",
+            "content": "<p>All products come with a minimum 1-year warranty. Commercial-grade equipment includes an extended 3-year warranty. Warranty periods begin from the date of purchase.</p>"
+          }
+        },
+        "warranty-3": {
+          "type": "row",
+          "settings": {
+            "heading": "How do I file a warranty claim?",
+            "content": "<p>Contact our support team at warranty@primereaction.com with your order number, proof of purchase, and a description of the issue. Include photos if applicable. Our team will review your claim within 48 hours.</p>"
+          }
+        },
+        "warranty-4": {
+          "type": "row",
+          "settings": {
+            "heading": "What happens if my claim is approved?",
+            "content": "<p>For approved claims, we'll either repair the item, send a replacement, or issue a refund at our discretion. Replacement parts are shipped free of charge. For larger items requiring return, we'll provide a prepaid shipping label.</p>"
+          }
+        }
+      },
+      "block_order": ["warranty-1", "warranty-2", "warranty-3", "warranty-4"],
+      "settings": {
+        "title": "Warranty Information",
+        "subtitle": "Product Protection",
+        "color_scheme": "default"
+      }
+    },
+    "contact-cta": {
+      "type": "rich-text",
+      "settings": {
+        "title": "Questions?",
+        "content": "<p>Our support team is here to help with any shipping or return questions.</p>",
+        "button_label": "Contact Support",
+        "button_link": "/pages/contact",
+        "width": "narrow",
+        "text_alignment": "center",
+        "color_scheme": "accent"
+      }
+    }
+  },
+  "order": ["banner", "shipping-info", "processing", "returns", "warranty", "contact-cta"]
+}

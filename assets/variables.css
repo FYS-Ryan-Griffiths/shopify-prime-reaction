@@ -1,0 +1,235 @@
+/* ============================================================================
+   VARIABLES.CSS - Design Tokens
+   Inspired by postfamiliar.com's editorial aesthetic
+   ============================================================================ */
+
+:root {
+  /* -------------------------------------------------------------------------
+     COLOR PALETTE - Clean, minimal with warm neutrals
+     ------------------------------------------------------------------------- */
+  
+  /* Primary colors */
+  --color-primary: #1a1a1a;
+  --color-secondary: #f5f5f0;
+  --color-accent: #c9a87c;
+  
+  /* Background colors */
+  --color-background: #ffffff;
+  --color-background-secondary: #fafaf8;
+  --color-background-tertiary: #f0f0ec;
+  
+  /* Text colors */
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b6b6b;
+  --color-text-light: #999999;
+  --color-text-inverse: #ffffff;
+  
+  /* Border colors */
+  --color-border: #e5e5e0;
+  --color-border-dark: #d0d0c8;
+  
+  /* Status colors */
+  --color-success: #2e7d32;
+  --color-error: #c62828;
+  --color-warning: #f9a825;
+  --color-info: #1565c0;
+  
+  /* Product line colors (Reaxing brand) */
+  --color-fluiball: #3b82f6;
+  --color-fluikettle: #f97316;
+  --color-reax-board: #8b5cf6;
+  --color-reax-run: #10b981;
+  --color-reax-lights: #ec4899;
+  --color-reax-chain: #6366f1;
+
+  /* -------------------------------------------------------------------------
+     TYPOGRAPHY - Editorial serif + clean sans-serif
+     ------------------------------------------------------------------------- */
+  
+  /* Font families */
+  --font-heading: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  
+  /* Font sizes - Fluid typography scale */
+  --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.8125rem);
+  --font-size-sm: clamp(0.8125rem, 0.75rem + 0.3vw, 0.875rem);
+  --font-size-base: clamp(0.9375rem, 0.875rem + 0.3vw, 1rem);
+  --font-size-md: clamp(1rem, 0.925rem + 0.4vw, 1.125rem);
+  --font-size-lg: clamp(1.125rem, 1rem + 0.6vw, 1.375rem);
+  --font-size-xl: clamp(1.375rem, 1.2rem + 0.9vw, 1.75rem);
+  --font-size-2xl: clamp(1.75rem, 1.4rem + 1.75vw, 2.5rem);
+  --font-size-3xl: clamp(2.25rem, 1.75rem + 2.5vw, 3.5rem);
+  --font-size-4xl: clamp(3rem, 2rem + 5vw, 5rem);
+  --font-size-5xl: clamp(3.5rem, 2.5rem + 6vw, 7rem);
+  
+  /* Font weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Line heights */
+  --line-height-tight: 1.1;
+  --line-height-snug: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 1.8;
+  
+  /* Letter spacing */
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.05em;
+  --letter-spacing-wider: 0.1em;
+  --letter-spacing-widest: 0.15em;
+
+  /* -------------------------------------------------------------------------
+     SPACING - Generous whitespace (postfamiliar aesthetic)
+     ------------------------------------------------------------------------- */
+  
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+  --space-32: 8rem;     /* 128px */
+  --space-40: 10rem;    /* 160px */
+  
+  /* Section spacing - Extra generous */
+  --section-spacing-sm: var(--space-16);
+  --section-spacing-md: var(--space-24);
+  --section-spacing-lg: var(--space-32);
+  --section-spacing-xl: var(--space-40);
+
+  /* -------------------------------------------------------------------------
+     LAYOUT
+     ------------------------------------------------------------------------- */
+  
+  /* Container widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1536px;
+  --container-max: 1800px;
+  
+  /* Page margins */
+  --page-margin: clamp(1rem, 5vw, 4rem);
+  --page-margin-sm: clamp(0.75rem, 3vw, 2rem);
+  
+  /* Grid gaps */
+  --grid-gap-sm: var(--space-4);
+  --grid-gap-md: var(--space-6);
+  --grid-gap-lg: var(--space-8);
+  --grid-gap-xl: var(--space-12);
+
+  /* -------------------------------------------------------------------------
+     BORDERS & RADIUS
+     ------------------------------------------------------------------------- */
+  
+  --border-width: 1px;
+  --border-width-thick: 2px;
+  
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* -------------------------------------------------------------------------
+     SHADOWS - Subtle and refined
+     ------------------------------------------------------------------------- */
+  
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+
+  /* -------------------------------------------------------------------------
+     TRANSITIONS - Smooth and refined
+     ------------------------------------------------------------------------- */
+  
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+  --transition-slower: 600ms ease;
+  
+  /* Easing functions */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* -------------------------------------------------------------------------
+     Z-INDEX SCALE
+     ------------------------------------------------------------------------- */
+  
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-overlay: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-toast: 700;
+  --z-max: 9999;
+
+  /* -------------------------------------------------------------------------
+     HEADER
+     ------------------------------------------------------------------------- */
+  
+  --header-height: 80px;
+  --header-height-scrolled: 64px;
+  --announcement-height: 40px;
+}
+
+/* =============================================================================
+   DARK MODE
+   ============================================================================= */
+
+.dark-mode {
+  --color-primary: #ffffff;
+  --color-secondary: #1a1a1a;
+  
+  --color-background: #0f0f0f;
+  --color-background-secondary: #1a1a1a;
+  --color-background-tertiary: #242424;
+  
+  --color-text: #f5f5f5;
+  --color-text-muted: #a0a0a0;
+  --color-text-light: #707070;
+  --color-text-inverse: #1a1a1a;
+  
+  --color-border: #2a2a2a;
+  --color-border-dark: #3a3a3a;
+  
+  /* Adjusted shadows for dark mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* =============================================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================================= */
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 64px;
+    --header-height-scrolled: 56px;
+    --section-spacing-sm: var(--space-10);
+    --section-spacing-md: var(--space-16);
+    --section-spacing-lg: var(--space-20);
+    --section-spacing-xl: var(--space-24);
+  }
+}

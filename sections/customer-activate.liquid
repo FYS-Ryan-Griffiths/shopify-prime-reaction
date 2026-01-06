@@ -1,0 +1,63 @@
+{% comment %}
+  Customer Activate Account Section
+{% endcomment %}
+
+<section class="customer-activate section">
+  <div class="container container--narrow">
+    <div class="customer-activate__wrapper">
+      <header class="customer-activate__header">
+        <h1 class="customer-activate__title h2">{{ 'customer.activate_account.title' | t }}</h1>
+        <p class="customer-activate__subtitle">{{ 'customer.activate_account.subtitle' | t }}</p>
+      </header>
+      
+      {%- form 'activate_customer_password', class: 'customer-activate__form' -%}
+        <div class="form-field">
+          <label for="Password" class="form-label">{{ 'customer.activate_account.password' | t }}</label>
+          <input 
+            type="password" 
+            id="Password"
+            name="customer[password]"
+            class="form-input"
+            autocomplete="new-password"
+            minlength="5"
+            required
+          >
+        </div>
+        
+        <div class="form-field">
+          <label for="PasswordConfirmation" class="form-label">{{ 'customer.activate_account.password_confirm' | t }}</label>
+          <input 
+            type="password" 
+            id="PasswordConfirmation"
+            name="customer[password_confirmation]"
+            class="form-input"
+            autocomplete="new-password"
+            minlength="5"
+            required
+          >
+        </div>
+        
+        <div class="form-field form-field--actions">
+          <button type="submit" class="button button--primary button--large button--full">
+            {{ 'customer.activate_account.submit' | t }}
+          </button>
+        </div>
+        
+        <div class="customer-activate__decline">
+          <p>{{ 'customer.activate_account.decline_text' | t }}</p>
+          <button type="submit" name="decline" class="button button--secondary">
+            {{ 'customer.activate_account.decline' | t }}
+          </button>
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Activate Account",
+  "tag": "section",
+  "class": "customer-activate-section"
+}
+{% endschema %}

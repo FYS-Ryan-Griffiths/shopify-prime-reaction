@@ -1,0 +1,52 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "image": "",
+        "heading": "Train Different",
+        "subheading": "Revolutionary neuromuscular training equipment that challenges body and mind through unpredictable movement.",
+        "button_text": "Shop Now",
+        "button_link": "shopify://collections/all",
+        "height": "full",
+        "text_position": "center",
+        "overlay_opacity": 30
+      }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Featured Products",
+        "collection": "all",
+        "products_to_show": 4,
+        "columns": 4,
+        "show_view_all": true
+      }
+    },
+    "image-with-text": {
+      "type": "image-with-text",
+      "settings": {
+        "image": "",
+        "heading": "The Science of Instability",
+        "text": "<p>Our SDI (Sudden Dynamic Impulse) technology creates unpredictable movements that engage more muscle fibers and improve reactive strength.</p>",
+        "button_text": "Learn More",
+        "button_link": "",
+        "layout": "image_first"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Join the Movement",
+        "subheading": "Subscribe for training tips, product launches, and exclusive offers.",
+        "background_color": "secondary"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "featured-collection",
+    "image-with-text",
+    "newsletter"
+  ]
+}

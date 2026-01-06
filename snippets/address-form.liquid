@@ -1,0 +1,136 @@
+{% comment %}
+  Address Form Snippet
+  Reusable address form fields for customer addresses
+{% endcomment %}
+
+<div class="form-row form-row--two">
+  <div class="form-field">
+    <label for="{{ form.id }}-first_name" class="form-label">{{ 'customer.addresses.first_name' | t }}</label>
+    <input 
+      type="text" 
+      id="{{ form.id }}-first_name"
+      name="address[first_name]"
+      class="form-input"
+      value="{{ form.first_name }}"
+      autocomplete="given-name"
+    >
+  </div>
+  
+  <div class="form-field">
+    <label for="{{ form.id }}-last_name" class="form-label">{{ 'customer.addresses.last_name' | t }}</label>
+    <input 
+      type="text" 
+      id="{{ form.id }}-last_name"
+      name="address[last_name]"
+      class="form-input"
+      value="{{ form.last_name }}"
+      autocomplete="family-name"
+    >
+  </div>
+</div>
+
+<div class="form-field">
+  <label for="{{ form.id }}-company" class="form-label">{{ 'customer.addresses.company' | t }}</label>
+  <input 
+    type="text" 
+    id="{{ form.id }}-company"
+    name="address[company]"
+    class="form-input"
+    value="{{ form.company }}"
+    autocomplete="organization"
+  >
+</div>
+
+<div class="form-field">
+  <label for="{{ form.id }}-address1" class="form-label">{{ 'customer.addresses.address1' | t }}</label>
+  <input 
+    type="text" 
+    id="{{ form.id }}-address1"
+    name="address[address1]"
+    class="form-input"
+    value="{{ form.address1 }}"
+    autocomplete="address-line1"
+    required
+  >
+</div>
+
+<div class="form-field">
+  <label for="{{ form.id }}-address2" class="form-label">{{ 'customer.addresses.address2' | t }}</label>
+  <input 
+    type="text" 
+    id="{{ form.id }}-address2"
+    name="address[address2]"
+    class="form-input"
+    value="{{ form.address2 }}"
+    autocomplete="address-line2"
+  >
+</div>
+
+<div class="form-row form-row--two">
+  <div class="form-field">
+    <label for="{{ form.id }}-city" class="form-label">{{ 'customer.addresses.city' | t }}</label>
+    <input 
+      type="text" 
+      id="{{ form.id }}-city"
+      name="address[city]"
+      class="form-input"
+      value="{{ form.city }}"
+      autocomplete="address-level2"
+      required
+    >
+  </div>
+  
+  <div class="form-field">
+    <label for="{{ form.id }}-country" class="form-label">{{ 'customer.addresses.country' | t }}</label>
+    <select 
+      id="{{ form.id }}-country"
+      name="address[country]"
+      class="form-select"
+      autocomplete="country"
+      data-country-select
+      data-default="{{ form.country }}"
+    >
+      {{ all_country_option_tags }}
+    </select>
+  </div>
+</div>
+
+<div class="form-row form-row--two">
+  <div class="form-field" id="{{ form.id }}-province-wrapper" style="{% unless form.country == 'Canada' or form.country == 'United States' %}display: none;{% endunless %}">
+    <label for="{{ form.id }}-province" class="form-label">{{ 'customer.addresses.province' | t }}</label>
+    <select 
+      id="{{ form.id }}-province"
+      name="address[province]"
+      class="form-select"
+      autocomplete="address-level1"
+      data-province-select
+      data-default="{{ form.province }}"
+    >
+    </select>
+  </div>
+  
+  <div class="form-field">
+    <label for="{{ form.id }}-zip" class="form-label">{{ 'customer.addresses.zip' | t }}</label>
+    <input 
+      type="text" 
+      id="{{ form.id }}-zip"
+      name="address[zip]"
+      class="form-input"
+      value="{{ form.zip }}"
+      autocomplete="postal-code"
+      required
+    >
+  </div>
+</div>
+
+<div class="form-field">
+  <label for="{{ form.id }}-phone" class="form-label">{{ 'customer.addresses.phone' | t }}</label>
+  <input 
+    type="tel" 
+    id="{{ form.id }}-phone"
+    name="address[phone]"
+    class="form-input"
+    value="{{ form.phone }}"
+    autocomplete="tel"
+  >
+</div>

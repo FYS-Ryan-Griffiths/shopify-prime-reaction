@@ -1,0 +1,208 @@
+{% comment %}
+  Related Products Section
+  Shows recommended products based on current product
+{% endcomment %}
+
+{%- liquid
+  assign limit = section.settings.products_to_show
+  assign heading = section.settings.heading
+  assign products_source = section.settings.products_source
+  
+  case products_source
+    when 'related'
+      assign related_products = product.metafields.storefront.related_products.value | default: recommendations.products
+    when 'collection'
+      if product.collections.first != blank
+        assign related_products = product.collections.first.products | where: 'id', '!=', product.id
+      endif
+    when 'custom'
+      assign related_products = section.settings.custom_products
+  endcase
+-%}
+
+{%- if related_products.size > 0 -%}
+  <section class="related-products section">
+    <div class="container">
+      <header class="related-products__header">
+        {%- if heading != blank -%}
+          <h2 class="related-products__heading h3">{{ heading }}</h2>
+        {%- endif -%}
+        
+        {%- if related_products.size > 4 -%}
+          <div class="related-products__navigation">
+            <button class="related-products__nav-button related-products__nav-button--prev" aria-label="{{ 'accessibility.previous_slide' | t }}" data-prev>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
+            </button>
+            <button class="related-products__nav-button related-products__nav-button--next" aria-label="{{ 'accessibility.next_slide' | t }}" data-next>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+          </div>
+        {%- endif -%}
+      </header>
+      
+      <div class="related-products__slider" data-slider>
+        <div class="related-products__track" data-track>
+          {%- for related_product in related_products limit: limit -%}
+            <div class="related-products__item" data-slide>
+              {% render 'product-card', product: related_product, show_secondary_image: section.settings.show_secondary_image, show_vendor: section.settings.show_vendor %}
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+      
+      {%- if section.settings.show_view_all -%}
+        <div class="related-products__footer">
+          <a href="{{ product.collections.first.url }}" class="related-products__view-all button button--secondary">
+            {{ 'collections.general.view_all' | t }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+{%- endif -%}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const sliders = document.querySelectorAll('.related-products__slider');
+    
+    sliders.forEach(slider => {
+      const track = slider.querySelector('[data-track]');
+      const slides = slider.querySelectorAll('[data-slide]');
+      const prevBtn = slider.parentElement.querySelector('[data-prev]');
+      const nextBtn = slider.parentElement.querySelector('[data-next]');
+      
+      if (!track || slides.length <= 4) return;
+      
+      let currentIndex = 0;
+      const slidesToShow = window.innerWidth < 768 ? 2 : window.innerWidth < 1024 ? 3 : 4;
+      const maxIndex = Math.max(0, slides.length - slidesToShow);
+      
+      function updateSlider() {
+        const slideWidth = slides[0].offsetWidth;
+        const gap = parseInt(getComputedStyle(track).gap) || 0;
+        track.style.transform = `translateX(-${currentIndex * (slideWidth + gap)}px)`;
+        
+        if (prevBtn) prevBtn.disabled = currentIndex === 0;
+        if (nextBtn) nextBtn.disabled = currentIndex >= maxIndex;
+      }
+      
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          currentIndex = Math.max(0, currentIndex - 1);
+          updateSlider();
+        });
+      }
+      
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          currentIndex = Math.min(maxIndex, currentIndex + 1);
+          updateSlider();
+        });
+      }
+      
+      // Touch/swipe support
+      let startX, endX;
+      
+      track.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+      
+      track.addEventListener('touchend', e => {
+        endX = e.changedTouches[0].clientX;
+        const diff = startX - endX;
+        
+        if (Math.abs(diff) > 50) {
+          if (diff > 0 && currentIndex < maxIndex) {
+            currentIndex++;
+          } else if (diff < 0 && currentIndex > 0) {
+            currentIndex--;
+          }
+          updateSlider();
+        }
+      }, { passive: true });
+      
+      // Recalculate on resize
+      window.addEventListener('resize', updateSlider);
+      updateSlider();
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Related Products",
+  "tag": "section",
+  "class": "related-products-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "You May Also Like"
+    },
+    {
+      "type": "select",
+      "id": "products_source",
+      "label": "Products source",
+      "options": [
+        {
+          "value": "related",
+          "label": "Shopify Recommendations"
+        },
+        {
+          "value": "collection",
+          "label": "Same collection"
+        },
+        {
+          "value": "custom",
+          "label": "Custom products"
+        }
+      ],
+      "default": "related"
+    },
+    {
+      "type": "product_list",
+      "id": "custom_products",
+      "label": "Custom products",
+      "info": "Only used if Products source is set to Custom"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "show_secondary_image",
+      "label": "Show secondary image on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show view all link",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Related Products"
+    }
+  ],
+  "templates": ["product"]
+}
+{% endschema %}

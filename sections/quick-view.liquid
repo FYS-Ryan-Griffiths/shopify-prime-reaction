@@ -1,0 +1,83 @@
+{% comment %}
+  Quick View Section (placeholder)
+  Modal for quick product preview
+{% endcomment %}
+
+<div class="quick-view modal" data-quick-view>
+  <div class="quick-view__overlay overlay" data-quick-view-close></div>
+  <div class="quick-view__content">
+    <button class="quick-view__close" aria-label="{{ 'accessibility.close' | t }}" data-quick-view-close>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="quick-view__body" data-quick-view-body>
+      <!-- Content loaded via AJAX -->
+    </div>
+  </div>
+</div>
+
+<style>
+  .quick-view {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-base), visibility var(--transition-base);
+  }
+  
+  .quick-view.is-active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .quick-view__content {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    background-color: var(--color-background);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform var(--transition-base);
+  }
+  
+  .quick-view.is-active .quick-view__content {
+    transform: scale(1);
+  }
+  
+  .quick-view__close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-background);
+    border-radius: var(--radius-full);
+    color: var(--color-text);
+  }
+  
+  .quick-view__body {
+    padding: var(--space-8);
+    overflow-y: auto;
+    max-height: 90vh;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Quick View",
+  "class": "section-quick-view",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,411 @@
+{% comment %}
+  Quote Modal
+  Full-featured RFQ (Request for Quote) form modal
+{% endcomment %}
+
+<div id="QuoteModal" class="quote-modal" data-quote-modal aria-hidden="true" role="dialog" aria-labelledby="QuoteModalTitle">
+  <div class="quote-modal__overlay" data-quote-modal-close></div>
+  
+  <div class="quote-modal__container">
+    <div class="quote-modal__header">
+      <h2 id="QuoteModalTitle" class="quote-modal__title">{{ section.settings.title | default: 'Request a Quote' }}</h2>
+      <button type="button" class="quote-modal__close" data-quote-modal-close aria-label="{{ 'accessibility.close' | t }}">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="quote-modal__body">
+      {%- if section.settings.description != blank -%}
+        <p class="quote-modal__description">{{ section.settings.description }}</p>
+      {%- endif -%}
+
+      <!-- Quote Items Preview -->
+      <div class="quote-modal__items" data-quote-items>
+        <div class="quote-modal__items-header">
+          <h3 class="h5">{{ 'quote.items' | t | default: 'Items' }}</h3>
+          <button type="button" class="quote-modal__add-more" data-quote-modal-close>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            {{ 'quote.add_more' | t | default: 'Add more items' }}
+          </button>
+        </div>
+        <div class="quote-modal__items-list" data-quote-items-list>
+          <!-- Items dynamically inserted here -->
+        </div>
+      </div>
+
+      <!-- Quote Form -->
+      <form class="quote-form" data-quote-form action="/contact#contact_form" method="post">
+        <input type="hidden" name="form_type" value="contact">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="contact[subject]" value="Quote Request">
+        <input type="hidden" name="contact[quote_items]" data-quote-form-items value="">
+
+        <div class="quote-form__grid">
+          <!-- Contact Information -->
+          <div class="quote-form__section">
+            <h3 class="quote-form__section-title">{{ 'quote.contact_info' | t | default: 'Contact Information' }}</h3>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="quote-first-name">{{ 'customer.register.first_name' | t }} <span class="required">*</span></label>
+                <input type="text" id="quote-first-name" name="contact[first_name]" required autocomplete="given-name">
+              </div>
+              <div class="form-group">
+                <label for="quote-last-name">{{ 'customer.register.last_name' | t }} <span class="required">*</span></label>
+                <input type="text" id="quote-last-name" name="contact[last_name]" required autocomplete="family-name">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="quote-email">{{ 'customer.login.email' | t }} <span class="required">*</span></label>
+              <input type="email" id="quote-email" name="contact[email]" required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+              <label for="quote-phone">{{ 'contact.phone' | t }}</label>
+              <input type="tel" id="quote-phone" name="contact[phone]" autocomplete="tel">
+            </div>
+          </div>
+
+          <!-- Business Information -->
+          {%- if section.settings.show_business_fields -%}
+            <div class="quote-form__section">
+              <h3 class="quote-form__section-title">{{ 'quote.business_info' | t | default: 'Business Information' }}</h3>
+              
+              <div class="form-group">
+                <label for="quote-company">{{ 'quote.company' | t | default: 'Company/Organization' }} {%- if section.settings.require_company -%}<span class="required">*</span>{%- endif -%}</label>
+                <input type="text" id="quote-company" name="contact[company]" {% if section.settings.require_company %}required{% endif %} autocomplete="organization">
+              </div>
+
+              <div class="form-group">
+                <label for="quote-job-title">{{ 'quote.job_title' | t | default: 'Job Title' }}</label>
+                <input type="text" id="quote-job-title" name="contact[job_title]" autocomplete="organization-title">
+              </div>
+
+              <div class="form-group">
+                <label for="quote-business-type">{{ 'quote.business_type' | t | default: 'Business Type' }}</label>
+                <select id="quote-business-type" name="contact[business_type]">
+                  <option value="">{{ 'quote.select_type' | t | default: 'Select...' }}</option>
+                  <option value="gym">{{ 'quote.type_gym' | t | default: 'Gym/Fitness Center' }}</option>
+                  <option value="studio">{{ 'quote.type_studio' | t | default: 'Training Studio' }}</option>
+                  <option value="school">{{ 'quote.type_school' | t | default: 'School/University' }}</option>
+                  <option value="corporate">{{ 'quote.type_corporate' | t | default: 'Corporate Wellness' }}</option>
+                  <option value="sports">{{ 'quote.type_sports' | t | default: 'Sports Team/Club' }}</option>
+                  <option value="rehab">{{ 'quote.type_rehab' | t | default: 'Rehabilitation Center' }}</option>
+                  <option value="hotel">{{ 'quote.type_hotel' | t | default: 'Hotel/Resort' }}</option>
+                  <option value="other">{{ 'quote.type_other' | t | default: 'Other' }}</option>
+                </select>
+              </div>
+            </div>
+          {%- endif -%}
+
+          <!-- Project Details -->
+          <div class="quote-form__section quote-form__section--full">
+            <h3 class="quote-form__section-title">{{ 'quote.project_details' | t | default: 'Project Details' }}</h3>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="quote-quantity">{{ 'quote.estimated_quantity' | t | default: 'Estimated Quantity' }}</label>
+                <select id="quote-quantity" name="contact[quantity_range]">
+                  <option value="">{{ 'quote.select_quantity' | t | default: 'Select...' }}</option>
+                  <option value="1-5">1-5 units</option>
+                  <option value="6-10">6-10 units</option>
+                  <option value="11-25">11-25 units</option>
+                  <option value="26-50">26-50 units</option>
+                  <option value="50+">50+ units</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="quote-timeline">{{ 'quote.timeline' | t | default: 'Timeline' }}</label>
+                <select id="quote-timeline" name="contact[timeline]">
+                  <option value="">{{ 'quote.select_timeline' | t | default: 'Select...' }}</option>
+                  <option value="immediate">{{ 'quote.timeline_immediate' | t | default: 'Immediate' }}</option>
+                  <option value="1-month">{{ 'quote.timeline_1month' | t | default: 'Within 1 month' }}</option>
+                  <option value="1-3-months">{{ 'quote.timeline_3months' | t | default: '1-3 months' }}</option>
+                  <option value="3-6-months">{{ 'quote.timeline_6months' | t | default: '3-6 months' }}</option>
+                  <option value="6-months-plus">{{ 'quote.timeline_future' | t | default: '6+ months' }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="quote-message">{{ 'quote.additional_info' | t | default: 'Additional Information' }}</label>
+              <textarea id="quote-message" name="contact[body]" rows="4" placeholder="{{ 'quote.message_placeholder' | t | default: 'Tell us about your project, specific requirements, or any questions...' }}"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote-form__footer">
+          <p class="quote-form__privacy">
+            {{ 'quote.privacy_notice' | t | default: 'By submitting this form, you agree to be contacted regarding your quote request.' }}
+          </p>
+          <button type="submit" class="button button--primary button--large">
+            {{ 'quote.submit' | t | default: 'Submit Quote Request' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+  .quote-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-base), visibility var(--transition-base);
+  }
+
+  .quote-modal.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .quote-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .quote-modal__container {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    background: var(--color-background);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(20px);
+    transition: transform var(--transition-base);
+  }
+
+  .quote-modal.is-open .quote-modal__container {
+    transform: translateY(0);
+  }
+
+  .quote-modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .quote-modal__title {
+    margin: 0;
+  }
+
+  .quote-modal__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    transition: color var(--transition-fast);
+  }
+
+  .quote-modal__close:hover {
+    color: var(--color-text);
+  }
+
+  .quote-modal__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-6);
+  }
+
+  .quote-modal__description {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-6);
+  }
+
+  /* Quote Items */
+  .quote-modal__items {
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .quote-modal__items-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+  }
+
+  .quote-modal__items-header h3 {
+    margin: 0;
+  }
+
+  .quote-modal__add-more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: none;
+    border: none;
+    font-size: var(--font-size-sm);
+    color: var(--color-primary);
+    cursor: pointer;
+  }
+
+  .quote-modal__items-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .quote-modal__item {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-background);
+    border-radius: var(--radius-sm);
+  }
+
+  .quote-modal__item-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+  }
+
+  .quote-modal__item-details {
+    flex: 1;
+  }
+
+  .quote-modal__item-title {
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-1);
+  }
+
+  .quote-modal__item-variant {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  .quote-modal__item-remove {
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: var(--space-1);
+  }
+
+  .quote-modal__item-remove:hover {
+    color: var(--color-error);
+  }
+
+  /* Quote Form */
+  .quote-form__grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .quote-form__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .quote-form__section--full {
+    grid-column: 1 / -1;
+  }
+
+  .quote-form__section-title {
+    margin: 0 0 var(--space-4);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .quote-form__footer {
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+  }
+
+  .quote-form__privacy {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  /* Quote Button Styles */
+  .quote-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    background: transparent;
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .quote-button:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+
+  .quote-button--full {
+    width: 100%;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Quote Modal",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Request a Quote"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Fill out the form below and we'll get back to you with a custom quote."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_business_fields",
+      "label": "Show business information fields",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "require_company",
+      "label": "Require company name",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,116 @@
+{% comment %}
+  Customer Account Section
+{% endcomment %}
+
+<section class="customer-account section">
+  <div class="container">
+    <header class="customer-account__header">
+      <h1 class="customer-account__title h2">{{ 'customer.account.title' | t }}</h1>
+      <p class="customer-account__welcome">
+        {{ 'customer.account.welcome' | t: name: customer.first_name | default: customer.email }}
+      </p>
+    </header>
+    
+    <div class="customer-account__grid">
+      {%- comment -%} Account Navigation {%- endcomment -%}
+      <aside class="customer-account__sidebar">
+        <nav class="customer-account__nav">
+          <a href="{{ routes.account_url }}" class="customer-account__nav-link is-active">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            {{ 'customer.account.orders' | t }}
+          </a>
+          <a href="{{ routes.account_addresses_url }}" class="customer-account__nav-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            {{ 'customer.account.addresses' | t }}
+          </a>
+          <a href="{{ routes.account_logout_url }}" class="customer-account__nav-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            {{ 'customer.account.logout' | t }}
+          </a>
+        </nav>
+      </aside>
+      
+      {%- comment -%} Orders {%- endcomment -%}
+      <div class="customer-account__content">
+        <h2 class="customer-account__section-title h4">{{ 'customer.orders.title' | t }}</h2>
+        
+        {%- if customer.orders.size > 0 -%}
+          <div class="customer-orders">
+            <table class="customer-orders__table">
+              <thead>
+                <tr>
+                  <th>{{ 'customer.orders.order_number' | t }}</th>
+                  <th>{{ 'customer.orders.date' | t }}</th>
+                  <th>{{ 'customer.orders.payment_status' | t }}</th>
+                  <th>{{ 'customer.orders.fulfillment_status' | t }}</th>
+                  <th>{{ 'customer.orders.total' | t }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for order in customer.orders -%}
+                  <tr>
+                    <td data-label="{{ 'customer.orders.order_number' | t }}">
+                      <a href="{{ order.customer_url }}" class="customer-orders__link">
+                        {{ order.name }}
+                      </a>
+                    </td>
+                    <td data-label="{{ 'customer.orders.date' | t }}">
+                      {{ order.created_at | date: format: 'abbreviated_date' }}
+                    </td>
+                    <td data-label="{{ 'customer.orders.payment_status' | t }}">
+                      <span class="customer-orders__badge customer-orders__badge--{{ order.financial_status }}">
+                        {{ order.financial_status_label }}
+                      </span>
+                    </td>
+                    <td data-label="{{ 'customer.orders.fulfillment_status' | t }}">
+                      <span class="customer-orders__badge customer-orders__badge--{{ order.fulfillment_status | default: 'unfulfilled' }}">
+                        {{ order.fulfillment_status_label | default: 'Unfulfilled' }}
+                      </span>
+                    </td>
+                    <td data-label="{{ 'customer.orders.total' | t }}">
+                      {{ order.total_price | money }}
+                    </td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+            
+            {%- if paginate.pages > 1 -%}
+              {% render 'pagination', paginate: paginate %}
+            {%- endif -%}
+          </div>
+        {%- else -%}
+          <div class="customer-account__empty">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            <p>{{ 'customer.orders.none' | t }}</p>
+            <a href="{{ routes.all_products_collection_url }}" class="button button--primary">
+              {{ 'customer.orders.start_shopping' | t }}
+            </a>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Customer Account",
+  "tag": "section",
+  "class": "customer-account-section"
+}
+{% endschema %}

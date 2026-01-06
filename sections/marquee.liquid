@@ -1,0 +1,195 @@
+{%- comment -%}
+  Marquee Section
+  Scrolling text marquee for press quotes, features, brand values
+{%- endcomment -%}
+
+{%- style -%}
+  .marquee-section {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+    overflow: hidden;
+  }
+
+  .marquee-section .marquee__item {
+    font-size: {{ section.settings.font_size }}px;
+    font-weight: {{ section.settings.font_weight }};
+    {% if section.settings.use_serif_font %}
+      font-family: var(--font-heading);
+      font-style: italic;
+    {% endif %}
+  }
+
+  @media (min-width: 768px) {
+    .marquee-section .marquee__item {
+      font-size: {{ section.settings.font_size_desktop }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="marquee-section">
+  {%- assign items = section.blocks | map: 'settings' | map: 'text' -%}
+  
+  {%- render 'marquee',
+    items: items,
+    speed: section.settings.speed,
+    direction: section.settings.direction,
+    separator: section.settings.separator,
+    pause_on_hover: section.settings.pause_on_hover
+  -%}
+</div>
+
+{% schema %}
+{
+  "name": "Marquee",
+  "tag": "section",
+  "class": "section-marquee",
+  "settings": [
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Animation speed (seconds)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "unit": "s"
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "label": "Direction",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "separator",
+      "label": "Separator icon",
+      "options": [
+        { "value": "star", "label": "Star" },
+        { "value": "dot", "label": "Dot" },
+        { "value": "dash", "label": "Dash" },
+        { "value": "diamond", "label": "Diamond" }
+      ],
+      "default": "star"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size (mobile)",
+      "min": 12,
+      "max": 48,
+      "step": 2,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "label": "Font size (desktop)",
+      "min": 14,
+      "max": 72,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_serif_font",
+      "label": "Use serif font (italic)",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "default": 16,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "Text item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free shipping on orders over $100"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Marquee",
+      "blocks": [
+        { "type": "text", "settings": { "text": "Free Shipping on Orders $100+" } },
+        { "type": "text", "settings": { "text": "30-Day Money Back Guarantee" } },
+        { "type": "text", "settings": { "text": "Professional Training Equipment" } },
+        { "type": "text", "settings": { "text": "Trusted by Elite Athletes Worldwide" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

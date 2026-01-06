@@ -1,0 +1,107 @@
+{% comment %}
+  Collection Banner Section
+  Displays collection title, description, and optional image
+{% endcomment %}
+
+{%- liquid
+  assign show_description = section.settings.show_collection_description
+  assign show_image = section.settings.show_collection_image
+  assign text_alignment = section.settings.text_alignment
+-%}
+
+<section class="collection-banner">
+  {%- if show_image and collection.image -%}
+    <div class="collection-banner__image-container">
+      <img 
+        src="{{ collection.image | image_url: width: 1920 }}"
+        srcset="{{ collection.image | image_url: width: 750 }} 750w,
+                {{ collection.image | image_url: width: 1100 }} 1100w,
+                {{ collection.image | image_url: width: 1500 }} 1500w,
+                {{ collection.image | image_url: width: 1920 }} 1920w"
+        sizes="100vw"
+        alt="{{ collection.image.alt | escape | default: collection.title }}"
+        width="{{ collection.image.width }}"
+        height="{{ collection.image.height }}"
+        loading="eager"
+        class="collection-banner__image"
+      >
+      <div class="collection-banner__overlay"></div>
+    </div>
+  {%- endif -%}
+  
+  <div class="container">
+    <div class="collection-banner__content collection-banner__content--{{ text_alignment }} {% if show_image and collection.image %}collection-banner__content--has-image{% endif %}">
+      <nav class="collection-banner__breadcrumbs" aria-label="Breadcrumb">
+        <ol class="breadcrumbs">
+          <li class="breadcrumbs__item">
+            <a href="{{ routes.root_url }}" class="breadcrumbs__link">{{ 'general.breadcrumbs.home' | t }}</a>
+          </li>
+          {%- if collection.handle == 'all' -%}
+            <li class="breadcrumbs__item breadcrumbs__item--current">
+              <span aria-current="page">{{ 'collections.general.all_products' | t }}</span>
+            </li>
+          {%- else -%}
+            <li class="breadcrumbs__item">
+              <a href="{{ routes.collections_url }}" class="breadcrumbs__link">{{ 'collections.general.title' | t }}</a>
+            </li>
+            <li class="breadcrumbs__item breadcrumbs__item--current">
+              <span aria-current="page">{{ collection.title }}</span>
+            </li>
+          {%- endif -%}
+        </ol>
+      </nav>
+      
+      <h1 class="collection-banner__title h1">{{ collection.title }}</h1>
+      
+      {%- if show_description and collection.description != blank -%}
+        <div class="collection-banner__description rte">
+          {{ collection.description }}
+        </div>
+      {%- endif -%}
+      
+      {%- if collection.products_count > 0 -%}
+        <p class="collection-banner__count">
+          {{ 'collections.general.product_count' | t: count: collection.products_count }}
+        </p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection Banner",
+  "tag": "section",
+  "class": "collection-banner-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Show collection image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "label": "Show collection description",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "left"
+    }
+  ]
+}
+{% endschema %}

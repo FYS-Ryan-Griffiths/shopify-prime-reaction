@@ -1,0 +1,255 @@
+{% comment %}
+  Contact Form Section
+{% endcomment %}
+
+<section class="contact-form section">
+  <div class="container">
+    <div class="contact-form__grid">
+      {%- comment -%} Contact Info {%- endcomment -%}
+      <div class="contact-form__info">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="contact-form__heading h3">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        
+        {%- if section.settings.description != blank -%}
+          <div class="contact-form__description rte">
+            {{ section.settings.description }}
+          </div>
+        {%- endif -%}
+        
+        <div class="contact-form__details">
+          {%- if section.settings.show_email and section.settings.email != blank -%}
+            <div class="contact-form__detail">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              <div>
+                <span class="contact-form__detail-label">{{ 'contact.info.email' | t }}</span>
+                <a href="mailto:{{ section.settings.email }}" class="contact-form__detail-value">{{ section.settings.email }}</a>
+              </div>
+            </div>
+          {%- endif -%}
+          
+          {%- if section.settings.show_phone and section.settings.phone != blank -%}
+            <div class="contact-form__detail">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <div>
+                <span class="contact-form__detail-label">{{ 'contact.info.phone' | t }}</span>
+                <a href="tel:{{ section.settings.phone | remove: ' ' | remove: '-' }}" class="contact-form__detail-value">{{ section.settings.phone }}</a>
+              </div>
+            </div>
+          {%- endif -%}
+          
+          {%- if section.settings.show_address and section.settings.address != blank -%}
+            <div class="contact-form__detail">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <div>
+                <span class="contact-form__detail-label">{{ 'contact.info.address' | t }}</span>
+                <address class="contact-form__detail-value">{{ section.settings.address | newline_to_br }}</address>
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+        
+        {%- if section.settings.show_hours and section.settings.hours != blank -%}
+          <div class="contact-form__hours">
+            <h3 class="contact-form__hours-title h5">{{ 'contact.info.hours' | t }}</h3>
+            <div class="contact-form__hours-content">
+              {{ section.settings.hours | newline_to_br }}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+      
+      {%- comment -%} Form {%- endcomment -%}
+      <div class="contact-form__form-wrapper">
+        {%- form 'contact', class: 'contact-form__form' -%}
+          {%- if form.posted_successfully? -%}
+            <div class="form-message form-message--success">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <span>{{ 'contact.form.success' | t }}</span>
+            </div>
+          {%- endif -%}
+          
+          {%- if form.errors -%}
+            <div class="form-message form-message--error">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              <span>{{ form.errors | default_errors }}</span>
+            </div>
+          {%- endif -%}
+          
+          <div class="form-row form-row--two">
+            <div class="form-field">
+              <label for="ContactName" class="form-label">{{ 'contact.form.name' | t }} <span class="form-required">*</span></label>
+              <input 
+                type="text" 
+                id="ContactName"
+                name="contact[name]"
+                class="form-input"
+                autocomplete="name"
+                required
+              >
+            </div>
+            
+            <div class="form-field">
+              <label for="ContactEmail" class="form-label">{{ 'contact.form.email' | t }} <span class="form-required">*</span></label>
+              <input 
+                type="email" 
+                id="ContactEmail"
+                name="contact[email]"
+                class="form-input"
+                autocomplete="email"
+                required
+              >
+            </div>
+          </div>
+          
+          <div class="form-field">
+            <label for="ContactPhone" class="form-label">{{ 'contact.form.phone' | t }}</label>
+            <input 
+              type="tel" 
+              id="ContactPhone"
+              name="contact[phone]"
+              class="form-input"
+              autocomplete="tel"
+            >
+          </div>
+          
+          {%- if section.settings.show_subject -%}
+            <div class="form-field">
+              <label for="ContactSubject" class="form-label">{{ 'contact.form.subject' | t }}</label>
+              <select id="ContactSubject" name="contact[subject]" class="form-select">
+                <option value="">{{ 'contact.form.subject_placeholder' | t }}</option>
+                <option value="General Inquiry">General Inquiry</option>
+                <option value="Product Question">Product Question</option>
+                <option value="Wholesale/B2B">Wholesale/B2B</option>
+                <option value="Order Support">Order Support</option>
+                <option value="Returns">Returns</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          {%- endif -%}
+          
+          <div class="form-field">
+            <label for="ContactMessage" class="form-label">{{ 'contact.form.message' | t }} <span class="form-required">*</span></label>
+            <textarea 
+              id="ContactMessage"
+              name="contact[body]"
+              class="form-textarea"
+              rows="6"
+              required
+            ></textarea>
+          </div>
+          
+          <div class="form-field form-field--actions">
+            <button type="submit" class="button button--primary button--large">
+              {{ 'contact.form.submit' | t }}
+            </button>
+          </div>
+        {%- endform -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact Form",
+  "tag": "section",
+  "class": "contact-form-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Get in Touch"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Have a question? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Contact Information"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_email",
+      "label": "Show email",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email address",
+      "default": "hello@example.com"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "Show phone",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone number",
+      "default": "+1 (555) 000-0000"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_address",
+      "label": "Show address",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "address",
+      "label": "Address",
+      "default": "123 Main Street\nCity, State 12345"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hours",
+      "label": "Show business hours",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "hours",
+      "label": "Business hours",
+      "default": "Monday - Friday: 9am - 5pm\nSaturday - Sunday: Closed"
+    },
+    {
+      "type": "header",
+      "content": "Form Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subject",
+      "label": "Show subject dropdown",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact Form"
+    }
+  ]
+}
+{% endschema %}

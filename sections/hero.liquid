@@ -1,0 +1,218 @@
+{% comment %}
+  Hero Section
+  Full-bleed hero with oversized typography - postfamiliar aesthetic
+{% endcomment %}
+
+{{ 'hero.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign height_class = 'hero--' | append: section.settings.height
+  assign position_class = 'hero--' | append: section.settings.text_position
+-%}
+
+<section 
+  class="hero {{ height_class }} {{ position_class }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="hero"
+>
+  {%- comment -%} Background Media {%- endcomment -%}
+  <div class="hero__media">
+    {%- if section.settings.video != blank -%}
+      <video 
+        class="hero__video"
+        autoplay 
+        muted 
+        loop 
+        playsinline
+        poster="{{ section.settings.image | image_url: width: 1920 }}"
+      >
+        <source src="{{ section.settings.video }}" type="video/mp4">
+      </video>
+    {%- elsif section.settings.image != blank -%}
+      <img 
+        src="{{ section.settings.image | image_url: width: 1920 }}"
+        srcset="{{ section.settings.image | image_url: width: 960 }} 960w,
+                {{ section.settings.image | image_url: width: 1440 }} 1440w,
+                {{ section.settings.image | image_url: width: 1920 }} 1920w,
+                {{ section.settings.image | image_url: width: 2560 }} 2560w"
+        sizes="100vw"
+        alt="{{ section.settings.image.alt | escape }}"
+        class="hero__image"
+        loading="eager"
+        fetchpriority="high"
+      >
+    {%- else -%}
+      <div class="hero__placeholder">
+        {{ 'lifestyle-1' | placeholder_svg_tag }}
+      </div>
+    {%- endif -%}
+    
+    {%- comment -%} Overlay {%- endcomment -%}
+    {%- if section.settings.overlay_opacity > 0 -%}
+      <div 
+        class="hero__overlay" 
+        style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }}"
+      ></div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Content {%- endcomment -%}
+  <div class="hero__content container">
+    <div class="hero__text" data-animate>
+      {%- if section.settings.subheading != blank -%}
+        <p class="hero__subheading label-text">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+      
+      {%- if section.settings.heading != blank -%}
+        <h1 class="hero__heading display-xl">{{ section.settings.heading }}</h1>
+      {%- endif -%}
+      
+      {%- if section.settings.text != blank -%}
+        <div class="hero__description lead">{{ section.settings.text }}</div>
+      {%- endif -%}
+      
+      {%- if section.settings.button_text != blank -%}
+        <div class="hero__actions">
+          <a href="{{ section.settings.button_link }}" class="hero__button btn btn--primary btn--lg">
+            {{ section.settings.button_text }}
+          </a>
+          {%- if section.settings.button_text_2 != blank -%}
+            <a href="{{ section.settings.button_link_2 }}" class="hero__button btn btn--secondary btn--lg">
+              {{ section.settings.button_text_2 }}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} Scroll Indicator {%- endcomment -%}
+  {%- if section.settings.show_scroll_indicator -%}
+    <div class="hero__scroll-indicator">
+      <span class="hero__scroll-text">Scroll</span>
+      <svg width="16" height="24" viewBox="0 0 16 24" fill="none">
+        <rect x="1" y="1" width="14" height="22" rx="7" stroke="currentColor" stroke-width="1.5"/>
+        <circle class="hero__scroll-dot" cx="8" cy="8" r="2" fill="currentColor"/>
+      </svg>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "class": "section-hero",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image"
+    },
+    {
+      "type": "url",
+      "id": "video",
+      "label": "Background video URL",
+      "info": "Direct link to MP4 file"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "New Collection"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Train Different"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "button_text_2",
+      "label": "Second button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link_2",
+      "label": "Second button link"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Section height",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" },
+        { "value": "full", "label": "Full screen" }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "default": 30,
+      "unit": "%",
+      "label": "Overlay opacity"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_scroll_indicator",
+      "label": "Show scroll indicator",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero"
+    }
+  ]
+}
+{% endschema %}

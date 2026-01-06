@@ -1,0 +1,44 @@
+{
+  "sections": {
+    "banner": {
+      "type": "page-banner",
+      "settings": {
+        "heading": "Contact Us",
+        "subheading": "We'd love to hear from you"
+      }
+    },
+    "main": {
+      "type": "contact-form",
+      "settings": {
+        "heading": "Get in Touch",
+        "show_phone": true,
+        "show_email": true,
+        "show_address": true
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "settings": {
+        "heading": "Common Questions"
+      },
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "What are your shipping times?",
+            "answer": "<p>Standard shipping takes 3-5 business days within the continental US. International orders typically arrive within 7-14 business days.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "Do you offer bulk/wholesale pricing?",
+            "answer": "<p>Yes! We offer special pricing for gyms, fitness centers, and bulk orders. Please use our contact form or email us directly to discuss your needs.</p>"
+          }
+        }
+      },
+      "block_order": ["q1", "q2"]
+    }
+  },
+  "order": ["banner", "main", "faq"]
+}

@@ -1,0 +1,80 @@
+{% comment %}
+  Page Banner Section
+  Hero banner for content pages
+{% endcomment %}
+
+{%- liquid
+  assign heading = section.settings.heading | default: page.title
+  assign subheading = section.settings.subheading
+  assign show_image = section.settings.show_image
+-%}
+
+<section class="page-banner {% if show_image and section.settings.image %}page-banner--has-image{% endif %}">
+  {%- if show_image and section.settings.image -%}
+    <div class="page-banner__image-container">
+      <img 
+        src="{{ section.settings.image | image_url: width: 1920 }}"
+        srcset="{{ section.settings.image | image_url: width: 750 }} 750w,
+                {{ section.settings.image | image_url: width: 1100 }} 1100w,
+                {{ section.settings.image | image_url: width: 1500 }} 1500w,
+                {{ section.settings.image | image_url: width: 1920 }} 1920w"
+        sizes="100vw"
+        alt="{{ section.settings.image.alt | escape | default: heading }}"
+        width="{{ section.settings.image.width }}"
+        height="{{ section.settings.image.height }}"
+        loading="eager"
+        class="page-banner__image"
+      >
+      <div class="page-banner__overlay"></div>
+    </div>
+  {%- endif -%}
+  
+  <div class="container">
+    <div class="page-banner__content">
+      {%- if heading != blank -%}
+        <h1 class="page-banner__title h1">{{ heading }}</h1>
+      {%- endif -%}
+      
+      {%- if subheading != blank -%}
+        <p class="page-banner__subtitle">{{ subheading }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Page Banner",
+  "tag": "section",
+  "class": "page-banner-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Leave blank to use page title"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "label": "Show background image",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Page Banner"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,189 @@
+{% comment %}
+  Customer Login Section
+{% endcomment %}
+
+<section class="customer-login section">
+  <div class="container container--narrow">
+    <div class="customer-login__wrapper">
+      <header class="customer-login__header">
+        <h1 class="customer-login__title h2">{{ 'customer.login.title' | t }}</h1>
+        <p class="customer-login__subtitle">{{ 'customer.login.subtitle' | t }}</p>
+      </header>
+      
+      {%- form 'customer_login', class: 'customer-login__form' -%}
+        {%- if form.errors -%}
+          <div class="form-message form-message--error">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            <span>{{ form.errors | default_errors }}</span>
+          </div>
+        {%- endif -%}
+        
+        <div class="form-field">
+          <label for="CustomerEmail" class="form-label">{{ 'customer.login.email' | t }}</label>
+          <input 
+            type="email" 
+            id="CustomerEmail"
+            name="customer[email]"
+            class="form-input"
+            autocomplete="email"
+            autocapitalize="off"
+            autocorrect="off"
+            required
+          >
+        </div>
+        
+        <div class="form-field">
+          <label for="CustomerPassword" class="form-label">{{ 'customer.login.password' | t }}</label>
+          <div class="form-input-wrapper">
+            <input 
+              type="password" 
+              id="CustomerPassword"
+              name="customer[password]"
+              class="form-input"
+              autocomplete="current-password"
+              required
+            >
+            <button type="button" class="form-password-toggle" data-toggle-password aria-label="{{ 'customer.login.show_password' | t }}">
+              <svg class="icon-show" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <svg class="icon-hide" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                <line x1="1" y1="1" x2="23" y2="23"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <div class="form-field form-field--actions">
+          <button type="submit" class="button button--primary button--large button--full">
+            {{ 'customer.login.submit' | t }}
+          </button>
+        </div>
+        
+        <div class="customer-login__links">
+          <a href="#recover" class="customer-login__link" id="RecoverPassword">
+            {{ 'customer.login.forgot_password' | t }}
+          </a>
+        </div>
+      {%- endform -%}
+      
+      {%- comment -%} Password Recovery Form {%- endcomment -%}
+      <div id="recover" class="customer-login__recover" style="display: none;">
+        <header class="customer-login__header">
+          <h2 class="customer-login__title h3">{{ 'customer.recover_password.title' | t }}</h2>
+          <p class="customer-login__subtitle">{{ 'customer.recover_password.subtitle' | t }}</p>
+        </header>
+        
+        {%- form 'recover_customer_password', class: 'customer-login__form' -%}
+          {%- if form.posted_successfully? -%}
+            <div class="form-message form-message--success">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span>{{ 'customer.recover_password.success' | t }}</span>
+            </div>
+          {%- endif -%}
+          
+          <div class="form-field">
+            <label for="RecoverEmail" class="form-label">{{ 'customer.recover_password.email' | t }}</label>
+            <input 
+              type="email" 
+              id="RecoverEmail"
+              name="email"
+              class="form-input"
+              autocomplete="email"
+              autocapitalize="off"
+              autocorrect="off"
+              required
+            >
+          </div>
+          
+          <div class="form-field form-field--actions">
+            <button type="submit" class="button button--primary button--large button--full">
+              {{ 'customer.recover_password.submit' | t }}
+            </button>
+          </div>
+          
+          <div class="customer-login__links">
+            <a href="#login" class="customer-login__link" id="HideRecoverPassword">
+              {{ 'customer.recover_password.cancel' | t }}
+            </a>
+          </div>
+        {%- endform -%}
+      </div>
+      
+      <div class="customer-login__footer">
+        <p>{{ 'customer.login.no_account' | t }}</p>
+        <a href="{{ routes.account_register_url }}" class="button button--secondary">
+          {{ 'customer.login.create_account' | t }}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Toggle between login and recovery forms
+    const recoverLink = document.getElementById('RecoverPassword');
+    const hideRecoverLink = document.getElementById('HideRecoverPassword');
+    const loginForm = document.querySelector('.customer-login__form');
+    const recoverForm = document.getElementById('recover');
+    
+    if (recoverLink && hideRecoverLink) {
+      recoverLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        loginForm.style.display = 'none';
+        recoverForm.style.display = 'block';
+        window.location.hash = 'recover';
+      });
+      
+      hideRecoverLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        recoverForm.style.display = 'none';
+        loginForm.style.display = 'block';
+        window.location.hash = '';
+      });
+      
+      // Check hash on load
+      if (window.location.hash === '#recover') {
+        loginForm.style.display = 'none';
+        recoverForm.style.display = 'block';
+      }
+    }
+    
+    // Password visibility toggle
+    const toggleBtns = document.querySelectorAll('[data-toggle-password]');
+    toggleBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const input = this.previousElementSibling;
+        const showIcon = this.querySelector('.icon-show');
+        const hideIcon = this.querySelector('.icon-hide');
+        
+        if (input.type === 'password') {
+          input.type = 'text';
+          showIcon.style.display = 'none';
+          hideIcon.style.display = 'block';
+        } else {
+          input.type = 'password';
+          showIcon.style.display = 'block';
+          hideIcon.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Customer Login",
+  "tag": "section",
+  "class": "customer-login-section"
+}
+{% endschema %}

@@ -1,0 +1,727 @@
+{{ 'facility-locator.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign map_provider = section.settings.map_provider
+  assign google_api_key = section.settings.google_maps_api_key
+  assign mapbox_token = section.settings.mapbox_token
+  assign default_lat = section.settings.default_lat | default: 40.7128
+  assign default_lng = section.settings.default_lng | default: -74.0060
+  assign default_zoom = section.settings.default_zoom | default: 10
+-%}
+
+<div 
+  class="section-facility-locator color-{{ section.settings.color_scheme }}"
+  data-facility-locator
+  data-section-id="{{ section.id }}"
+  data-map-provider="{{ map_provider }}"
+  data-google-key="{{ google_api_key }}"
+  data-mapbox-token="{{ mapbox_token }}"
+  data-default-lat="{{ default_lat }}"
+  data-default-lng="{{ default_lng }}"
+  data-default-zoom="{{ default_zoom }}"
+>
+  <div class="container">
+    {%- if section.settings.title != blank or section.settings.subtitle != blank -%}
+      <div class="facility-locator__header">
+        {%- if section.settings.subtitle != blank -%}
+          <p class="facility-locator__subtitle">{{ section.settings.subtitle }}</p>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="facility-locator__title h1">{{ section.settings.title }}</h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <div class="facility-locator__description rte">{{ section.settings.description }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="facility-locator__content">
+      <div class="facility-locator__sidebar">
+        <div class="facility-locator__search">
+          <label for="facility-search-{{ section.id }}" class="visually-hidden">{{ 'facility_locator.search_label' | t }}</label>
+          <input 
+            type="text" 
+            id="facility-search-{{ section.id }}"
+            class="facility-locator__search-input"
+            placeholder="{{ 'facility_locator.search_placeholder' | t | default: 'Enter city or zip code' }}"
+            data-facility-search
+          >
+          <button type="button" class="facility-locator__search-btn" data-facility-search-btn aria-label="{{ 'facility_locator.search' | t }}">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16ZM19 19l-4.35-4.35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <button type="button" class="facility-locator__locate-btn" data-use-location>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10 1v3M10 16v3M1 10h3M16 10h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          {{ 'facility_locator.use_my_location' | t | default: 'Use my location' }}
+        </button>
+
+        {%- if section.settings.show_filters and section.blocks.size > 0 -%}
+          <div class="facility-locator__filters">
+            <h3 class="facility-locator__filters-title h5">{{ 'facility_locator.filter_by_type' | t | default: 'Filter by type' }}</h3>
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'type_filter' -%}
+                <label class="facility-locator__filter" {{ block.shopify_attributes }}>
+                  <input type="checkbox" value="{{ block.settings.type_id }}" data-facility-filter checked>
+                  <span class="facility-locator__filter-check"></span>
+                  <span class="facility-locator__filter-label">
+                    {%- if block.settings.icon != blank -%}
+                      <span class="facility-locator__filter-icon">{{ block.settings.icon }}</span>
+                    {%- endif -%}
+                    {{ block.settings.label }}
+                  </span>
+                </label>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        <div class="facility-locator__results" data-facility-results>
+          <div class="facility-locator__loading" data-facility-loading hidden>
+            <span class="spinner"></span>
+            {{ 'facility_locator.loading' | t | default: 'Finding locations...' }}
+          </div>
+
+          <div class="facility-locator__list" data-facility-list>
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'location' -%}
+                <div 
+                  class="facility-card"
+                  data-facility-card
+                  data-facility-id="{{ block.id }}"
+                  data-lat="{{ block.settings.latitude }}"
+                  data-lng="{{ block.settings.longitude }}"
+                  data-type="{{ block.settings.location_type }}"
+                  {{ block.shopify_attributes }}
+                >
+                  <div class="facility-card__header">
+                    <h4 class="facility-card__name">{{ block.settings.name }}</h4>
+                    {%- if block.settings.location_type != blank -%}
+                      <span class="facility-card__type">{{ block.settings.location_type }}</span>
+                    {%- endif -%}
+                  </div>
+
+                  {%- if block.settings.address != blank -%}
+                    <p class="facility-card__address">{{ block.settings.address }}</p>
+                  {%- endif -%}
+
+                  <div class="facility-card__meta">
+                    {%- if block.settings.phone != blank -%}
+                      <a href="tel:{{ block.settings.phone | remove: ' ' | remove: '-' }}" class="facility-card__phone">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <path d="M14.5 11.3v2a1.3 1.3 0 0 1-1.4 1.3 13 13 0 0 1-5.7-2 12.8 12.8 0 0 1-3.9-3.9 13 13 0 0 1-2-5.8 1.3 1.3 0 0 1 1.2-1.4h2A1.3 1.3 0 0 1 6 2.5a8.6 8.6 0 0 0 .5 1.9 1.3 1.3 0 0 1-.3 1.4l-.9.8a10.6 10.6 0 0 0 3.9 3.9l.8-.8a1.3 1.3 0 0 1 1.4-.3 8.6 8.6 0 0 0 1.9.5 1.3 1.3 0 0 1 1.2 1.4Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        {{ block.settings.phone }}
+                      </a>
+                    {%- endif -%}
+
+                    {%- if block.settings.hours != blank -%}
+                      <p class="facility-card__hours">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+                          <path d="M8 4v4l2.5 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                        </svg>
+                        {{ block.settings.hours }}
+                      </p>
+                    {%- endif -%}
+                  </div>
+
+                  <div class="facility-card__actions">
+                    <button type="button" class="facility-card__directions-btn" data-get-directions data-address="{{ block.settings.address | url_encode }}">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M3 13l4-9 4 9-4-3-4 3z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      {{ 'facility_locator.get_directions' | t | default: 'Directions' }}
+                    </button>
+
+                    {%- if block.settings.url != blank -%}
+                      <a href="{{ block.settings.url }}" class="facility-card__website-btn">
+                        {{ 'facility_locator.visit_website' | t | default: 'Website' }}
+                      </a>
+                    {%- endif -%}
+                  </div>
+
+                  <span class="facility-card__distance" data-facility-distance hidden></span>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          <div class="facility-locator__no-results" data-facility-no-results hidden>
+            <p>{{ 'facility_locator.no_results' | t | default: 'No locations found in this area.' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="facility-locator__map-container">
+        <div class="facility-locator__map" id="facility-map-{{ section.id }}" data-facility-map></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{%- comment -%} Locations data for JavaScript {%- endcomment -%}
+<script type="application/json" data-facility-locations>
+  [
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'location' -%}
+        {
+          "id": "{{ block.id }}",
+          "name": {{ block.settings.name | json }},
+          "address": {{ block.settings.address | json }},
+          "lat": {{ block.settings.latitude | default: 0 }},
+          "lng": {{ block.settings.longitude | default: 0 }},
+          "type": {{ block.settings.location_type | json }},
+          "phone": {{ block.settings.phone | json }},
+          "hours": {{ block.settings.hours | json }},
+          "url": {{ block.settings.url | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endif -%}
+    {%- endfor -%}
+  ]
+</script>
+
+<script>
+  (function() {
+    const container = document.querySelector('[data-facility-locator][data-section-id="{{ section.id }}"]');
+    if (!container) return;
+
+    const mapProvider = container.dataset.mapProvider;
+    const googleKey = container.dataset.googleKey;
+    const mapboxToken = container.dataset.mapboxToken;
+    const defaultLat = parseFloat(container.dataset.defaultLat);
+    const defaultLng = parseFloat(container.dataset.defaultLng);
+    const defaultZoom = parseInt(container.dataset.defaultZoom);
+
+    const mapEl = container.querySelector('[data-facility-map]');
+    const searchInput = container.querySelector('[data-facility-search]');
+    const searchBtn = container.querySelector('[data-facility-search-btn]');
+    const locateBtn = container.querySelector('[data-use-location]');
+    const filters = container.querySelectorAll('[data-facility-filter]');
+    const cards = container.querySelectorAll('[data-facility-card]');
+    const loadingEl = container.querySelector('[data-facility-loading]');
+    const noResultsEl = container.querySelector('[data-facility-no-results]');
+
+    // Load locations data
+    const locationsData = JSON.parse(
+      container.querySelector('[data-facility-locations]')?.textContent || '[]'
+    );
+
+    let map = null;
+    let markers = [];
+    let userMarker = null;
+    let userLocation = null;
+
+    // Initialize map based on provider
+    function initMap() {
+      if (mapProvider === 'mapbox' && mapboxToken) {
+        initMapbox();
+      } else if (googleKey) {
+        initGoogleMaps();
+      } else {
+        // Fallback: Static map or no map
+        mapEl.innerHTML = '<p class="facility-locator__map-fallback">Configure a map provider in section settings</p>';
+      }
+    }
+
+    function initMapbox() {
+      if (!window.mapboxgl) {
+        // Load Mapbox GL JS
+        const script = document.createElement('script');
+        script.src = 'https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js';
+        script.onload = () => {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = 'https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css';
+          document.head.appendChild(link);
+          createMapboxMap();
+        };
+        document.head.appendChild(script);
+      } else {
+        createMapboxMap();
+      }
+    }
+
+    function createMapboxMap() {
+      mapboxgl.accessToken = mapboxToken;
+      map = new mapboxgl.Map({
+        container: mapEl.id,
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [defaultLng, defaultLat],
+        zoom: defaultZoom
+      });
+
+      map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+      // Add markers
+      locationsData.forEach(location => {
+        if (location.lat && location.lng) {
+          const el = document.createElement('div');
+          el.className = 'facility-marker';
+          el.innerHTML = '<svg width="32" height="40" viewBox="0 0 32 40"><path d="M16 0C7.2 0 0 7.2 0 16c0 12 16 24 16 24s16-12 16-24C32 7.2 24.8 0 16 0zm0 22a6 6 0 1 1 0-12 6 6 0 0 1 0 12z" fill="currentColor"/></svg>';
+
+          const marker = new mapboxgl.Marker(el)
+            .setLngLat([location.lng, location.lat])
+            .addTo(map);
+
+          el.addEventListener('click', () => selectLocation(location.id));
+          markers.push({ marker, data: location });
+        }
+      });
+
+      fitBounds();
+    }
+
+    function initGoogleMaps() {
+      if (!window.google) {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${googleKey}&callback=initGoogleMap_{{ section.id | replace: '-', '_' }}`;
+        script.async = true;
+        window['initGoogleMap_{{ section.id | replace: '-', '_' }}'] = createGoogleMap;
+        document.head.appendChild(script);
+      } else {
+        createGoogleMap();
+      }
+    }
+
+    function createGoogleMap() {
+      map = new google.maps.Map(mapEl, {
+        center: { lat: defaultLat, lng: defaultLng },
+        zoom: defaultZoom,
+        styles: [
+          { featureType: 'poi', stylers: [{ visibility: 'off' }] }
+        ]
+      });
+
+      const bounds = new google.maps.LatLngBounds();
+
+      locationsData.forEach(location => {
+        if (location.lat && location.lng) {
+          const marker = new google.maps.Marker({
+            position: { lat: location.lat, lng: location.lng },
+            map: map,
+            title: location.name
+          });
+
+          marker.addListener('click', () => selectLocation(location.id));
+          markers.push({ marker, data: location });
+          bounds.extend(marker.getPosition());
+        }
+      });
+
+      if (markers.length > 0) {
+        map.fitBounds(bounds);
+      }
+    }
+
+    function fitBounds() {
+      if (mapProvider === 'mapbox' && map && markers.length > 0) {
+        const bounds = new mapboxgl.LngLatBounds();
+        markers.forEach(m => bounds.extend([m.data.lng, m.data.lat]));
+        map.fitBounds(bounds, { padding: 50 });
+      }
+    }
+
+    function selectLocation(locationId) {
+      // Highlight card
+      cards.forEach(card => {
+        card.classList.toggle('is-selected', card.dataset.facilityId === locationId);
+        if (card.dataset.facilityId === locationId) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+
+      // Center map on location
+      const location = locationsData.find(l => l.id === locationId);
+      if (location && map) {
+        if (mapProvider === 'mapbox') {
+          map.flyTo({ center: [location.lng, location.lat], zoom: 14 });
+        } else if (window.google) {
+          map.panTo({ lat: location.lat, lng: location.lng });
+          map.setZoom(14);
+        }
+      }
+    }
+
+    // Card click handlers
+    cards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (!e.target.closest('a, button')) {
+          selectLocation(card.dataset.facilityId);
+        }
+      });
+    });
+
+    // Use my location
+    if (locateBtn) {
+      locateBtn.addEventListener('click', () => {
+        if ('geolocation' in navigator) {
+          loadingEl.hidden = false;
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              };
+              updateDistances();
+              centerOnUser();
+              loadingEl.hidden = true;
+            },
+            (error) => {
+              console.error('Geolocation error:', error);
+              loadingEl.hidden = true;
+              alert('{{ "facility_locator.location_error" | t | default: "Could not get your location" }}');
+            }
+          );
+        }
+      });
+    }
+
+    function centerOnUser() {
+      if (!userLocation || !map) return;
+
+      if (mapProvider === 'mapbox') {
+        if (userMarker) userMarker.remove();
+        const el = document.createElement('div');
+        el.className = 'facility-user-marker';
+        userMarker = new mapboxgl.Marker(el)
+          .setLngLat([userLocation.lng, userLocation.lat])
+          .addTo(map);
+        map.flyTo({ center: [userLocation.lng, userLocation.lat], zoom: 12 });
+      } else if (window.google) {
+        if (userMarker) userMarker.setMap(null);
+        userMarker = new google.maps.Marker({
+          position: userLocation,
+          map: map,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 8,
+            fillColor: '#4285F4',
+            fillOpacity: 1,
+            strokeColor: 'white',
+            strokeWeight: 2
+          }
+        });
+        map.panTo(userLocation);
+        map.setZoom(12);
+      }
+    }
+
+    function updateDistances() {
+      if (!userLocation) return;
+
+      cards.forEach(card => {
+        const lat = parseFloat(card.dataset.lat);
+        const lng = parseFloat(card.dataset.lng);
+        const distance = calculateDistance(userLocation.lat, userLocation.lng, lat, lng);
+        const distanceEl = card.querySelector('[data-facility-distance]');
+        if (distanceEl) {
+          distanceEl.textContent = `${distance.toFixed(1)} mi`;
+          distanceEl.hidden = false;
+        }
+      });
+
+      // Sort cards by distance
+      const list = container.querySelector('[data-facility-list]');
+      const sortedCards = Array.from(cards).sort((a, b) => {
+        const distA = parseFloat(a.querySelector('[data-facility-distance]')?.textContent) || 999;
+        const distB = parseFloat(b.querySelector('[data-facility-distance]')?.textContent) || 999;
+        return distA - distB;
+      });
+      sortedCards.forEach(card => list.appendChild(card));
+    }
+
+    function calculateDistance(lat1, lng1, lat2, lng2) {
+      const R = 3959; // Earth's radius in miles
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLng = (lng2 - lng1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLng/2) * Math.sin(dLng/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // Search
+    if (searchBtn && searchInput) {
+      searchBtn.addEventListener('click', performSearch);
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performSearch();
+      });
+    }
+
+    function performSearch() {
+      const query = searchInput.value.trim();
+      if (!query) return;
+
+      loadingEl.hidden = false;
+
+      // Use geocoding to get coordinates
+      if (mapProvider === 'mapbox' && mapboxToken) {
+        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${mapboxToken}&limit=1`)
+          .then(r => r.json())
+          .then(data => {
+            loadingEl.hidden = true;
+            if (data.features && data.features[0]) {
+              const [lng, lat] = data.features[0].center;
+              userLocation = { lat, lng };
+              updateDistances();
+              centerOnUser();
+            }
+          })
+          .catch(() => loadingEl.hidden = true);
+      } else if (window.google) {
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ address: query }, (results, status) => {
+          loadingEl.hidden = true;
+          if (status === 'OK' && results[0]) {
+            const loc = results[0].geometry.location;
+            userLocation = { lat: loc.lat(), lng: loc.lng() };
+            updateDistances();
+            centerOnUser();
+          }
+        });
+      }
+    }
+
+    // Filters
+    filters.forEach(filter => {
+      filter.addEventListener('change', applyFilters);
+    });
+
+    function applyFilters() {
+      const activeTypes = Array.from(filters)
+        .filter(f => f.checked)
+        .map(f => f.value.toLowerCase());
+
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const type = (card.dataset.type || '').toLowerCase();
+        const show = activeTypes.length === 0 || activeTypes.includes(type);
+        card.hidden = !show;
+        if (show) visibleCount++;
+
+        // Update markers
+        const marker = markers.find(m => m.data.id === card.dataset.facilityId);
+        if (marker) {
+          if (mapProvider === 'mapbox') {
+            marker.marker.getElement().style.display = show ? '' : 'none';
+          } else if (window.google) {
+            marker.marker.setVisible(show);
+          }
+        }
+      });
+
+      noResultsEl.hidden = visibleCount > 0;
+    }
+
+    // Directions
+    container.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-get-directions]');
+      if (btn) {
+        const address = btn.dataset.address;
+        const url = `https://www.google.com/maps/dir/?api=1&destination=${address}`;
+        window.open(url, '_blank');
+      }
+    });
+
+    // Initialize
+    initMap();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Facility Locator",
+  "tag": "section",
+  "class": "section-facility-locator-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "default": "Find a Location",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Map settings"
+    },
+    {
+      "type": "select",
+      "id": "map_provider",
+      "options": [
+        { "value": "google", "label": "Google Maps" },
+        { "value": "mapbox", "label": "Mapbox" }
+      ],
+      "default": "mapbox",
+      "label": "Map provider"
+    },
+    {
+      "type": "text",
+      "id": "google_maps_api_key",
+      "label": "Google Maps API key",
+      "info": "Required for Google Maps"
+    },
+    {
+      "type": "text",
+      "id": "mapbox_token",
+      "label": "Mapbox access token",
+      "info": "Required for Mapbox"
+    },
+    {
+      "type": "text",
+      "id": "default_lat",
+      "label": "Default latitude",
+      "default": "40.7128"
+    },
+    {
+      "type": "text",
+      "id": "default_lng",
+      "label": "Default longitude",
+      "default": "-74.0060"
+    },
+    {
+      "type": "range",
+      "id": "default_zoom",
+      "min": 3,
+      "max": 18,
+      "step": 1,
+      "default": 10,
+      "label": "Default zoom level"
+    },
+    {
+      "type": "header",
+      "content": "Display options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "default": true,
+      "label": "Show type filters"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "inverse", "label": "Inverse" },
+        { "value": "accent", "label": "Accent" }
+      ],
+      "default": "default",
+      "label": "Color scheme"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "type_filter",
+      "name": "Location type filter",
+      "settings": [
+        {
+          "type": "text",
+          "id": "type_id",
+          "label": "Type ID",
+          "info": "Must match location type (e.g., 'gym', 'retail')"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Display label"
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (emoji or text)"
+        }
+      ]
+    },
+    {
+      "type": "location",
+      "name": "Location",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Location name",
+          "default": "Location Name"
+        },
+        {
+          "type": "textarea",
+          "id": "address",
+          "label": "Address"
+        },
+        {
+          "type": "text",
+          "id": "latitude",
+          "label": "Latitude"
+        },
+        {
+          "type": "text",
+          "id": "longitude",
+          "label": "Longitude"
+        },
+        {
+          "type": "text",
+          "id": "location_type",
+          "label": "Location type",
+          "info": "e.g., 'gym', 'retail', 'partner'"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "Phone number"
+        },
+        {
+          "type": "text",
+          "id": "hours",
+          "label": "Hours",
+          "placeholder": "Mon-Fri 9am-6pm"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Website URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Facility Locator",
+      "blocks": [
+        {
+          "type": "type_filter",
+          "settings": {
+            "type_id": "gym",
+            "label": "Gyms",
+            "icon": "🏋️"
+          }
+        },
+        {
+          "type": "type_filter",
+          "settings": {
+            "type_id": "retail",
+            "label": "Retail",
+            "icon": "🏪"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

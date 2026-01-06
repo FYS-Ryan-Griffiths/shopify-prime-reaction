@@ -1,0 +1,112 @@
+{% comment %}
+  Back to Top Button
+  Floating button to scroll back to top
+  
+  Include in theme.liquid before </body>:
+  {% render 'back-to-top' %}
+{% endcomment %}
+
+{%- if settings.show_back_to_top -%}
+<button 
+  type="button"
+  class="back-to-top" 
+  id="backToTop"
+  aria-label="{{ 'accessibility.back_to_top' | t | default: 'Back to top' }}"
+  hidden
+>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15"></polyline>
+  </svg>
+</button>
+
+<style>
+  .back-to-top {
+    position: fixed;
+    bottom: var(--space-6, 1.5rem);
+    right: var(--space-6, 1.5rem);
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-primary);
+    color: var(--color-on-primary, #fff);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: var(--shadow-md, 0 4px 6px rgba(0,0,0,0.1));
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: opacity var(--transition-base, 200ms), 
+                visibility var(--transition-base, 200ms), 
+                transform var(--transition-base, 200ms),
+                background-color var(--transition-base, 200ms);
+    z-index: var(--z-fixed, 100);
+  }
+
+  .back-to-top:hover {
+    background-color: var(--color-primary-dark, #333);
+    transform: translateY(-2px);
+  }
+
+  .back-to-top:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .back-to-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .back-to-top[hidden] {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .back-to-top {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const btn = document.getElementById('backToTop');
+    if (!btn) return;
+
+    btn.hidden = false;
+    const threshold = 400;
+
+    function toggleVisibility() {
+      if (window.scrollY > threshold) {
+        btn.classList.add('is-visible');
+      } else {
+        btn.classList.remove('is-visible');
+      }
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          toggleVisibility();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+
+    btn.addEventListener('click', function() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    toggleVisibility();
+  })();
+</script>
+{%- endif -%}

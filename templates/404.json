@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "main": {
+      "type": "404",
+      "settings": {}
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Popular Products",
+        "collection": "",
+        "products_to_show": 4
+      }
+    }
+  },
+  "order": ["main", "featured"]
+}

@@ -1,0 +1,275 @@
+{% comment %}
+  Quick View Modal
+  Renders a quick product view modal for collection pages
+{% endcomment %}
+
+<div id="QuickViewModal" class="quick-view-modal" data-quick-view-modal aria-hidden="true" role="dialog" aria-labelledby="QuickViewTitle">
+  <div class="quick-view-modal__overlay" data-quick-view-close></div>
+  
+  <div class="quick-view-modal__container">
+    <button type="button" class="quick-view-modal__close" data-quick-view-close aria-label="{{ 'accessibility.close' | t }}">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
+    <div class="quick-view-modal__content" data-quick-view-content>
+      <!-- Content loaded dynamically -->
+      <div class="quick-view-modal__loading">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .quick-view-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-base), visibility var(--transition-base);
+  }
+
+  .quick-view-modal.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .quick-view-modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .quick-view-modal__container {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    max-height: 90vh;
+    background: var(--color-background);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transform: translateY(20px) scale(0.98);
+    transition: transform var(--transition-base);
+  }
+
+  .quick-view-modal.is-open .quick-view-modal__container {
+    transform: translateY(0) scale(1);
+  }
+
+  .quick-view-modal__close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: var(--color-background);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--color-text);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-fast);
+  }
+
+  .quick-view-modal__close:hover {
+    background: var(--color-surface);
+    transform: scale(1.05);
+  }
+
+  .quick-view-modal__content {
+    overflow-y: auto;
+    max-height: 90vh;
+  }
+
+  .quick-view-modal__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Quick View Product Layout */
+  .quick-view {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 768px) {
+    .quick-view {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-8);
+    }
+  }
+
+  .quick-view__gallery {
+    position: relative;
+  }
+
+  .quick-view__image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background: var(--color-surface);
+  }
+
+  .quick-view__thumbnails {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    overflow-x: auto;
+  }
+
+  .quick-view__thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all var(--transition-fast);
+  }
+
+  .quick-view__thumbnail:hover,
+  .quick-view__thumbnail.is-active {
+    opacity: 1;
+    border-color: var(--color-primary);
+  }
+
+  .quick-view__info {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .quick-view__vendor {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+  }
+
+  .quick-view__title {
+    margin: 0 0 var(--space-4);
+  }
+
+  .quick-view__price {
+    margin-bottom: var(--space-6);
+  }
+
+  .quick-view__price-current {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .quick-view__price-compare {
+    font-size: var(--font-size-base);
+    color: var(--color-text-muted);
+    text-decoration: line-through;
+    margin-left: var(--space-2);
+  }
+
+  .quick-view__description {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-6);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .quick-view__form {
+    margin-top: auto;
+  }
+
+  .quick-view__variants {
+    margin-bottom: var(--space-4);
+  }
+
+  .quick-view__variant-label {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-2);
+  }
+
+  .quick-view__variant-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .quick-view__variant-option {
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .quick-view__variant-option:hover {
+    border-color: var(--color-border);
+  }
+
+  .quick-view__variant-option.is-selected {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+
+  .quick-view__variant-option.is-unavailable {
+    opacity: 0.4;
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+
+  .quick-view__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .quick-view__add-button {
+    width: 100%;
+  }
+
+  .quick-view__view-full {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    padding: var(--space-3);
+  }
+
+  .quick-view__view-full a {
+    color: var(--color-text);
+    font-weight: var(--font-weight-medium);
+  }
+</style>

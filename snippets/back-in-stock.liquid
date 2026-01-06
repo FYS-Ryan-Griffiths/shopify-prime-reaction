@@ -1,0 +1,152 @@
+{% comment %}
+  Back in Stock Notification Snippet
+  Displays email signup form for out-of-stock products
+  
+  Usage:
+  {% render 'back-in-stock', product: product, variant: current_variant %}
+{% endcomment %}
+
+{%- liquid
+  assign variant = variant | default: product.selected_or_first_available_variant
+  assign is_available = variant.available
+-%}
+
+{%- unless is_available -%}
+  <div class="back-in-stock" data-back-in-stock>
+    <div class="back-in-stock__header">
+      <svg class="back-in-stock__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+      <h4 class="back-in-stock__title">{{ 'products.product.back_in_stock.title' | t }}</h4>
+    </div>
+    
+    <p class="back-in-stock__description">
+      {{ 'products.product.back_in_stock.description' | t }}
+    </p>
+    
+    <form class="back-in-stock__form" data-back-in-stock-form action="/cart/add" method="post">
+      <input type="hidden" name="variant_id" value="{{ variant.id }}">
+      <input type="hidden" name="product_id" value="{{ product.id }}">
+      
+      <div class="back-in-stock__input-wrapper">
+        <input 
+          type="email" 
+          name="email" 
+          class="back-in-stock__input"
+          placeholder="{{ 'products.product.back_in_stock.email_placeholder' | t }}"
+          required
+          autocomplete="email"
+          data-back-in-stock-email
+        >
+        <button type="submit" class="back-in-stock__button">
+          <span class="back-in-stock__button-text">{{ 'products.product.back_in_stock.submit' | t }}</span>
+          <svg class="back-in-stock__button-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+      
+      <p class="back-in-stock__privacy">
+        {{ 'products.product.back_in_stock.privacy' | t }}
+      </p>
+    </form>
+    
+    <div class="back-in-stock__success" data-back-in-stock-success hidden>
+      <svg class="back-in-stock__success-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      <p class="back-in-stock__success-message">
+        {{ 'products.product.back_in_stock.success' | t }}
+      </p>
+    </div>
+    
+    <div class="back-in-stock__error" data-back-in-stock-error hidden>
+      <p class="back-in-stock__error-message"></p>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('[data-back-in-stock-form]');
+      const successEl = document.querySelector('[data-back-in-stock-success]');
+      const errorEl = document.querySelector('[data-back-in-stock-error]');
+      
+      if (!form) return;
+      
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const email = form.querySelector('[data-back-in-stock-email]').value;
+        const variantId = form.querySelector('[name="variant_id"]').value;
+        const productId = form.querySelector('[name="product_id"]').value;
+        const productTitle = form.closest('[data-product-title]')?.dataset.productTitle || document.title;
+        const variantTitle = form.closest('[data-variant-title]')?.dataset.variantTitle || '';
+        
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = true;
+        button.classList.add('is-loading');
+        
+        // Store subscription in localStorage as backup
+        const subscriptions = JSON.parse(localStorage.getItem('backInStockSubscriptions') || '[]');
+        const subscription = {
+          email: email,
+          variantId: variantId,
+          productId: productId,
+          productTitle: productTitle,
+          variantTitle: variantTitle,
+          date: new Date().toISOString()
+        };
+        
+        const existing = subscriptions.find(s => s.email === email && s.variantId === variantId);
+        if (!existing) {
+          subscriptions.push(subscription);
+          localStorage.setItem('backInStockSubscriptions', JSON.stringify(subscriptions));
+        }
+        
+        // Push to data layer for GTM/analytics
+        if (window.dataLayer) {
+          window.dataLayer.push({
+            event: 'back_in_stock_signup',
+            product_id: productId,
+            variant_id: variantId,
+            product_title: productTitle
+          });
+        }
+
+        // Klaviyo Back in Stock integration
+        if (window._learnq) {
+          window._learnq.push(['identify', { $email: email }]);
+          window._learnq.push(['track', 'Back In Stock Signup', {
+            ProductID: productId,
+            VariantID: variantId,
+            ProductName: productTitle,
+            VariantName: variantTitle
+          }]);
+        }
+
+        // Klaviyo BIS API (if configured)
+        const klaviyoKey = window.klaviyoBISKey;
+        if (klaviyoKey) {
+          fetch('https://a.klaviyo.com/api/v2/list/' + klaviyoKey + '/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              profiles: [{ email: email }]
+            })
+          }).catch(() => {});
+        }
+        
+        // Show success message
+        form.hidden = true;
+        successEl.hidden = false;
+        
+        // Announce to screen readers
+        if (window.announceToScreenReader) {
+          window.announceToScreenReader('You will be notified when this product is back in stock.');
+        }
+      });
+    });
+  </script>
+{%- endunless -%}
