@@ -879,5 +879,92 @@
         "info": "Videos will be muted"
       }
     ]
+  },
+  {
+    "name": "Search",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Predictive Search"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_predictive_search",
+        "label": "Enable predictive search",
+        "default": true,
+        "info": "Show instant search results as users type"
+      },
+      {
+        "type": "checkbox",
+        "id": "search_show_keyboard_shortcut",
+        "label": "Show keyboard shortcut hint",
+        "default": true,
+        "info": "Shows ⌘K / Ctrl+K hint in search input"
+      },
+      {
+        "type": "range",
+        "id": "search_results_limit",
+        "min": 3,
+        "max": 10,
+        "step": 1,
+        "unit": "items",
+        "label": "Number of predictive results",
+        "default": 6
+      },
+      {
+        "type": "header",
+        "content": "Search Types"
+      },
+      {
+        "type": "checkbox",
+        "id": "search_include_products",
+        "label": "Include products in search",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "search_include_articles",
+        "label": "Include blog articles in search",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "search_include_pages",
+        "label": "Include pages in search",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Search Results Page"
+      },
+      {
+        "type": "checkbox",
+        "id": "search_show_type_filter",
+        "label": "Show result type filter",
+        "default": true,
+        "info": "Allow filtering by products, articles, pages"
+      },
+      {
+        "type": "checkbox",
+        "id": "search_show_suggestions",
+        "label": "Show search suggestions",
+        "default": true,
+        "info": "Show helpful suggestions when no results found"
+      },
+      {
+        "type": "checkbox",
+        "id": "search_show_popular",
+        "label": "Show popular searches",
+        "default": true,
+        "info": "Display popular search terms"
+      },
+      {
+        "type": "text",
+        "id": "search_popular_terms",
+        "label": "Popular search terms",
+        "default": "Fire extinguishers, Safety signs, First aid",
+        "info": "Comma-separated list of popular search terms"
+      }
+    ]
   }
 ]

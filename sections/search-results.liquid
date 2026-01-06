@@ -2,36 +2,60 @@
   Search Results Section
 {% endcomment %}
 
+{{ 'search.css' | asset_url | stylesheet_tag }}
+
 {%- liquid
   assign products_per_page = section.settings.products_per_page
   assign show_vendor = section.settings.show_vendor
   assign show_secondary_image = section.settings.show_secondary_image
 -%}
 
-<section class="search-results section">
+<section class="search-results-page section">
   <div class="container">
-    <header class="search-results__header">
-      <h1 class="search-results__title h2">{{ 'search.title' | t }}</h1>
+    <header class="search-results-page__header">
+      <h1 class="search-results-page__title h2">{{ 'search.title' | t }}</h1>
       
-      <form action="{{ routes.search_url }}" method="get" class="search-results__form">
-        <div class="search-results__input-wrapper">
+      <form action="{{ routes.search_url }}" method="get" class="search-results-page__form" role="search">
+        <div class="search-results-page__input-wrapper">
+          <label for="search-input" class="visually-hidden">{{ 'search.placeholder' | t }}</label>
           <input 
-            type="search" 
+            type="search"
+            id="search-input" 
             name="q" 
             value="{{ search.terms | escape }}"
             placeholder="{{ 'search.placeholder' | t }}"
-            class="search-results__input"
+            class="search-results-page__input"
             autofocus
           >
-          <button type="submit" class="search-results__submit">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <button type="submit" class="search-results-page__submit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <circle cx="11" cy="11" r="8"/>
               <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
             <span class="visually-hidden">{{ 'search.submit' | t }}</span>
           </button>
         </div>
-        <input type="hidden" name="type" value="product">
+        
+        {%- if section.settings.show_type_filter -%}
+          <div class="search-results-page__filters">
+            <label class="search-results-page__filter">
+              <input type="radio" name="type" value="product" {% if search.types contains 'product' %}checked{% endif %}>
+              <span>{{ 'search.products' | t }}</span>
+            </label>
+            <label class="search-results-page__filter">
+              <input type="radio" name="type" value="article" {% if search.types contains 'article' %}checked{% endif %}>
+              <span>{{ 'search.articles' | t }}</span>
+            </label>
+            <label class="search-results-page__filter">
+              <input type="radio" name="type" value="page" {% if search.types contains 'page' %}checked{% endif %}>
+              <span>{{ 'search.pages' | t }}</span>
+            </label>
+            <label class="search-results-page__filter">
+              <input type="radio" name="type" value="product,article,page" {% unless search.types %}checked{% endunless %}>
+              <span>{{ 'search.all' | t }}</span>
+            </label>
+          </div>
+        {%- endif -%}
       </form>
     </header>
     
@@ -98,12 +122,12 @@
           </div>
           
           {%- if paginate.pages > 1 -%}
-            <nav class="search-results__pagination pagination" aria-label="{{ 'accessibility.pagination' | t }}">
+            <nav class="search-results-page__pagination pagination" aria-label="{{ 'accessibility.pagination' | t }}">
               <ul class="pagination__list">
                 {%- if paginate.previous -%}
                   <li class="pagination__item pagination__item--prev">
                     <a href="{{ paginate.previous.url }}" class="pagination__link" aria-label="{{ 'accessibility.previous_page' | t }}">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <polyline points="15 18 9 12 15 6"/>
                       </svg>
                     </a>
@@ -127,7 +151,7 @@
                 {%- if paginate.next -%}
                   <li class="pagination__item pagination__item--next">
                     <a href="{{ paginate.next.url }}" class="pagination__link" aria-label="{{ 'accessibility.next_page' | t }}">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <polyline points="9 18 15 12 9 6"/>
                       </svg>
                     </a>
@@ -139,22 +163,45 @@
         {%- endpaginate -%}
         
       {%- else -%}
-        <div class="search-results__empty">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+        <div class="search-results-page__empty">
+          <svg class="search-results-page__empty-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
             <circle cx="11" cy="11" r="8"/>
             <line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-          <p class="search-results__empty-message">
+          <h2 class="search-results-page__empty-title h4">{{ 'search.no_results_title' | t }}</h2>
+          <p class="search-results-page__empty-text">
             {{ 'search.no_results' | t: terms: search.terms }}
           </p>
-          <a href="{{ routes.all_products_collection_url }}" class="button button--primary">
+          
+          {%- if section.settings.show_suggestions -%}
+            <div class="search-results-page__suggestions">
+              {%- for suggestion in section.settings.suggestions | split: ',' -%}
+                <a href="/search?q={{ suggestion | strip | url_encode }}" class="search-results-page__suggestion">
+                  {{ suggestion | strip }}
+                </a>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+          
+          <a href="{{ routes.all_products_collection_url }}" class="button button--primary" style="margin-top: var(--spacing-lg);">
             {{ 'search.browse_all' | t }}
           </a>
         </div>
       {%- endif -%}
     {%- else -%}
-      <div class="search-results__empty">
-        <p class="search-results__empty-message">{{ 'search.start_searching' | t }}</p>
+      <div class="search-results-page__empty">
+        <p class="search-results-page__empty-text">{{ 'search.start_searching' | t }}</p>
+        
+        {%- if section.settings.show_popular -%}
+          <h3 class="h5" style="margin-top: var(--spacing-lg);">{{ 'search.popular_searches' | t }}</h3>
+          <div class="search-results-page__suggestions">
+            {%- for suggestion in section.settings.suggestions | split: ',' -%}
+              <a href="/search?q={{ suggestion | strip | url_encode }}" class="search-results-page__suggestion">
+                {{ suggestion | strip }}
+              </a>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
       </div>
     {%- endif -%}
   </div>
@@ -186,6 +233,31 @@
       "id": "show_secondary_image",
       "label": "Show secondary image on hover",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_type_filter",
+      "label": "Show search type filter",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_suggestions",
+      "label": "Show search suggestions when no results",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_popular",
+      "label": "Show popular searches",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "suggestions",
+      "label": "Search suggestions",
+      "default": "Fluiball, Fluikettle, Training, Equipment",
+      "info": "Comma-separated list"
     }
   ]
 }
