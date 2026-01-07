@@ -1,0 +1,153 @@
+{%- comment -%}
+  Banner Section
+  A simple page banner for top-of-page content
+{%- endcomment -%}
+
+<section class="banner banner--{{ section.settings.height }} banner--{{ section.settings.color_scheme }}">
+  <div class="banner__container container">
+    {%- if section.settings.subtitle != blank -%}
+      <span class="banner__subtitle">{{ section.settings.subtitle }}</span>
+    {%- endif -%}
+    
+    {%- if section.settings.title != blank -%}
+      <h1 class="banner__title">{{ section.settings.title }}</h1>
+    {%- endif -%}
+    
+    {%- if section.settings.description != blank -%}
+      <p class="banner__description">{{ section.settings.description }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+<style>
+  .banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+  
+  .banner--small { min-height: 200px; }
+  .banner--medium { min-height: 300px; }
+  .banner--large { min-height: 400px; }
+  
+  .banner--default {
+    background: var(--color-background);
+    color: var(--color-text);
+  }
+  
+  .banner--inverse {
+    background: var(--color-primary);
+    color: var(--color-background);
+  }
+  
+  .banner--secondary {
+    background: var(--color-secondary);
+    color: var(--color-text);
+  }
+  
+  .banner__container {
+    max-width: 800px;
+  }
+  
+  .banner__subtitle {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+  }
+  
+  .banner__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 0 0 1rem;
+  }
+  
+  .banner__description {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    opacity: 0.9;
+    margin: 0;
+  }
+  
+  @media (max-width: 768px) {
+    .banner {
+      padding: 2rem 1rem;
+    }
+    
+    .banner--small { min-height: 150px; }
+    .banner--medium { min-height: 200px; }
+    .banner--large { min-height: 280px; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Banner",
+  "tag": "section",
+  "class": "section-banner",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": ""
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Page Title"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Height",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "inverse", "label": "Inverse" },
+        { "value": "secondary", "label": "Secondary" }
+      ],
+      "default": "default"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner"
+    }
+  ]
+}
+{% endschema %}

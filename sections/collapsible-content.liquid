@@ -1,0 +1,135 @@
+{%- comment -%}
+  Collapsible Content Section (Accordion)
+  FAQ-style expandable content blocks
+{%- endcomment -%}
+
+<section class="collapsible-content">
+  <div class="collapsible-content__container container">
+    {%- if section.settings.title != blank -%}
+      <h2 class="collapsible-content__title">{{ section.settings.title }}</h2>
+    {%- endif -%}
+    
+    <div class="collapsible-content__items">
+      {%- for block in section.blocks -%}
+        <details class="collapsible-content__item" {{ block.shopify_attributes }}>
+          <summary class="collapsible-content__header">
+            <span class="collapsible-content__question">{{ block.settings.heading }}</span>
+            <span class="collapsible-content__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </span>
+          </summary>
+          <div class="collapsible-content__body">
+            <div class="collapsible-content__answer rte">
+              {{ block.settings.content }}
+            </div>
+          </div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .collapsible-content {
+    padding: 3rem 1.5rem;
+  }
+  
+  .collapsible-content__container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .collapsible-content__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .collapsible-content__item {
+    border-bottom: 1px solid var(--color-border, #e5e5e5);
+  }
+  
+  .collapsible-content__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 0;
+    cursor: pointer;
+    list-style: none;
+  }
+  
+  .collapsible-content__header::-webkit-details-marker {
+    display: none;
+  }
+  
+  .collapsible-content__question {
+    font-weight: 500;
+    font-size: 1.0625rem;
+  }
+  
+  .collapsible-content__icon {
+    transition: transform 0.3s ease;
+  }
+  
+  .collapsible-content__item[open] .collapsible-content__icon {
+    transform: rotate(180deg);
+  }
+  
+  .collapsible-content__body {
+    padding-bottom: 1.25rem;
+  }
+  
+  .collapsible-content__answer {
+    color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Collapsible content",
+  "tag": "section",
+  "class": "section-collapsible-content",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collapsible_row",
+      "name": "Collapsible row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Answer goes here.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collapsible content",
+      "blocks": [
+        { "type": "collapsible_row" },
+        { "type": "collapsible_row" },
+        { "type": "collapsible_row" }
+      ]
+    }
+  ]
+}
+{% endschema %}
