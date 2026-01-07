@@ -1,0 +1,152 @@
+{%- comment -%}
+  Row Section
+  A flexible row layout for content blocks
+{%- endcomment -%}
+
+<section class="row-section row-section--{{ section.settings.layout }}">
+  <div class="row-section__container container">
+    {%- if section.settings.title != blank -%}
+      <h2 class="row-section__title">{{ section.settings.title }}</h2>
+    {%- endif -%}
+    
+    <div class="row-section__grid">
+      {%- for block in section.blocks -%}
+        <div class="row-section__item" {{ block.shopify_attributes }}>
+          {%- if block.settings.icon != blank -%}
+            <div class="row-section__icon">{{ block.settings.icon }}</div>
+          {%- endif -%}
+          
+          {%- if block.settings.title != blank -%}
+            <h3 class="row-section__item-title">{{ block.settings.title }}</h3>
+          {%- endif -%}
+          
+          {%- if block.settings.text != blank -%}
+            <div class="row-section__item-text rte">{{ block.settings.text }}</div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  .row-section {
+    padding: 3rem 1.5rem;
+  }
+  
+  .row-section__container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .row-section__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .row-section__grid {
+    display: grid;
+    gap: 2rem;
+  }
+  
+  .row-section--2-column .row-section__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .row-section--3-column .row-section__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .row-section--4-column .row-section__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .row-section__item {
+    text-align: center;
+  }
+  
+  .row-section__icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .row-section__item-title {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .row-section__item-text {
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+  
+  @media (max-width: 768px) {
+    .row-section--2-column .row-section__grid,
+    .row-section--3-column .row-section__grid,
+    .row-section--4-column .row-section__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Row",
+  "tag": "section",
+  "class": "section-row",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "2-column", "label": "2 columns" },
+        { "value": "3-column", "label": "3 columns" },
+        { "value": "4-column", "label": "4 columns" }
+      ],
+      "default": "3-column"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (emoji)"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Row",
+      "blocks": [
+        { "type": "column" },
+        { "type": "column" },
+        { "type": "column" }
+      ]
+    }
+  ]
+}
+{% endschema %}

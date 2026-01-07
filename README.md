@@ -1,4 +1,4 @@
-# 🏋️ Reaxing Prime Reaction - Shopify Theme
+# 🏋️ Reaxing Prime Reaction - Shopify Theme v1.a
 
 > **Premium Shopify Theme for Neuromuscular Training Equipment**  
 > Editorial, typography-forward design inspired by [postfamiliar.com](https://postfamiliar.com/)  
