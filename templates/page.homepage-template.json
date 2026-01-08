@@ -9,13 +9,23 @@
  */
 {
   "sections": {
-    "hero": {
-      "type": "page-banner",
+    "hero_6GFzpM": {
+      "type": "hero",
+      "name": "Hero",
       "settings": {
-        "heading": "Homepage",
-        "subheading": "Redefining functional training",
-        "show_image": true,
-        "image": "shopify://shop_images/Screenshot_2025-12-23_at_8.46.09_AM.png"
+        "image": "shopify://shop_images/Screenshot_2025-12-23_at_8.46.09_AM.png",
+        "video": "",
+        "subheading": "New Collection",
+        "heading": "Train Different",
+        "text": "",
+        "button_text": "Shop Now",
+        "button_link": "",
+        "button_text_2": "",
+        "button_link_2": "",
+        "height": "medium",
+        "text_position": "center",
+        "overlay_opacity": 30,
+        "show_scroll_indicator": true
       }
     },
     "story": {
@@ -80,7 +90,7 @@
     }
   },
   "order": [
-    "hero",
+    "hero_6GFzpM",
     "story",
     "values",
     "team"
