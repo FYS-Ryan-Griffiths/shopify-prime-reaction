@@ -5,7 +5,7 @@
 
 {%- unless settings.popup_enabled == false -%}
 {%- liquid
-  assign show_popup = true
+  assign show_popup = false
   
   # Don't show on cart or checkout
   if template.name == 'cart' or request.page_type == 'checkout'
