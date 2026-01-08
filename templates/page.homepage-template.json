@@ -12,7 +12,7 @@
     "hero_6GFzpM": {
       "type": "hero",
       "custom_css": [
-        ".hero__button.btn--primary {background-color: rgba(255, 0, 0, 0.5);}"
+        ".hero__button.btn--primary {background-color: rgba(255, 0, 0, 0.15);}"
       ],
       "name": "Hero",
       "settings": {
