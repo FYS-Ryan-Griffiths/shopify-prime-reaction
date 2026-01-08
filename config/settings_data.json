@@ -1,0 +1,96 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "current": {
+    "sections": {
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "settings": {
+          "show_announcement": true,
+          "text": "Free shipping on orders over $500",
+          "link": "",
+          "background_color": "#1a1a1a",
+          "text_color": "#ffffff"
+        }
+      },
+      "header": {
+        "type": "header",
+        "settings": {
+          "logo": "shopify://shop_images/PRIME-Reaction-logo-Reverse.png",
+          "logo_width": 300,
+          "menu": "main-menu",
+          "sticky": true,
+          "transparent_home": false,
+          "show_search": true,
+          "show_account": true,
+          "show_theme_toggle": true
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "blocks": {
+          "footer-0": {
+            "type": "menu",
+            "settings": {
+              "title": "Shop",
+              "menu": "footer"
+            }
+          },
+          "footer-1": {
+            "type": "menu",
+            "settings": {
+              "title": "Support",
+              "menu": "footer"
+            }
+          },
+          "footer-2": {
+            "type": "menu",
+            "settings": {
+              "title": "Company",
+              "menu": "footer"
+            }
+          }
+        },
+        "block_order": [
+          "footer-0",
+          "footer-1",
+          "footer-2"
+        ],
+        "settings": {
+          "tagline": "Premium neuromuscular training equipment",
+          "show_marquee": false,
+          "marquee_text": "Free shipping on orders over $500 • As seen in Men's Health & Shape Magazine •",
+          "show_newsletter": true,
+          "newsletter_title": "Stay in the loop",
+          "newsletter_text": "Subscribe for training tips, new product launches, and exclusive offers.",
+          "newsletter_tag": "",
+          "show_social": true,
+          "show_payment_icons": true
+        }
+      },
+      "cart-drawer-ajax": {
+        "type": "cart-drawer-ajax",
+        "settings": {}
+      },
+      "predictive-search": {
+        "type": "predictive-search",
+        "settings": {
+          "search_type": "product,article,page",
+          "show_keyboard_hint": true
+        }
+      },
+      "popup": {
+        "type": "popup",
+        "settings": {}
+      }
+    },
+    "content_for_index": []
+  }
+}
