@@ -1,0 +1,77 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "page-banner",
+      "settings": {
+        "heading": "Our Story",
+        "subheading": "Redefining functional training"
+      }
+    },
+    "story": {
+      "type": "image-with-text",
+      "settings": {
+        "heading": "The Science of Movement",
+        "button_link": "shopify://collections/all"
+      }
+    },
+    "values": {
+      "type": "brand-values",
+      "blocks": {
+        "v1": {
+          "type": "value",
+          "settings": {
+            "icon": "innovation",
+            "heading": "Innovation",
+            "content": "Pioneering new approaches to functional fitness"
+          }
+        },
+        "v2": {
+          "type": "value",
+          "settings": {
+            "icon": "quality",
+            "heading": "Quality",
+            "content": "Premium materials built to last"
+          }
+        },
+        "v3": {
+          "type": "value",
+          "settings": {
+            "icon": "science",
+            "heading": "Science-Backed",
+            "content": "Every product grounded in research"
+          }
+        }
+      },
+      "block_order": [
+        "v1",
+        "v2",
+        "v3"
+      ],
+      "settings": {
+        "heading": "What We Stand For"
+      }
+    },
+    "team": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "Join the Movement",
+        "content": "<p>Used by elite athletes, professional teams, and fitness enthusiasts worldwide, Reaxing equipment is trusted to deliver results. Join thousands who have transformed their training.</p>"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "story",
+    "values",
+    "team"
+  ]
+}
