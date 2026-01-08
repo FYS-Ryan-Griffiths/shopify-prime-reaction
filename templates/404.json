@@ -9,21 +9,6 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "404",
-      "name": "404 Page",
-      "settings": {}
-    },
-    "featured": {
-      "type": "featured-collection",
-      "settings": {
-        "title": "Featured Products",
-        "collection": "",
-        "products_to_show": 4,
-        "columns": "4",
-        "show_view_all": true
-      }
-    },
     "bento_grid_EXihmJ": {
       "type": "bento-grid",
       "blocks": {
@@ -86,6 +71,22 @@
         "heading": "Shop the Collection",
         "subheading": "",
         "color_scheme": "background-1"
+      }
+    },
+    "main": {
+      "type": "404",
+      "disabled": true,
+      "name": "404 Page",
+      "settings": {}
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Featured Products",
+        "collection": "",
+        "products_to_show": 4,
+        "columns": "4",
+        "show_view_all": true
       }
     }
   },

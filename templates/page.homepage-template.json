@@ -12,15 +12,20 @@
     "hero": {
       "type": "page-banner",
       "settings": {
-        "heading": "Our Story",
-        "subheading": "Redefining functional training"
+        "heading": "Homepage",
+        "subheading": "Redefining functional training",
+        "show_image": false
       }
     },
     "story": {
       "type": "image-with-text",
       "settings": {
+        "subheading": "",
         "heading": "The Science of Movement",
-        "button_link": "shopify://collections/all"
+        "text": "<p>Share your brand story with customers. Describe a product, make announcements, or welcome customers to your store.</p>",
+        "button_text": "Learn More",
+        "button_link": "shopify://collections/all",
+        "layout": "image_first"
       }
     },
     "values": {
@@ -57,14 +62,19 @@
         "v3"
       ],
       "settings": {
-        "heading": "What We Stand For"
+        "heading": "What We Stand For",
+        "subheading": ""
       }
     },
     "team": {
       "type": "rich-text",
       "settings": {
         "heading": "Join the Movement",
-        "content": "<p>Used by elite athletes, professional teams, and fitness enthusiasts worldwide, Reaxing equipment is trusted to deliver results. Join thousands who have transformed their training.</p>"
+        "content": "<p>Used by elite athletes, professional teams, and fitness enthusiasts worldwide, Reaxing equipment is trusted to deliver results. Join thousands who have transformed their training.</p>",
+        "text_alignment": "center",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "primary"
       }
     }
   },
